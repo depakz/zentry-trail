@@ -1,0 +1,21 @@
+{
+  "target": "https://www.apple.com/",
+  "created": "2026-05-09_12-55-22",
+  "subdomains": [
+    "https://www.apple.com/"
+  ],
+  "alive_hosts": [
+    "https://www.apple.com/"
+  ],
+  "endpoints": [
+    "https://www.apple.com/"
+  ],
+  "mined_params": {},
+  "categorized": {
+    "OTHER": [
+      "https://www.apple.com/"
+    ]
+  },
+  "reflections": [],
+  "error_leaks": []
+}

@@ -1,0 +1,27 @@
+# Secrets
+.env
+.env.*
+*.key
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Project artifacts
+logs/
+reports/
+data/sessions/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

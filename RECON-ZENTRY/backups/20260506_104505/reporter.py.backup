@@ -1,0 +1,56 @@
+"""Pro reports — JSON + console summary"""
+import json
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from core.logger import logger
+
+console = Console()
+
+SEV_COLOR = {"critical":"bold red", "high":"red", "medium":"yellow", "low":"cyan", "info":"green"}
+
+def report(session):
+    data = session.data
+    valid = data.get("validated", [])
+    valid.sort(key=lambda x: x.get("confidence",0), reverse=True)
+
+    console.print(Panel.fit(
+        f"[bold cyan]Target:[/] {data['target']}\n"
+        f"[bold]Subdomains:[/] {len(data.get('subdomains',[]))}  "
+        f"[bold]Alive:[/] {len(data.get('alive_hosts',[]))}\n"
+        f"[bold]Endpoints:[/] {len(data.get('endpoints',[]))}  "
+        f"[bold]Params discovered:[/] {sum(len(v) for v in data.get('parameters',{}).values())}\n"
+        f"[bold green]Validated Findings:[/] {len(valid)}",
+        title="🎯 Mission Report"))
+
+    if valid:
+        t = Table(title="🔥 TOP VULNERABILITIES", show_lines=True)
+        t.add_column("#", style="dim")
+        t.add_column("Severity")
+        t.add_column("Type")
+        t.add_column("URL", overflow="fold")
+        t.add_column("Conf", justify="right")
+        for i, f in enumerate(valid[:25], 1):
+            sev = (f.get("info",{}).get("severity") or f.get("severity","info")).lower()
+            typ = f.get("type") or f.get("info",{}).get("name","nuclei")
+            url = (f.get("matched-at") or f.get("url") or f.get("host","?"))[:80]
+            conf = str(f.get("confidence",0))
+            t.add_row(str(i), f"[{SEV_COLOR.get(sev,'white')}]{sev.upper()}[/]", typ[:25], url, conf)
+        console.print(t)
+    else:
+        console.print("[yellow]No validated findings.[/]")
+
+    # JSON
+    out = session.path.with_suffix(".report.json")
+    with open(out, "w") as f:
+        json.dump({
+            "target": data["target"],
+            "summary": {
+                "subdomains": len(data.get("subdomains",[])),
+                "alive": len(data.get("alive_hosts",[])),
+                "endpoints": len(data.get("endpoints",[])),
+                "validated_findings": len(valid),
+            },
+            "findings": valid,
+        }, f, indent=2, default=str)
+    console.print(f"📄 Full report: [cyan]{out}[/]")

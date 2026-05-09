@@ -1,0 +1,73 @@
+"""Parameter discovery: arjun + paramspider"""
+import asyncio, tempfile, json, re
+from pathlib import Path
+from core.runner import run_cmd, have, run_parallel
+from core.logger import logger
+from config.settings import MAX_CONCURRENT_TASKS
+
+async def run_paramspider(domain):
+    """Pull historical parameters from web archives"""
+    if not have("paramspider"):
+        logger.warning("paramspider not found, skipping")
+        return []
+    out = Path(tempfile.gettempdir()) / f"ps_{domain}.txt"
+    cmd = f"paramspider -d {domain} -o {out} 2>/dev/null"
+    await run_cmd(cmd, timeout=180)
+    if out.exists():
+        urls = [l.strip() for l in out.read_text().splitlines() if l.strip() and "?" in l]
+        out.unlink(missing_ok=True)
+        logger.info(f"   paramspider: {len(urls)} URLs from {domain}")
+        return urls
+    return []
+
+async def run_arjun_one(url):
+    """Discover hidden params on a single URL"""
+    if not have("arjun"):
+        return url, []
+    out = Path(tempfile.gettempdir()) / f"arjun_{abs(hash(url))}.json"
+    cmd = f'arjun -u "{url}" -oJ {out} -t 10 --stable 2>/dev/null'
+    await run_cmd(cmd, timeout=120)
+    params = []
+    if out.exists():
+        try:
+            data = json.loads(out.read_text())
+            for entry in (data if isinstance(data, list) else [data]):
+                params.extend(entry.get("params", []))
+        except Exception:
+            pass
+        out.unlink(missing_ok=True)
+    return url, list(set(params))
+
+async def mine_parameters(domains, target_urls, session):
+    """Combined param discovery"""
+    logger.info("🔎 PARAMETER MINING")
+    discovered = {}
+    new_urls = []
+
+    # 1. Paramspider on alive domains
+    ps_tasks = [run_paramspider(d) for d in domains[:10]]
+    results = await run_parallel(ps_tasks, max_concurrent=5)
+    for r in results:
+        if isinstance(r, list):
+            new_urls.extend(r)
+
+    # 2. Arjun on parameterized URLs (top targets)
+    arjun_targets = list(set(target_urls))[:30]
+    arjun_tasks = [run_arjun_one(u) for u in arjun_targets]
+    arjun_results = await run_parallel(arjun_tasks, max_concurrent=5)
+    for r in arjun_results:
+        if isinstance(r, tuple):
+            url, params = r
+            if params:
+                discovered[url] = params
+                logger.info(f"   arjun → {url[:60]}: {params}")
+
+    session.update("parameters", discovered)
+    logger.info(f"   ✓ ParamSpider: {len(new_urls)} URLs | Arjun: {sum(len(v) for v in discovered.values())} params")
+    return list(set(new_urls)), discovered
+
+def extract_params_from_url(url):
+    """Extract param names from URL"""
+    m = re.search(r"\?(.+)", url)
+    if not m: return []
+    return [p.split("=")[0] for p in m.group(1).split("&") if "=" in p]

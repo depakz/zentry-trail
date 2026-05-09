@@ -1,0 +1,89 @@
+[
+    {
+        "url": "https://altoro.testfire.net/",
+        "status_code": 200,
+        "title": "Altoro Mutual",
+        "webserver": "Apache-Coyote/1.1",
+        "tech": [
+            "Apache Tomcat",
+            "Java"
+        ],
+        "ip": "",
+        "content_type": "text/html",
+        "method": "GET",
+        "port": "443",
+        "scheme": "https",
+        "tls_grab": {},
+        "tls": {
+            "host": "altoro.testfire.net",
+            "port": "443",
+            "probe_status": true,
+            "tls_version": "tls12",
+            "cipher": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+            "mismatched": true,
+            "not_before": "2025-05-21T00:00:00Z",
+            "not_after": "2026-06-21T23:59:59Z",
+            "subject_dn": "CN=demo.testfire.net",
+            "subject_cn": "demo.testfire.net",
+            "subject_an": [
+                "demo.testfire.net"
+            ],
+            "issuer_dn": "CN=Sectigo RSA Domain Validation Secure Server CA, O=Sectigo Limited, L=Salford, ST=Greater Manchester, C=GB",
+            "issuer_cn": "Sectigo RSA Domain Validation Secure Server CA",
+            "issuer_org": [
+                "Sectigo Limited"
+            ],
+            "fingerprint_hash": {
+                "md5": "04a1277200693d65011dded8ccb0201c",
+                "sha1": "a1e98d60388b84f4bbc550d7b61bb2b0cc8961fd",
+                "sha256": "b0eac225501db594a9639f9e718bc036759b9f492c7c729a60c8473568393382"
+            },
+            "tls_connection": "ctls",
+            "sni": "altoro.testfire.net"
+        },
+        "favicon": ""
+    },
+    {
+        "url": "https://demo.testfire.net",
+        "status_code": 200,
+        "title": "Altoro Mutual",
+        "webserver": "Apache-Coyote/1.1",
+        "tech": [
+            "Apache Tomcat",
+            "Java"
+        ],
+        "ip": "",
+        "content_type": "text/html",
+        "method": "GET",
+        "port": "443",
+        "scheme": "https",
+        "tls_grab": {},
+        "tls": {
+            "host": "demo.testfire.net",
+            "port": "443",
+            "probe_status": true,
+            "tls_version": "tls12",
+            "cipher": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+            "not_before": "2025-05-21T00:00:00Z",
+            "not_after": "2026-06-21T23:59:59Z",
+            "subject_dn": "CN=demo.testfire.net",
+            "subject_cn": "demo.testfire.net",
+            "subject_an": [
+                "demo.testfire.net"
+            ],
+            "issuer_dn": "CN=Sectigo RSA Domain Validation Secure Server CA, O=Sectigo Limited, L=Salford, ST=Greater Manchester, C=GB",
+            "issuer_cn": "Sectigo RSA Domain Validation Secure Server CA",
+            "issuer_org": [
+                "Sectigo Limited"
+            ],
+            "fingerprint_hash": {
+                "md5": "04a1277200693d65011dded8ccb0201c",
+                "sha1": "a1e98d60388b84f4bbc550d7b61bb2b0cc8961fd",
+                "sha256": "b0eac225501db594a9639f9e718bc036759b9f492c7c729a60c8473568393382"
+            },
+            "tls_connection": "ctls",
+            "sni": "demo.testfire.net"
+        },
+        "favicon": ""
+    }
+]
