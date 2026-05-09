@@ -1,0 +1,91 @@
+{
+  "target": "http://altoro.testfire.net/",
+  "generated_at": "2026-05-09T19:39:22.073082Z",
+  "confirmed_count": 2,
+  "confirmed_vulnerabilities": [
+    {
+      "type": "missing-security-headers",
+      "source_action": "validator",
+      "endpoint": "",
+      "base": "",
+      "params": [],
+      "reason": "Missing headers can increase exposure to clickjacking and some XSS scenarios.",
+      "proof": {
+        "request": "http://altoro.testfire.net/",
+        "response": {
+          "Server": "Apache-Coyote/1.1",
+          "Set-Cookie": "JSESSIONID=4209689F351C2D2107CEAC931B3E7D64; Path=/; HttpOnly",
+          "Content-Type": "text/html;charset=ISO-8859-1",
+          "Transfer-Encoding": "chunked",
+          "Date": "Sat, 09 May 2026 19:39:19 GMT",
+          "Connection": "close"
+        },
+        "matched": "CSP,X-Frame-Options",
+        "extra": {
+          "coverage_markers": [
+            "missing_security_headers_as_monitoring_signal",
+            "insufficient_monitoring_indicators",
+            "audit_visibility_hardening_gap",
+            "low_detection_surface_signal",
+            "telemetry_control_gap"
+          ]
+        }
+      },
+      "validator_id": "",
+      "validator_class": "",
+      "severity": "info",
+      "confidence": 0.8,
+      "compliance_tags": {
+        "OWASP": "General Security Requirement",
+        "PCI-DSS": "Review Required",
+        "SOC2": "Control Review Required",
+        "NIST": "Control Review Required"
+      },
+      "business_risk": "OWASP: General Security Requirement | PCI-DSS: Review Required | SOC2: Control Review Required | NIST: Control Review Required"
+    },
+    {
+      "type": "a02-crypto-missing-security-headers",
+      "source_action": "validator",
+      "endpoint": "",
+      "base": "",
+      "params": [],
+      "reason": "Missing 6 security headers: strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking). This reduces defense against various attacks.",
+      "proof": {
+        "request": {
+          "url": "http://altoro.testfire.net/"
+        },
+        "response": {
+          "missing_headers": [
+            "strict-transport-security (HSTS - enforces HTTPS)",
+            "x-content-type-options (prevents MIME sniffing)",
+            "x-frame-options (prevents clickjacking)",
+            "x-xss-protection (legacy XSS protection)",
+            "content-security-policy (controls resource loading)",
+            "referrer-policy (controls referrer information)"
+          ]
+        },
+        "matched": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)",
+        "extra": {
+          "coverage_markers": [
+            "weak_tls_versions",
+            "plaintext_sensitive_transport",
+            "missing_transport_encryption",
+            "insecure_cipher_or_protocol_policy",
+            "sensitive_data_exposure_in_transit"
+          ]
+        }
+      },
+      "validator_id": "",
+      "validator_class": "",
+      "severity": "medium",
+      "confidence": 0.8,
+      "compliance_tags": {
+        "OWASP": "General Security Requirement",
+        "PCI-DSS": "Review Required",
+        "SOC2": "Control Review Required",
+        "NIST": "Control Review Required"
+      },
+      "business_risk": "OWASP: General Security Requirement | PCI-DSS: Review Required | SOC2: Control Review Required | NIST: Control Review Required"
+    }
+  ]
+}

@@ -1,0 +1,1003 @@
+{
+    "nodes": [
+        {
+            "id": "target:http://altoro.testfire.net/",
+            "kind": "root",
+            "label": "http://altoro.testfire.net/",
+            "state": {
+                "target": "http://altoro.testfire.net/"
+            }
+        },
+        {
+            "id": "port:80",
+            "kind": "discovery",
+            "label": "Port 80",
+            "state": {
+                "port": 80
+            }
+        },
+        {
+            "id": "protocol:http",
+            "kind": "discovery",
+            "label": "HTTP",
+            "state": {
+                "protocol": "http"
+            }
+        },
+        {
+            "id": "validator:missing_security_headers",
+            "kind": "validator",
+            "label": "MissingSecurityHeadersValidator",
+            "state": {
+                "spec": {
+                    "id": "missing_security_headers",
+                    "name": "MissingSecurityHeadersValidator",
+                    "class_path": "validators.http.MissingSecurityHeadersValidator",
+                    "description": "Checks for missing security headers on HTTP endpoints.",
+                    "severity": "info",
+                    "priority": 10,
+                    "keywords": [
+                        "http",
+                        "headers",
+                        "csp",
+                        "x-frame-options"
+                    ],
+                    "required_ports": [],
+                    "required_protocols": [
+                        "http"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "validator:crypto_validator",
+            "kind": "validator",
+            "label": "CryptoValidator",
+            "state": {
+                "spec": {
+                    "id": "crypto_validator",
+                    "name": "CryptoValidator",
+                    "class_path": "validators.crypto.CryptoValidator",
+                    "description": "Checks for weak TLS versions and sensitive data transmitted over plaintext HTTP.",
+                    "severity": "high",
+                    "priority": 85,
+                    "keywords": [
+                        "tls",
+                        "ssl",
+                        "crypto",
+                        "cipher",
+                        "http",
+                        "cookie",
+                        "authorization"
+                    ],
+                    "required_ports": [],
+                    "required_protocols": [
+                        "http"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "vulnerability:redis-no-auth",
+            "kind": "vulnerability",
+            "label": "Unauthenticated Redis Access",
+            "state": {
+                "spec": {
+                    "id": "redis-no-auth",
+                    "title": "Unauthenticated Redis Access",
+                    "description": "Redis exposed on 6379 and accepting unauthenticated connections.",
+                    "severity": "high",
+                    "keywords": [
+                        "redis",
+                        "6379",
+                        "auth"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "vulnerability:missing-security-headers",
+            "kind": "vulnerability",
+            "label": "Missing Security Headers",
+            "state": {
+                "spec": {
+                    "id": "missing-security-headers",
+                    "title": "Missing Security Headers",
+                    "description": "HTTP response missing baseline defensive headers.",
+                    "severity": "info",
+                    "keywords": [
+                        "headers",
+                        "csp",
+                        "x-frame-options",
+                        "http"
+                    ]
+                }
+            }
+        }
+    ],
+    "edges": [
+        {
+            "from": "target:http://altoro.testfire.net/",
+            "to": "port:80",
+            "id": "edge_target:http://altoro.testfire.net/_to_port:80",
+            "action": "edge_action",
+            "params": {},
+            "executed": true,
+            "result": {
+                "success": false,
+                "batch_key": "altoro.testfire.net:80|edge_action|generic",
+                "info": "action-executed",
+                "action": "edge_action",
+                "params": {}
+            }
+        },
+        {
+            "from": "target:http://altoro.testfire.net/",
+            "to": "protocol:http",
+            "id": "edge_target:http://altoro.testfire.net/_to_protocol:http",
+            "action": "edge_action",
+            "params": {},
+            "executed": true,
+            "result": {
+                "success": false,
+                "batch_key": "altoro.testfire.net:80|edge_action|generic",
+                "info": "action-executed",
+                "action": "edge_action",
+                "params": {}
+            }
+        },
+        {
+            "from": "target:http://altoro.testfire.net/",
+            "to": "validator:missing_security_headers",
+            "id": "edge_target:http://altoro.testfire.net/_to_validator:missing_security_headers",
+            "action": "run_validator",
+            "params": {
+                "validator_id": "missing_security_headers"
+            },
+            "executed": true,
+            "result": {
+                "success": true,
+                "batch_key": "altoro.testfire.net:80|run_validator|missing_security_headers",
+                "result": {
+                    "success": true,
+                    "vulnerability": "missing-security-headers",
+                    "severity": "info",
+                    "validation": {
+                        "status": "confirmed",
+                        "confidence": 0.8,
+                        "confidence_score": 0.8,
+                        "execution_proved": false
+                    },
+                    "evidence": {
+                        "request": "http://altoro.testfire.net/",
+                        "response": {
+                            "Server": "Apache-Coyote/1.1",
+                            "Set-Cookie": "JSESSIONID=4209689F351C2D2107CEAC931B3E7D64; Path=/; HttpOnly",
+                            "Content-Type": "text/html;charset=ISO-8859-1",
+                            "Transfer-Encoding": "chunked",
+                            "Date": "Sat, 09 May 2026 19:39:19 GMT",
+                            "Connection": "close"
+                        },
+                        "matched": "CSP,X-Frame-Options",
+                        "extra": {
+                            "coverage_markers": [
+                                "missing_security_headers_as_monitoring_signal",
+                                "insufficient_monitoring_indicators",
+                                "audit_visibility_hardening_gap",
+                                "low_detection_surface_signal",
+                                "telemetry_control_gap"
+                            ]
+                        }
+                    },
+                    "impact": "Missing headers can increase exposure to clickjacking and some XSS scenarios.",
+                    "remediation": "Add standard security headers (at minimum CSP and X-Frame-Options) at the web server or application layer.",
+                    "proof": {
+                        "proof_id": "177a6fd2860a9c21",
+                        "validator_id": "missing-security-headers",
+                        "vulnerability": "missing-security-headers",
+                        "confirmed": true,
+                        "proof_kind": "observed_response",
+                        "proof_strength": 0.8,
+                        "summary": "missing-security-headers confirmed via observed_response",
+                        "artifacts": [
+                            {
+                                "type": "matched_indicator",
+                                "value": "CSP,X-Frame-Options"
+                            },
+                            {
+                                "type": "response",
+                                "value": "{'Server': 'Apache-Coyote/1.1', 'Set-Cookie': 'JSESSIONID=4209689F351C2D2107CEAC931B3E7D64; Path=/; HttpOnly', 'Content-Type': 'text/html;charset=ISO-8859-1', 'Transfer-Encoding': 'chunked', 'Date': 'Sat, 09 May 2026 19:39:19 GMT', 'Connection': 'close'}"
+                            },
+                            {
+                                "type": "request",
+                                "value": "http://altoro.testfire.net/"
+                            },
+                            {
+                                "type": "extra",
+                                "value": {
+                                    "coverage_markers": [
+                                        "missing_security_headers_as_monitoring_signal",
+                                        "insufficient_monitoring_indicators",
+                                        "audit_visibility_hardening_gap",
+                                        "low_detection_surface_signal",
+                                        "telemetry_control_gap"
+                                    ]
+                                }
+                            }
+                        ],
+                        "metadata": {
+                            "severity": "info",
+                            "confidence": 0.8,
+                            "execution_proved": false
+                        }
+                    },
+                    "proof_strength": 0.8,
+                    "proof_kind": "observed_response",
+                    "extracted_facts": [
+                        {
+                            "category": "confirmed_vulnerability",
+                            "key": "None_missing-security-headers",
+                            "value": {
+                                "type": "missing-security-headers",
+                                "target": "unknown"
+                            },
+                            "confidence": 0.8,
+                            "source_validator_id": null,
+                            "source_chain": [],
+                            "timestamp": "2026-05-09T19:39:20.650186",
+                            "metadata": {
+                                "evidence": {
+                                    "request": "http://altoro.testfire.net/",
+                                    "response": {
+                                        "Server": "Apache-Coyote/1.1",
+                                        "Set-Cookie": "JSESSIONID=4209689F351C2D2107CEAC931B3E7D64; Path=/; HttpOnly",
+                                        "Content-Type": "text/html;charset=ISO-8859-1",
+                                        "Transfer-Encoding": "chunked",
+                                        "Date": "Sat, 09 May 2026 19:39:19 GMT",
+                                        "Connection": "close"
+                                    },
+                                    "matched": "CSP,X-Frame-Options",
+                                    "extra": {
+                                        "coverage_markers": [
+                                            "missing_security_headers_as_monitoring_signal",
+                                            "insufficient_monitoring_indicators",
+                                            "audit_visibility_hardening_gap",
+                                            "low_detection_surface_signal",
+                                            "telemetry_control_gap"
+                                        ]
+                                    }
+                                },
+                                "chain_source": null
+                            }
+                        }
+                    ]
+                },
+                "tested_urls": [
+                    "http://altoro.testfire.net/"
+                ]
+            }
+        },
+        {
+            "from": "target:http://altoro.testfire.net/",
+            "to": "validator:crypto_validator",
+            "id": "edge_target:http://altoro.testfire.net/_to_validator:crypto_validator",
+            "action": "run_validator",
+            "params": {
+                "validator_id": "crypto_validator"
+            },
+            "executed": true,
+            "result": {
+                "success": true,
+                "batch_key": "altoro.testfire.net:80|run_validator|crypto_validator",
+                "result": {
+                    "success": true,
+                    "vulnerability": "a02-crypto-missing-security-headers",
+                    "severity": "medium",
+                    "validation": {
+                        "status": "confirmed",
+                        "confidence": 0.8,
+                        "confidence_score": 0.8,
+                        "execution_proved": false
+                    },
+                    "evidence": {
+                        "request": {
+                            "url": "http://altoro.testfire.net/"
+                        },
+                        "response": {
+                            "missing_headers": [
+                                "strict-transport-security (HSTS - enforces HTTPS)",
+                                "x-content-type-options (prevents MIME sniffing)",
+                                "x-frame-options (prevents clickjacking)",
+                                "x-xss-protection (legacy XSS protection)",
+                                "content-security-policy (controls resource loading)",
+                                "referrer-policy (controls referrer information)"
+                            ]
+                        },
+                        "matched": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)",
+                        "extra": {
+                            "coverage_markers": [
+                                "weak_tls_versions",
+                                "plaintext_sensitive_transport",
+                                "missing_transport_encryption",
+                                "insecure_cipher_or_protocol_policy",
+                                "sensitive_data_exposure_in_transit"
+                            ]
+                        }
+                    },
+                    "impact": "Missing 6 security headers: strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking). This reduces defense against various attacks.",
+                    "remediation": "Add HSTS, X-Content-Type-Options, X-Frame-Options, CSP, and other security headers to all responses.",
+                    "proof": {
+                        "proof_id": "1789e2d315ce0be4",
+                        "validator_id": "a02-crypto-missing-security-headers",
+                        "vulnerability": "a02-crypto-missing-security-headers",
+                        "confirmed": true,
+                        "proof_kind": "observed_response",
+                        "proof_strength": 0.8,
+                        "summary": "a02-crypto-missing-security-headers confirmed via observed_response",
+                        "artifacts": [
+                            {
+                                "type": "matched_indicator",
+                                "value": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)"
+                            },
+                            {
+                                "type": "response",
+                                "value": "{'missing_headers': ['strict-transport-security (HSTS - enforces HTTPS)', 'x-content-type-options (prevents MIME sniffing)', 'x-frame-options (prevents clickjacking)', 'x-xss-protection (legacy XSS protection)', 'content-security-policy (controls resource loading)', 'referrer-policy (controls referrer information)']}"
+                            },
+                            {
+                                "type": "request",
+                                "value": "{'url': 'http://altoro.testfire.net/'}"
+                            },
+                            {
+                                "type": "extra",
+                                "value": {
+                                    "coverage_markers": [
+                                        "weak_tls_versions",
+                                        "plaintext_sensitive_transport",
+                                        "missing_transport_encryption",
+                                        "insecure_cipher_or_protocol_policy",
+                                        "sensitive_data_exposure_in_transit"
+                                    ]
+                                }
+                            }
+                        ],
+                        "metadata": {
+                            "severity": "medium",
+                            "confidence": 0.8,
+                            "execution_proved": false
+                        }
+                    },
+                    "proof_strength": 0.8,
+                    "proof_kind": "observed_response",
+                    "extracted_facts": [
+                        {
+                            "category": "confirmed_vulnerability",
+                            "key": "None_a02-crypto-missing-security-headers",
+                            "value": {
+                                "type": "a02-crypto-missing-security-headers",
+                                "target": "unknown"
+                            },
+                            "confidence": 0.8,
+                            "source_validator_id": null,
+                            "source_chain": [],
+                            "timestamp": "2026-05-09T19:39:20.652117",
+                            "metadata": {
+                                "evidence": {
+                                    "request": {
+                                        "url": "http://altoro.testfire.net/"
+                                    },
+                                    "response": {
+                                        "missing_headers": [
+                                            "strict-transport-security (HSTS - enforces HTTPS)",
+                                            "x-content-type-options (prevents MIME sniffing)",
+                                            "x-frame-options (prevents clickjacking)",
+                                            "x-xss-protection (legacy XSS protection)",
+                                            "content-security-policy (controls resource loading)",
+                                            "referrer-policy (controls referrer information)"
+                                        ]
+                                    },
+                                    "matched": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)",
+                                    "extra": {
+                                        "coverage_markers": [
+                                            "weak_tls_versions",
+                                            "plaintext_sensitive_transport",
+                                            "missing_transport_encryption",
+                                            "insecure_cipher_or_protocol_policy",
+                                            "sensitive_data_exposure_in_transit"
+                                        ]
+                                    }
+                                },
+                                "chain_source": null
+                            }
+                        }
+                    ]
+                },
+                "tested_urls": [
+                    "http://altoro.testfire.net/"
+                ]
+            }
+        },
+        {
+            "from": "target:http://altoro.testfire.net/",
+            "to": "vulnerability:redis-no-auth",
+            "id": "edge_target:http://altoro.testfire.net/_to_vulnerability:redis-no-auth",
+            "action": "edge_action",
+            "params": {},
+            "executed": true,
+            "result": {
+                "success": false,
+                "batch_key": "altoro.testfire.net:80|edge_action|generic",
+                "info": "action-executed",
+                "action": "edge_action",
+                "params": {}
+            }
+        },
+        {
+            "from": "target:http://altoro.testfire.net/",
+            "to": "vulnerability:missing-security-headers",
+            "id": "edge_target:http://altoro.testfire.net/_to_vulnerability:missing-security-headers",
+            "action": "edge_action",
+            "params": {},
+            "executed": true,
+            "result": {
+                "success": false,
+                "batch_key": "altoro.testfire.net:80|edge_action|generic",
+                "info": "action-executed",
+                "action": "edge_action",
+                "params": {}
+            }
+        },
+        {
+            "from": "protocol:http",
+            "to": "validator:missing_security_headers",
+            "id": "edge_protocol:http_to_validator:missing_security_headers",
+            "action": "run_validator",
+            "params": {
+                "validator_id": "missing_security_headers"
+            },
+            "executed": true,
+            "result": {
+                "success": true,
+                "batch_key": "altoro.testfire.net:80|run_validator|missing_security_headers",
+                "result": {
+                    "success": true,
+                    "vulnerability": "missing-security-headers",
+                    "severity": "info",
+                    "validation": {
+                        "status": "confirmed",
+                        "confidence": 0.8,
+                        "confidence_score": 0.8,
+                        "execution_proved": false
+                    },
+                    "evidence": {
+                        "request": "http://altoro.testfire.net/",
+                        "response": {
+                            "Server": "Apache-Coyote/1.1",
+                            "Set-Cookie": "JSESSIONID=A654B9BE1D0811B29409E101CADAA102; Path=/; HttpOnly",
+                            "Content-Type": "text/html;charset=ISO-8859-1",
+                            "Transfer-Encoding": "chunked",
+                            "Date": "Sat, 09 May 2026 19:39:20 GMT",
+                            "Connection": "close"
+                        },
+                        "matched": "CSP,X-Frame-Options",
+                        "extra": {
+                            "coverage_markers": [
+                                "missing_security_headers_as_monitoring_signal",
+                                "insufficient_monitoring_indicators",
+                                "audit_visibility_hardening_gap",
+                                "low_detection_surface_signal",
+                                "telemetry_control_gap"
+                            ]
+                        }
+                    },
+                    "impact": "Missing headers can increase exposure to clickjacking and some XSS scenarios.",
+                    "remediation": "Add standard security headers (at minimum CSP and X-Frame-Options) at the web server or application layer.",
+                    "proof": {
+                        "proof_id": "177a6fd2860a9c21",
+                        "validator_id": "missing-security-headers",
+                        "vulnerability": "missing-security-headers",
+                        "confirmed": true,
+                        "proof_kind": "observed_response",
+                        "proof_strength": 0.8,
+                        "summary": "missing-security-headers confirmed via observed_response",
+                        "artifacts": [
+                            {
+                                "type": "matched_indicator",
+                                "value": "CSP,X-Frame-Options"
+                            },
+                            {
+                                "type": "response",
+                                "value": "{'Server': 'Apache-Coyote/1.1', 'Set-Cookie': 'JSESSIONID=A654B9BE1D0811B29409E101CADAA102; Path=/; HttpOnly', 'Content-Type': 'text/html;charset=ISO-8859-1', 'Transfer-Encoding': 'chunked', 'Date': 'Sat, 09 May 2026 19:39:20 GMT', 'Connection': 'close'}"
+                            },
+                            {
+                                "type": "request",
+                                "value": "http://altoro.testfire.net/"
+                            },
+                            {
+                                "type": "extra",
+                                "value": {
+                                    "coverage_markers": [
+                                        "missing_security_headers_as_monitoring_signal",
+                                        "insufficient_monitoring_indicators",
+                                        "audit_visibility_hardening_gap",
+                                        "low_detection_surface_signal",
+                                        "telemetry_control_gap"
+                                    ]
+                                }
+                            }
+                        ],
+                        "metadata": {
+                            "severity": "info",
+                            "confidence": 0.8,
+                            "execution_proved": false
+                        }
+                    },
+                    "proof_strength": 0.8,
+                    "proof_kind": "observed_response",
+                    "extracted_facts": [
+                        {
+                            "category": "confirmed_vulnerability",
+                            "key": "None_missing-security-headers",
+                            "value": {
+                                "type": "missing-security-headers",
+                                "target": "unknown"
+                            },
+                            "confidence": 0.8,
+                            "source_validator_id": null,
+                            "source_chain": [],
+                            "timestamp": "2026-05-09T19:39:21.428797",
+                            "metadata": {
+                                "evidence": {
+                                    "request": "http://altoro.testfire.net/",
+                                    "response": {
+                                        "Server": "Apache-Coyote/1.1",
+                                        "Set-Cookie": "JSESSIONID=A654B9BE1D0811B29409E101CADAA102; Path=/; HttpOnly",
+                                        "Content-Type": "text/html;charset=ISO-8859-1",
+                                        "Transfer-Encoding": "chunked",
+                                        "Date": "Sat, 09 May 2026 19:39:20 GMT",
+                                        "Connection": "close"
+                                    },
+                                    "matched": "CSP,X-Frame-Options",
+                                    "extra": {
+                                        "coverage_markers": [
+                                            "missing_security_headers_as_monitoring_signal",
+                                            "insufficient_monitoring_indicators",
+                                            "audit_visibility_hardening_gap",
+                                            "low_detection_surface_signal",
+                                            "telemetry_control_gap"
+                                        ]
+                                    }
+                                },
+                                "chain_source": null
+                            }
+                        }
+                    ]
+                },
+                "tested_urls": [
+                    "http://altoro.testfire.net/"
+                ]
+            }
+        },
+        {
+            "from": "protocol:http",
+            "to": "validator:crypto_validator",
+            "id": "edge_protocol:http_to_validator:crypto_validator",
+            "action": "run_validator",
+            "params": {
+                "validator_id": "crypto_validator"
+            },
+            "executed": true,
+            "result": {
+                "success": true,
+                "batch_key": "altoro.testfire.net:80|run_validator|crypto_validator",
+                "result": {
+                    "success": true,
+                    "vulnerability": "a02-crypto-missing-security-headers",
+                    "severity": "medium",
+                    "validation": {
+                        "status": "confirmed",
+                        "confidence": 0.8,
+                        "confidence_score": 0.8,
+                        "execution_proved": false
+                    },
+                    "evidence": {
+                        "request": {
+                            "url": "http://altoro.testfire.net/"
+                        },
+                        "response": {
+                            "missing_headers": [
+                                "strict-transport-security (HSTS - enforces HTTPS)",
+                                "x-content-type-options (prevents MIME sniffing)",
+                                "x-frame-options (prevents clickjacking)",
+                                "x-xss-protection (legacy XSS protection)",
+                                "content-security-policy (controls resource loading)",
+                                "referrer-policy (controls referrer information)"
+                            ]
+                        },
+                        "matched": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)",
+                        "extra": {
+                            "coverage_markers": [
+                                "weak_tls_versions",
+                                "plaintext_sensitive_transport",
+                                "missing_transport_encryption",
+                                "insecure_cipher_or_protocol_policy",
+                                "sensitive_data_exposure_in_transit"
+                            ]
+                        }
+                    },
+                    "impact": "Missing 6 security headers: strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking). This reduces defense against various attacks.",
+                    "remediation": "Add HSTS, X-Content-Type-Options, X-Frame-Options, CSP, and other security headers to all responses.",
+                    "proof": {
+                        "proof_id": "1789e2d315ce0be4",
+                        "validator_id": "a02-crypto-missing-security-headers",
+                        "vulnerability": "a02-crypto-missing-security-headers",
+                        "confirmed": true,
+                        "proof_kind": "observed_response",
+                        "proof_strength": 0.8,
+                        "summary": "a02-crypto-missing-security-headers confirmed via observed_response",
+                        "artifacts": [
+                            {
+                                "type": "matched_indicator",
+                                "value": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)"
+                            },
+                            {
+                                "type": "response",
+                                "value": "{'missing_headers': ['strict-transport-security (HSTS - enforces HTTPS)', 'x-content-type-options (prevents MIME sniffing)', 'x-frame-options (prevents clickjacking)', 'x-xss-protection (legacy XSS protection)', 'content-security-policy (controls resource loading)', 'referrer-policy (controls referrer information)']}"
+                            },
+                            {
+                                "type": "request",
+                                "value": "{'url': 'http://altoro.testfire.net/'}"
+                            },
+                            {
+                                "type": "extra",
+                                "value": {
+                                    "coverage_markers": [
+                                        "weak_tls_versions",
+                                        "plaintext_sensitive_transport",
+                                        "missing_transport_encryption",
+                                        "insecure_cipher_or_protocol_policy",
+                                        "sensitive_data_exposure_in_transit"
+                                    ]
+                                }
+                            }
+                        ],
+                        "metadata": {
+                            "severity": "medium",
+                            "confidence": 0.8,
+                            "execution_proved": false
+                        }
+                    },
+                    "proof_strength": 0.8,
+                    "proof_kind": "observed_response",
+                    "extracted_facts": [
+                        {
+                            "category": "confirmed_vulnerability",
+                            "key": "None_a02-crypto-missing-security-headers",
+                            "value": {
+                                "type": "a02-crypto-missing-security-headers",
+                                "target": "unknown"
+                            },
+                            "confidence": 0.8,
+                            "source_validator_id": null,
+                            "source_chain": [],
+                            "timestamp": "2026-05-09T19:39:21.438818",
+                            "metadata": {
+                                "evidence": {
+                                    "request": {
+                                        "url": "http://altoro.testfire.net/"
+                                    },
+                                    "response": {
+                                        "missing_headers": [
+                                            "strict-transport-security (HSTS - enforces HTTPS)",
+                                            "x-content-type-options (prevents MIME sniffing)",
+                                            "x-frame-options (prevents clickjacking)",
+                                            "x-xss-protection (legacy XSS protection)",
+                                            "content-security-policy (controls resource loading)",
+                                            "referrer-policy (controls referrer information)"
+                                        ]
+                                    },
+                                    "matched": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)",
+                                    "extra": {
+                                        "coverage_markers": [
+                                            "weak_tls_versions",
+                                            "plaintext_sensitive_transport",
+                                            "missing_transport_encryption",
+                                            "insecure_cipher_or_protocol_policy",
+                                            "sensitive_data_exposure_in_transit"
+                                        ]
+                                    }
+                                },
+                                "chain_source": null
+                            }
+                        }
+                    ]
+                },
+                "tested_urls": [
+                    "http://altoro.testfire.net/"
+                ]
+            }
+        },
+        {
+            "from": "vulnerability:missing-security-headers",
+            "to": "validator:missing_security_headers",
+            "id": "edge_vulnerability:missing-security-headers_to_validator:missing_security_headers",
+            "action": "run_validator",
+            "params": {
+                "validator_id": "missing_security_headers"
+            },
+            "executed": true,
+            "result": {
+                "success": true,
+                "batch_key": "altoro.testfire.net:80|run_validator|missing_security_headers",
+                "result": {
+                    "success": true,
+                    "vulnerability": "missing-security-headers",
+                    "severity": "info",
+                    "validation": {
+                        "status": "confirmed",
+                        "confidence": 0.8,
+                        "confidence_score": 0.8,
+                        "execution_proved": false
+                    },
+                    "evidence": {
+                        "request": "http://altoro.testfire.net/",
+                        "response": {
+                            "Server": "Apache-Coyote/1.1",
+                            "Set-Cookie": "JSESSIONID=07B97F527733B7182224AB2B06DC0A3C; Path=/; HttpOnly",
+                            "Content-Type": "text/html;charset=ISO-8859-1",
+                            "Transfer-Encoding": "chunked",
+                            "Date": "Sat, 09 May 2026 19:39:21 GMT",
+                            "Connection": "close"
+                        },
+                        "matched": "CSP,X-Frame-Options",
+                        "extra": {
+                            "coverage_markers": [
+                                "missing_security_headers_as_monitoring_signal",
+                                "insufficient_monitoring_indicators",
+                                "audit_visibility_hardening_gap",
+                                "low_detection_surface_signal",
+                                "telemetry_control_gap"
+                            ]
+                        }
+                    },
+                    "impact": "Missing headers can increase exposure to clickjacking and some XSS scenarios.",
+                    "remediation": "Add standard security headers (at minimum CSP and X-Frame-Options) at the web server or application layer.",
+                    "proof": {
+                        "proof_id": "177a6fd2860a9c21",
+                        "validator_id": "missing-security-headers",
+                        "vulnerability": "missing-security-headers",
+                        "confirmed": true,
+                        "proof_kind": "observed_response",
+                        "proof_strength": 0.8,
+                        "summary": "missing-security-headers confirmed via observed_response",
+                        "artifacts": [
+                            {
+                                "type": "matched_indicator",
+                                "value": "CSP,X-Frame-Options"
+                            },
+                            {
+                                "type": "response",
+                                "value": "{'Server': 'Apache-Coyote/1.1', 'Set-Cookie': 'JSESSIONID=07B97F527733B7182224AB2B06DC0A3C; Path=/; HttpOnly', 'Content-Type': 'text/html;charset=ISO-8859-1', 'Transfer-Encoding': 'chunked', 'Date': 'Sat, 09 May 2026 19:39:21 GMT', 'Connection': 'close'}"
+                            },
+                            {
+                                "type": "request",
+                                "value": "http://altoro.testfire.net/"
+                            },
+                            {
+                                "type": "extra",
+                                "value": {
+                                    "coverage_markers": [
+                                        "missing_security_headers_as_monitoring_signal",
+                                        "insufficient_monitoring_indicators",
+                                        "audit_visibility_hardening_gap",
+                                        "low_detection_surface_signal",
+                                        "telemetry_control_gap"
+                                    ]
+                                }
+                            }
+                        ],
+                        "metadata": {
+                            "severity": "info",
+                            "confidence": 0.8,
+                            "execution_proved": false
+                        }
+                    },
+                    "proof_strength": 0.8,
+                    "proof_kind": "observed_response",
+                    "extracted_facts": [
+                        {
+                            "category": "confirmed_vulnerability",
+                            "key": "None_missing-security-headers",
+                            "value": {
+                                "type": "missing-security-headers",
+                                "target": "unknown"
+                            },
+                            "confidence": 0.8,
+                            "source_validator_id": null,
+                            "source_chain": [],
+                            "timestamp": "2026-05-09T19:39:22.040029",
+                            "metadata": {
+                                "evidence": {
+                                    "request": "http://altoro.testfire.net/",
+                                    "response": {
+                                        "Server": "Apache-Coyote/1.1",
+                                        "Set-Cookie": "JSESSIONID=07B97F527733B7182224AB2B06DC0A3C; Path=/; HttpOnly",
+                                        "Content-Type": "text/html;charset=ISO-8859-1",
+                                        "Transfer-Encoding": "chunked",
+                                        "Date": "Sat, 09 May 2026 19:39:21 GMT",
+                                        "Connection": "close"
+                                    },
+                                    "matched": "CSP,X-Frame-Options",
+                                    "extra": {
+                                        "coverage_markers": [
+                                            "missing_security_headers_as_monitoring_signal",
+                                            "insufficient_monitoring_indicators",
+                                            "audit_visibility_hardening_gap",
+                                            "low_detection_surface_signal",
+                                            "telemetry_control_gap"
+                                        ]
+                                    }
+                                },
+                                "chain_source": null
+                            }
+                        }
+                    ]
+                },
+                "tested_urls": [
+                    "http://altoro.testfire.net/"
+                ]
+            }
+        },
+        {
+            "from": "vulnerability:missing-security-headers",
+            "to": "validator:crypto_validator",
+            "id": "edge_vulnerability:missing-security-headers_to_validator:crypto_validator",
+            "action": "run_validator",
+            "params": {
+                "validator_id": "crypto_validator"
+            },
+            "executed": true,
+            "result": {
+                "success": true,
+                "batch_key": "altoro.testfire.net:80|run_validator|crypto_validator",
+                "result": {
+                    "success": true,
+                    "vulnerability": "a02-crypto-missing-security-headers",
+                    "severity": "medium",
+                    "validation": {
+                        "status": "confirmed",
+                        "confidence": 0.8,
+                        "confidence_score": 0.8,
+                        "execution_proved": false
+                    },
+                    "evidence": {
+                        "request": {
+                            "url": "http://altoro.testfire.net/"
+                        },
+                        "response": {
+                            "missing_headers": [
+                                "strict-transport-security (HSTS - enforces HTTPS)",
+                                "x-content-type-options (prevents MIME sniffing)",
+                                "x-frame-options (prevents clickjacking)",
+                                "x-xss-protection (legacy XSS protection)",
+                                "content-security-policy (controls resource loading)",
+                                "referrer-policy (controls referrer information)"
+                            ]
+                        },
+                        "matched": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)",
+                        "extra": {
+                            "coverage_markers": [
+                                "weak_tls_versions",
+                                "plaintext_sensitive_transport",
+                                "missing_transport_encryption",
+                                "insecure_cipher_or_protocol_policy",
+                                "sensitive_data_exposure_in_transit"
+                            ]
+                        }
+                    },
+                    "impact": "Missing 6 security headers: strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking). This reduces defense against various attacks.",
+                    "remediation": "Add HSTS, X-Content-Type-Options, X-Frame-Options, CSP, and other security headers to all responses.",
+                    "proof": {
+                        "proof_id": "1789e2d315ce0be4",
+                        "validator_id": "a02-crypto-missing-security-headers",
+                        "vulnerability": "a02-crypto-missing-security-headers",
+                        "confirmed": true,
+                        "proof_kind": "observed_response",
+                        "proof_strength": 0.8,
+                        "summary": "a02-crypto-missing-security-headers confirmed via observed_response",
+                        "artifacts": [
+                            {
+                                "type": "matched_indicator",
+                                "value": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)"
+                            },
+                            {
+                                "type": "response",
+                                "value": "{'missing_headers': ['strict-transport-security (HSTS - enforces HTTPS)', 'x-content-type-options (prevents MIME sniffing)', 'x-frame-options (prevents clickjacking)', 'x-xss-protection (legacy XSS protection)', 'content-security-policy (controls resource loading)', 'referrer-policy (controls referrer information)']}"
+                            },
+                            {
+                                "type": "request",
+                                "value": "{'url': 'http://altoro.testfire.net/'}"
+                            },
+                            {
+                                "type": "extra",
+                                "value": {
+                                    "coverage_markers": [
+                                        "weak_tls_versions",
+                                        "plaintext_sensitive_transport",
+                                        "missing_transport_encryption",
+                                        "insecure_cipher_or_protocol_policy",
+                                        "sensitive_data_exposure_in_transit"
+                                    ]
+                                }
+                            }
+                        ],
+                        "metadata": {
+                            "severity": "medium",
+                            "confidence": 0.8,
+                            "execution_proved": false
+                        }
+                    },
+                    "proof_strength": 0.8,
+                    "proof_kind": "observed_response",
+                    "extracted_facts": [
+                        {
+                            "category": "confirmed_vulnerability",
+                            "key": "None_a02-crypto-missing-security-headers",
+                            "value": {
+                                "type": "a02-crypto-missing-security-headers",
+                                "target": "unknown"
+                            },
+                            "confidence": 0.8,
+                            "source_validator_id": null,
+                            "source_chain": [],
+                            "timestamp": "2026-05-09T19:39:22.050046",
+                            "metadata": {
+                                "evidence": {
+                                    "request": {
+                                        "url": "http://altoro.testfire.net/"
+                                    },
+                                    "response": {
+                                        "missing_headers": [
+                                            "strict-transport-security (HSTS - enforces HTTPS)",
+                                            "x-content-type-options (prevents MIME sniffing)",
+                                            "x-frame-options (prevents clickjacking)",
+                                            "x-xss-protection (legacy XSS protection)",
+                                            "content-security-policy (controls resource loading)",
+                                            "referrer-policy (controls referrer information)"
+                                        ]
+                                    },
+                                    "matched": "strict-transport-security (HSTS - enforces HTTPS), x-content-type-options (prevents MIME sniffing), x-frame-options (prevents clickjacking)",
+                                    "extra": {
+                                        "coverage_markers": [
+                                            "weak_tls_versions",
+                                            "plaintext_sensitive_transport",
+                                            "missing_transport_encryption",
+                                            "insecure_cipher_or_protocol_policy",
+                                            "sensitive_data_exposure_in_transit"
+                                        ]
+                                    }
+                                },
+                                "chain_source": null
+                            }
+                        }
+                    ]
+                },
+                "tested_urls": [
+                    "http://altoro.testfire.net/"
+                ]
+            }
+        }
+    ],
+    "scheduler_metrics": {
+        "max_workers": 20,
+        "total_duration_ms": 2149.89,
+        "ready_edges_seen": 17,
+        "queued_edges": 10,
+        "queued_batches": 3,
+        "executed_edges": 10,
+        "executed_batches": 3,
+        "dedupe_skips": 7,
+        "dedupe_hit_rate": 0.4118,
+        "avg_batch_duration_ms": 1429.4,
+        "avg_batch_size": 3.33
+    }
+}

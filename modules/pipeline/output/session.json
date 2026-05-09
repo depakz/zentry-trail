@@ -1,0 +1,35 @@
+{
+    "target": "http://altoro.testfire.net/",
+    "subdomains": [
+        "http://altoro.testfire.net/"
+    ],
+    "alive_hosts": [],
+    "endpoints": [],
+    "validation_targets": [],
+    "ranked_targets": [],
+    "params": [],
+    "categories": [],
+    "findings": [],
+    "vulnerabilities": [],
+    "response_analysis": {},
+    "source": "recon_zentry",
+    "scan_info": {
+        "duration_seconds": 10
+    },
+    "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0,
+        "risk_score": 0
+    },
+    "session_context": {
+        "target": "http://altoro.testfire.net/",
+        "cookie": "",
+        "headers": {},
+        "source": "previous_session",
+        "captured_at": "2026-05-01T15:34:36.751455Z",
+        "persisted": true
+    }
+}
