@@ -1,5 +1,15 @@
+# Environments
 .venv/
-__pycache__/
-*.pyc
 venv/
+__pycache__/
+
+# Binaries & Large Tools
 bin/
+tools/archives/
+*.zip
+
+# Project Outputs
+output/
+reports/
+logs/
+pipeline_run.log
