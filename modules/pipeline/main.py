@@ -290,11 +290,8 @@ def _extract_pipeline_validation_records(pipeline_result):
     for edge_result in pipeline_result.get("results", []) or []:
         if not isinstance(edge_result, dict):
             continue
-        result_wrapper = edge_result.get("result")
-        if not isinstance(result_wrapper, dict):
-            continue
-
-        payload = result_wrapper.get("result")
+        
+        payload = edge_result.get("result")
         if isinstance(payload, dict):
             out.append(payload)
         elif isinstance(payload, list):

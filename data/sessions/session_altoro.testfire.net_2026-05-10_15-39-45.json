@@ -1,0 +1,1845 @@
+{
+  "target": "http://altoro.testfire.net/",
+  "created": "2026-05-10_15-39-45",
+  "subdomains": [
+    "http://altoro.testfire.net/"
+  ],
+  "alive_hosts": [
+    "https://altoro.testfire.net/"
+  ],
+  "endpoints": [
+    "https://altoro.testfire.net/swagger/3200/oauth2-redirect.html",
+    "https://altoro.testfire.net/swagger/oas3/components/callbacks.jsx",
+    "https://altoro.testfire.net/jobs/20061026.htm",
+    "https://altoro.testfire.net/swagger/oas3/selectors.js",
+    "https://altoro.testfire.net/Privacypolicy.jsp?sec=FUZZ",
+    "https://altoro.testfire.net/swagger/oas3/wrap-components/index.js",
+    "http://altoro.testfire.net/bank/queryxpath.jsp?content=FUZZ",
+    "https://altoro.testfire.net/swagger/configs/spec-actions.js",
+    "https://altoro.testfire.net/swagger/audio/",
+    "https://altoro.testfire.net/swagger/e.json%7C%7Cs.call%28n,o%29%7C%7C%21s.call%28t,o%29%7C%7C%28e.line=a%7C%7Ce.line,e.position=u%7C%7Ce.position,I%28e,",
+    "https://altoro.testfire.net/swagger/layout/selectors.js",
+    "https://altoro.testfire.net/swagger/spec/index.js",
+    "https://altoro.testfire.net/swagger/oas3/components/servers.jsx",
+    "https://altoro.testfire.net/swagger/oas3/actions.js",
+    "http://altoro.testfire.net/bank/queryxpath.jsp?content=queryxpath.jsp&qu=",
+    "http://altoro.testfire.net/pr/communityannualreport.pdf",
+    "https://altoro.testfire.net/pr/20060720.htm",
+    "https://altoro.testfire.net/swagger/err/error-transformers/transformers/strip-instance.js",
+    "https://altoro.testfire.net/swagger/index.js",
+    "https://altoro.testfire.net/swagger/err/index.js",
+    "https://altoro.testfire.net/swagger/oas3/spec-extensions/wrap-selectors.js",
+    "https://altoro.testfire.net/retirement.htm",
+    "https://altoro.testfire.net/swagger/layout/index.js",
+    "https://altoro.testfire.net/search.jsp",
+    "https://altoro.testfire.net/swagger/deep-linking/operation-tag-wrapper.jsx",
+    "https://altoro.testfire.net/swagger/err/error-transformers/hook.js",
+    "http://altoro.testfire.net/search.jsp?query=%3Cbody+bgcolor%3D%22red%22+%2F%3E%3Ch3+style%3D%22background-color%3Apowderblue%3B%22%3EThis+website+is+secretly+selling+the+data+of+customers+to+illegal+agency.+This+website+is+not+secure%2C+kindly+move+on+to+the+secure+site%3Cbr+%2F%3E%3Ca+href%3D%22evil.com%22%3Esecurewebsite%3C%2Fa%3E%3C%2Fh3%3E",
+    "https://altoro.testfire.net/swagger/view/root-injects.js",
+    "http://altoro.testfire.net/bank/main.jsp",
+    "https://altoro.testfire.net/jobs/20061025.htm",
+    "https://altoro.testfire.net/swagger/filter/index.js",
+    "https://altoro.testfire.net/swagger/oas3/wrap-components/json-schema-string.js",
+    "https://altoro.testfire.net/swagger/err/actions.js",
+    "https://altoro.testfire.net/myfile6713.jsp/cgi.exe",
+    "http://altoro.testfire.net/admin/admin.jsp",
+    "https://altoro.testfire.net/subscribe.jsp",
+    "https://altoro.testfire.net/jobs/20061024.htm",
+    "https://altoro.testfire.net/Privacypolicy.jsp?sec=Careers&template=US",
+    "https://altoro.testfire.net/my%20documents/JohnSmith/Bank%20Site%20Documents/grouplife.htm",
+    "https://altoro.testfire.net/pr/20060928.htm",
+    "https://altoro.testfire.net/default.jsp",
+    "https://altoro.testfire.net/default.jsp?content=FUZZ",
+    "https://altoro.testfire.net/survey_questions.jsp?step=FUZZ",
+    "https://altoro.testfire.net/swagger/multipart/",
+    "https://altoro.testfire.net/disclaimer.htm?url=FUZZ",
+    "https://altoro.testfire.net/swagger/configs/actions.js",
+    "https://altoro.testfire.net/swagger/oas3/wrap-components/auth-item.jsx",
+    "https://altoro.testfire.net/sameDomain",
+    "https://altoro.testfire.net/index.jsp?content=FUZZ",
+    "https://altoro.testfire.net/Privacypolicy.jsp?template=FUZZ",
+    "https://altoro.testfire.net/swagger/oas3/components/http-auth.jsx",
+    "https://altoro.testfire.net",
+    "https://altoro.testfire.net/swagger/deep-linking/operation-wrapper.jsx",
+    "https://altoro.testfire.net/pr/20061109.htm",
+    "https://altoro.testfire.net/swagger/oas3/reducers.js",
+    "https://altoro.testfire.net/swagger/oas3/spec-extensions/selectors.js",
+    "https://altoro.testfire.net/swagger/download-url.js",
+    "https://altoro.testfire.net/status_check.jsp",
+    "https://altoro.testfire.net/high",
+    "https://altoro.testfire.net/index.jsp?content=inside_jobs.htm&job=OperationalRiskManager:RiskManagement",
+    "https://altoro.testfire.net/swagger/err/error-transformers/transformers/parameter-oneof.js",
+    "https://altoro.testfire.net/security.htm",
+    "http://altoro.testfire.net/cgi.exe",
+    "https://altoro.testfire.net/swagger/oas3/wrap-components/version-stamp.jsx",
+    "https://altoro.testfire.net/swagger/oas3/index.js",
+    "https://altoro.testfire.net/swagger/oas3/components/operation-servers.jsx",
+    "https://altoro.testfire.net/swagger/spec/wrap-actions.js",
+    "https://altoro.testfire.net/swagger/auth/selectors.js",
+    "https://altoro.testfire.net/index.jsp",
+    "https://altoro.testfire.net/swagger/spec/selectors.js",
+    "https://altoro.testfire.net/util/serverStatusCheckService.jsp",
+    "https://altoro.testfire.net/bank/showAccount?listAccounts=800000",
+    "https://altoro.testfire.net/swagger/Autolinker.js",
+    "https://altoro.testfire.net/jobs/20061023.htm",
+    "https://altoro.testfire.net/swagger/samples/index.js",
+    "https://altoro.testfire.net/swagger/spec/reducers.js",
+    "https://altoro.testfire.net/swagger/swagger-ui-bundle.js",
+    "https://altoro.testfire.net/admin/clients.xls",
+    "https://altoro.testfire.net/bank/showAccount?listAccounts=FUZZ",
+    "https://altoro.testfire.net/swagger/configs/selectors.js",
+    "https://altoro.testfire.net/swagger/err/reducers.js",
+    "https://altoro.testfire.net/feedback.jsp",
+    "https://altoro.testfire.net/swagger/err/error-transformers/transformers/not-of-type.js",
+    "https://altoro.testfire.net/swagger/filter/opsFilter.js",
+    "https://altoro.testfire.net/swagger/deep-linking/helpers.js",
+    "https://altoro.testfire.net/util/serverStatusCheckService.jsp?HostName=",
+    "https://altoro.testfire.net/pr/20060921.htm",
+    "https://altoro.testfire.net/swagger/oas3/components/request-body-editor.jsx",
+    "https://altoro.testfire.net/swagger/err/selectors.js",
+    "http://altoro.testfire.net/abc",
+    "https://altoro.testfire.net/jobs/20061027.htm",
+    "https://altoro.testfire.net/swagger/properties.json",
+    "http://altoro.testfire.net/subscribe.swf",
+    "https://altoro.testfire.net/swagger/view/index.js",
+    "https://altoro.testfire.net/swagger/oas3/components/servers-container.jsx",
+    "https://altoro.testfire.net/swagger/auth/actions.js",
+    "https://altoro.testfire.net/swagger/swagger-js/index.js",
+    "https://altoro.testfire.net/swagger/deep-linking/index.js",
+    "https://altoro.testfire.net/swagger/index.html",
+    "https://altoro.testfire.net/swagger/configs/index.js",
+    "https://altoro.testfire.net/swagger/all.js",
+    "https://altoro.testfire.net/swagger/logs/index.js",
+    "https://altoro.testfire.net/swagger/spec/actions.js",
+    "https://altoro.testfire.net/swagger/configs/reducers.js",
+    "https://altoro.testfire.net/survey_questions.jsp?step=a",
+    "https://altoro.testfire.net/index.jsp?job=FUZZ",
+    "https://altoro.testfire.net/swagger/auth/index.js",
+    "https://altoro.testfire.net/swagger/oas3/wrap-components/model.jsx",
+    "https://altoro.testfire.net/",
+    "https://altoro.testfire.net/swagger/image/",
+    "https://altoro.testfire.net/swagger/oas3/helpers.js",
+    "http://altoro.testfire.net/.pdf",
+    "https://altoro.testfire.net/high_yield_investments.htm",
+    "https://altoro.testfire.net/swagger/samples/fn.js",
+    "https://altoro.testfire.net/swagger/auth/spec-wrap-actions.js",
+    "https://altoro.testfire.net/swagger/util/index.js",
+    "https://altoro.testfire.net/pr/20060413.htm",
+    "https://altoro.testfire.net/pr/20060817.htm",
+    "https://altoro.testfire.net/index.jsp?content=security.htm",
+    "https://altoro.testfire.net/swagger/swagger-ui-standalone-preset.js",
+    "https://altoro.testfire.net/swagger/t.json%7C%7Cs.call%28n,i%29%7C%7C%21s.call%28e,i%29%7C%7C%28t.line=u%7C%7Ct.line,t.position=a%7C%7Ct.position,C%28t,",
+    "https://altoro.testfire.net/swagger/layout/actions.js",
+    "https://altoro.testfire.net/login.jsp",
+    "https://altoro.testfire.net/swagger/on-complete/index.js",
+    "https://altoro.testfire.net/default.jsp?content=security.htm",
+    "https://altoro.testfire.net/survey_questions.jsp",
+    "https://altoro.testfire.net/disclaimer.htm?url=http://www.netscape.com",
+    "https://altoro.testfire.net/swagger/video/",
+    "https://altoro.testfire.net/pr/20060518.htm",
+    "https://altoro.testfire.net/jobs/20061019.htm",
+    "https://altoro.testfire.net/swagger/oas3/auth-extensions/wrap-selectors.js",
+    "https://altoro.testfire.net/swagger/Immutable.js",
+    "http://altoro.testfire.net/swagger/",
+    "https://altoro.testfire.net/swagger/auth/reducers.js",
+    "https://altoro.testfire.net/swagger/oas3/wrap-components/online-validator-badge.js",
+    "https://altoro.testfire.net/swagger/layout/reducers.js",
+    "https://altoro.testfire.net/swagger/oas3/wrap-components/markdown.js",
+    "https://altoro.testfire.net/swagger/oas3/wrap-components/parameters.jsx",
+    "https://altoro.testfire.net/swagger/oas3/components/index.js",
+    "https://altoro.testfire.net/swagger/deep-linking/layout.js",
+    "https://altoro.testfire.net/pr/20061005.htm",
+    "https://altoro.testfire.net/swagger/configs/helpers.js",
+    "https://altoro.testfire.net/static/personal_savings.htm",
+    "http://altoro.testfire.net/search.jsp?query=FUZZ",
+    "https://altoro.testfire.net/images/z",
+    "https://altoro.testfire.net/swagger/oas3/components/request-body.jsx",
+    "https://altoro.testfire.net/swagger/oas3/components/operation-link.jsx",
+    "https://altoro.testfire.net/inside_points_of_interest.htm",
+    "https://altoro.testfire.net/myfile6713.jsp/",
+    "http://demo-analytics.testfire.net/urchin.js"
+  ],
+  "mined_params": {
+    "https://altoro.testfire.net/index.jsp": [
+      "job",
+      "content"
+    ],
+    "https://altoro.testfire.net/default.jsp": [
+      "content"
+    ],
+    "https://altoro.testfire.net/survey_questions.jsp": [
+      "step"
+    ],
+    "https://altoro.testfire.net/Privacypolicy.jsp": [
+      "sec",
+      "template"
+    ],
+    "https://altoro.testfire.net/disclaimer.htm": [
+      "url"
+    ],
+    "http://altoro.testfire.net/bank/queryxpath.jsp": [
+      "content"
+    ],
+    "https://altoro.testfire.net/bank/showAccount": [
+      "listAccounts"
+    ],
+    "http://altoro.testfire.net/search.jsp": [
+      "query"
+    ]
+  },
+  "categorized": {
+    "ADMIN": [
+      "https://altoro.testfire.net/index.jsp?content=inside_jobs.htm&job=OperationalRiskManager:RiskManagement",
+      "http://altoro.testfire.net/admin/admin.jsp",
+      "https://altoro.testfire.net/admin/clients.xls"
+    ],
+    "AUTH": [
+      "https://altoro.testfire.net/swagger/3200/oauth2-redirect.html",
+      "https://altoro.testfire.net/login.jsp",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/auth-item.jsx",
+      "https://altoro.testfire.net/swagger/oas3/components/http-auth.jsx",
+      "https://altoro.testfire.net/swagger/auth/selectors.js",
+      "https://altoro.testfire.net/swagger/auth/actions.js",
+      "https://altoro.testfire.net/swagger/auth/index.js",
+      "https://altoro.testfire.net/swagger/auth/spec-wrap-actions.js",
+      "https://altoro.testfire.net/swagger/oas3/auth-extensions/wrap-selectors.js",
+      "https://altoro.testfire.net/swagger/auth/reducers.js"
+    ],
+    "OPENREDIRECT": [
+      "https://altoro.testfire.net/swagger/3200/oauth2-redirect.html",
+      "https://altoro.testfire.net/disclaimer.htm?url=FUZZ",
+      "https://altoro.testfire.net/disclaimer.htm?url=http://www.netscape.com"
+    ],
+    "PASSWORD": [
+      "https://altoro.testfire.net/swagger/swagger-ui-standalone-preset.js"
+    ],
+    "OTHER": [
+      "https://altoro.testfire.net/Privacypolicy.jsp?sec=FUZZ",
+      "http://altoro.testfire.net/bank/queryxpath.jsp?content=FUZZ",
+      "http://altoro.testfire.net/bank/queryxpath.jsp?content=queryxpath.jsp&qu=",
+      "http://altoro.testfire.net/search.jsp?query=%3Cbody+bgcolor%3D%22red%22+%2F%3E%3Ch3+style%3D%22background-color%3Apowderblue%3B%22%3EThis+website+is+secretly+selling+the+data+of+customers+to+illegal+agency.+This+website+is+not+secure%2C+kindly+move+on+to+the+secure+site%3Cbr+%2F%3E%3Ca+href%3D%22evil.com%22%3Esecurewebsite%3C%2Fa%3E%3C%2Fh3%3E",
+      "https://altoro.testfire.net/Privacypolicy.jsp?sec=Careers&template=US",
+      "https://altoro.testfire.net/default.jsp?content=FUZZ",
+      "https://altoro.testfire.net/survey_questions.jsp?step=FUZZ",
+      "https://altoro.testfire.net/index.jsp?content=FUZZ",
+      "https://altoro.testfire.net/Privacypolicy.jsp?template=FUZZ",
+      "https://altoro.testfire.net/util/serverStatusCheckService.jsp?HostName=",
+      "https://altoro.testfire.net/survey_questions.jsp?step=a",
+      "https://altoro.testfire.net/index.jsp?job=FUZZ",
+      "https://altoro.testfire.net/index.jsp?content=security.htm",
+      "https://altoro.testfire.net/default.jsp?content=security.htm",
+      "http://altoro.testfire.net/search.jsp?query=FUZZ",
+      "https://altoro.testfire.net/search.jsp",
+      "http://altoro.testfire.net/bank/main.jsp",
+      "https://altoro.testfire.net/subscribe.jsp",
+      "https://altoro.testfire.net/default.jsp",
+      "https://altoro.testfire.net/status_check.jsp",
+      "https://altoro.testfire.net/index.jsp",
+      "https://altoro.testfire.net/util/serverStatusCheckService.jsp",
+      "https://altoro.testfire.net/feedback.jsp",
+      "https://altoro.testfire.net/survey_questions.jsp",
+      "https://altoro.testfire.net/bank/showAccount?listAccounts=800000",
+      "https://altoro.testfire.net/bank/showAccount?listAccounts=FUZZ",
+      "https://altoro.testfire.net/swagger/oas3/components/callbacks.jsx",
+      "https://altoro.testfire.net/jobs/20061026.htm",
+      "https://altoro.testfire.net/swagger/oas3/selectors.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/index.js",
+      "https://altoro.testfire.net/swagger/configs/spec-actions.js",
+      "https://altoro.testfire.net/swagger/audio/",
+      "https://altoro.testfire.net/swagger/layout/selectors.js",
+      "https://altoro.testfire.net/swagger/spec/index.js",
+      "https://altoro.testfire.net/swagger/oas3/components/servers.jsx",
+      "https://altoro.testfire.net/swagger/oas3/actions.js",
+      "http://altoro.testfire.net/pr/communityannualreport.pdf",
+      "https://altoro.testfire.net/pr/20060720.htm",
+      "https://altoro.testfire.net/swagger/err/error-transformers/transformers/strip-instance.js",
+      "https://altoro.testfire.net/swagger/index.js",
+      "https://altoro.testfire.net/swagger/err/index.js",
+      "https://altoro.testfire.net/swagger/oas3/spec-extensions/wrap-selectors.js",
+      "https://altoro.testfire.net/retirement.htm",
+      "https://altoro.testfire.net/swagger/layout/index.js",
+      "https://altoro.testfire.net/swagger/deep-linking/operation-tag-wrapper.jsx",
+      "https://altoro.testfire.net/swagger/err/error-transformers/hook.js",
+      "https://altoro.testfire.net/swagger/view/root-injects.js",
+      "https://altoro.testfire.net/jobs/20061025.htm",
+      "https://altoro.testfire.net/swagger/filter/index.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/json-schema-string.js",
+      "https://altoro.testfire.net/swagger/err/actions.js",
+      "https://altoro.testfire.net/jobs/20061024.htm",
+      "https://altoro.testfire.net/my%20documents/JohnSmith/Bank%20Site%20Documents/grouplife.htm",
+      "https://altoro.testfire.net/pr/20060928.htm",
+      "https://altoro.testfire.net/swagger/multipart/",
+      "https://altoro.testfire.net/swagger/configs/actions.js",
+      "https://altoro.testfire.net/sameDomain",
+      "https://altoro.testfire.net",
+      "https://altoro.testfire.net/swagger/deep-linking/operation-wrapper.jsx",
+      "https://altoro.testfire.net/pr/20061109.htm",
+      "https://altoro.testfire.net/swagger/oas3/reducers.js",
+      "https://altoro.testfire.net/swagger/oas3/spec-extensions/selectors.js",
+      "https://altoro.testfire.net/swagger/download-url.js",
+      "https://altoro.testfire.net/high",
+      "https://altoro.testfire.net/swagger/err/error-transformers/transformers/parameter-oneof.js",
+      "https://altoro.testfire.net/security.htm",
+      "http://altoro.testfire.net/cgi.exe",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/version-stamp.jsx",
+      "https://altoro.testfire.net/swagger/oas3/index.js",
+      "https://altoro.testfire.net/swagger/oas3/components/operation-servers.jsx",
+      "https://altoro.testfire.net/swagger/spec/wrap-actions.js",
+      "https://altoro.testfire.net/swagger/spec/selectors.js",
+      "https://altoro.testfire.net/swagger/Autolinker.js",
+      "https://altoro.testfire.net/jobs/20061023.htm",
+      "https://altoro.testfire.net/swagger/samples/index.js",
+      "https://altoro.testfire.net/swagger/spec/reducers.js",
+      "https://altoro.testfire.net/swagger/swagger-ui-bundle.js",
+      "https://altoro.testfire.net/swagger/configs/selectors.js",
+      "https://altoro.testfire.net/swagger/err/reducers.js",
+      "https://altoro.testfire.net/swagger/err/error-transformers/transformers/not-of-type.js",
+      "https://altoro.testfire.net/swagger/filter/opsFilter.js",
+      "https://altoro.testfire.net/swagger/deep-linking/helpers.js",
+      "https://altoro.testfire.net/pr/20060921.htm",
+      "https://altoro.testfire.net/swagger/oas3/components/request-body-editor.jsx",
+      "https://altoro.testfire.net/swagger/err/selectors.js",
+      "http://altoro.testfire.net/abc",
+      "https://altoro.testfire.net/jobs/20061027.htm",
+      "http://altoro.testfire.net/subscribe.swf",
+      "https://altoro.testfire.net/swagger/view/index.js",
+      "https://altoro.testfire.net/swagger/oas3/components/servers-container.jsx",
+      "https://altoro.testfire.net/swagger/swagger-js/index.js",
+      "https://altoro.testfire.net/swagger/deep-linking/index.js",
+      "https://altoro.testfire.net/swagger/index.html",
+      "https://altoro.testfire.net/swagger/configs/index.js",
+      "https://altoro.testfire.net/swagger/all.js",
+      "https://altoro.testfire.net/swagger/logs/index.js",
+      "https://altoro.testfire.net/swagger/spec/actions.js",
+      "https://altoro.testfire.net/swagger/configs/reducers.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/model.jsx",
+      "https://altoro.testfire.net/",
+      "https://altoro.testfire.net/swagger/image/",
+      "https://altoro.testfire.net/swagger/oas3/helpers.js",
+      "http://altoro.testfire.net/.pdf",
+      "https://altoro.testfire.net/high_yield_investments.htm",
+      "https://altoro.testfire.net/swagger/samples/fn.js",
+      "https://altoro.testfire.net/swagger/util/index.js",
+      "https://altoro.testfire.net/pr/20060413.htm",
+      "https://altoro.testfire.net/pr/20060817.htm",
+      "https://altoro.testfire.net/swagger/layout/actions.js",
+      "https://altoro.testfire.net/swagger/on-complete/index.js",
+      "https://altoro.testfire.net/swagger/video/",
+      "https://altoro.testfire.net/pr/20060518.htm",
+      "https://altoro.testfire.net/jobs/20061019.htm",
+      "https://altoro.testfire.net/swagger/Immutable.js",
+      "http://altoro.testfire.net/swagger/",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/online-validator-badge.js",
+      "https://altoro.testfire.net/swagger/layout/reducers.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/markdown.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/parameters.jsx",
+      "https://altoro.testfire.net/swagger/oas3/components/index.js",
+      "https://altoro.testfire.net/swagger/deep-linking/layout.js",
+      "https://altoro.testfire.net/pr/20061005.htm",
+      "https://altoro.testfire.net/swagger/configs/helpers.js",
+      "https://altoro.testfire.net/static/personal_savings.htm",
+      "https://altoro.testfire.net/images/z",
+      "https://altoro.testfire.net/swagger/oas3/components/request-body.jsx",
+      "https://altoro.testfire.net/swagger/oas3/components/operation-link.jsx",
+      "https://altoro.testfire.net/inside_points_of_interest.htm",
+      "http://demo-analytics.testfire.net/urchin.js"
+    ],
+    "API": [
+      "https://altoro.testfire.net/swagger/properties.json",
+      "https://altoro.testfire.net/swagger/e.json%7C%7Cs.call%28n,o%29%7C%7C%21s.call%28t,o%29%7C%7C%28e.line=a%7C%7Ce.line,e.position=u%7C%7Ce.position,I%28e,",
+      "https://altoro.testfire.net/swagger/t.json%7C%7Cs.call%28n,i%29%7C%7C%21s.call%28e,i%29%7C%7C%28t.line=u%7C%7Ct.line,t.position=a%7C%7Ct.position,C%28t,"
+    ],
+    "UPLOAD": [
+      "https://altoro.testfire.net/myfile6713.jsp/cgi.exe",
+      "https://altoro.testfire.net/myfile6713.jsp/"
+    ]
+  },
+  "reflections": [
+    {
+      "url": "https://altoro.testfire.net/index.jsp?content=inside_jobs.htm&job=OperationalRiskManager:RiskManagement",
+      "param": "content",
+      "test_url": "https://altoro.testfire.net/index.jsp?content=yuvaXSS9182&job=OperationalRiskManager%3ARiskManagement",
+      "status": 200
+    },
+    {
+      "url": "http://altoro.testfire.net/search.jsp?query=%3Cbody+bgcolor%3D%22red%22+%2F%3E%3Ch3+style%3D%22background-color%3Apowderblue%3B%22%3EThis+website+is+secretly+selling+the+data+of+customers+to+illegal+agency.+This+website+is+not+secure%2C+kindly+move+on+to+the+secure+site%3Cbr+%2F%3E%3Ca+href%3D%22evil.com%22%3Esecurewebsite%3C%2Fa%3E%3C%2Fh3%3E",
+      "param": "query",
+      "test_url": "http://altoro.testfire.net/search.jsp?query=yuvaXSS9182",
+      "status": 200
+    },
+    {
+      "url": "https://altoro.testfire.net/index.jsp?content=FUZZ",
+      "param": "content",
+      "test_url": "https://altoro.testfire.net/index.jsp?content=yuvaXSS9182",
+      "status": 200
+    },
+    {
+      "url": "https://altoro.testfire.net/util/serverStatusCheckService.jsp?HostName=",
+      "param": "HostName",
+      "test_url": "https://altoro.testfire.net/util/serverStatusCheckService.jsp?HostName=yuvaXSS9182",
+      "status": 200
+    },
+    {
+      "url": "https://altoro.testfire.net/index.jsp?content=security.htm",
+      "param": "content",
+      "test_url": "https://altoro.testfire.net/index.jsp?content=yuvaXSS9182",
+      "status": 200
+    },
+    {
+      "url": "http://altoro.testfire.net/search.jsp?query=FUZZ",
+      "param": "query",
+      "test_url": "http://altoro.testfire.net/search.jsp?query=yuvaXSS9182",
+      "status": 200
+    }
+  ],
+  "error_leaks": [],
+  "nuclei_findings": [],
+  "normalized_state": {
+    "target": "http://altoro.testfire.net/",
+    "subdomains": [
+      "http://altoro.testfire.net/"
+    ],
+    "alive_hosts": [
+      "https://altoro.testfire.net/"
+    ],
+    "endpoints": [
+      "https://altoro.testfire.net/swagger/3200/oauth2-redirect.html",
+      "https://altoro.testfire.net/swagger/oas3/components/callbacks.jsx",
+      "https://altoro.testfire.net/jobs/20061026.htm",
+      "https://altoro.testfire.net/swagger/oas3/selectors.js",
+      "https://altoro.testfire.net/Privacypolicy.jsp?sec=FUZZ",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/index.js",
+      "http://altoro.testfire.net/bank/queryxpath.jsp?content=FUZZ",
+      "https://altoro.testfire.net/swagger/configs/spec-actions.js",
+      "https://altoro.testfire.net/swagger/audio/",
+      "https://altoro.testfire.net/swagger/e.json%7C%7Cs.call%28n,o%29%7C%7C%21s.call%28t,o%29%7C%7C%28e.line=a%7C%7Ce.line,e.position=u%7C%7Ce.position,I%28e,",
+      "https://altoro.testfire.net/swagger/layout/selectors.js",
+      "https://altoro.testfire.net/swagger/spec/index.js",
+      "https://altoro.testfire.net/swagger/oas3/components/servers.jsx",
+      "https://altoro.testfire.net/swagger/oas3/actions.js",
+      "http://altoro.testfire.net/bank/queryxpath.jsp?content=queryxpath.jsp&qu=",
+      "http://altoro.testfire.net/pr/communityannualreport.pdf",
+      "https://altoro.testfire.net/pr/20060720.htm",
+      "https://altoro.testfire.net/swagger/err/error-transformers/transformers/strip-instance.js",
+      "https://altoro.testfire.net/swagger/index.js",
+      "https://altoro.testfire.net/swagger/err/index.js",
+      "https://altoro.testfire.net/swagger/oas3/spec-extensions/wrap-selectors.js",
+      "https://altoro.testfire.net/retirement.htm",
+      "https://altoro.testfire.net/swagger/layout/index.js",
+      "https://altoro.testfire.net/search.jsp",
+      "https://altoro.testfire.net/swagger/deep-linking/operation-tag-wrapper.jsx",
+      "https://altoro.testfire.net/swagger/err/error-transformers/hook.js",
+      "http://altoro.testfire.net/search.jsp?query=%3Cbody+bgcolor%3D%22red%22+%2F%3E%3Ch3+style%3D%22background-color%3Apowderblue%3B%22%3EThis+website+is+secretly+selling+the+data+of+customers+to+illegal+agency.+This+website+is+not+secure%2C+kindly+move+on+to+the+secure+site%3Cbr+%2F%3E%3Ca+href%3D%22evil.com%22%3Esecurewebsite%3C%2Fa%3E%3C%2Fh3%3E",
+      "https://altoro.testfire.net/swagger/view/root-injects.js",
+      "http://altoro.testfire.net/bank/main.jsp",
+      "https://altoro.testfire.net/jobs/20061025.htm",
+      "https://altoro.testfire.net/swagger/filter/index.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/json-schema-string.js",
+      "https://altoro.testfire.net/swagger/err/actions.js",
+      "https://altoro.testfire.net/myfile6713.jsp/cgi.exe",
+      "http://altoro.testfire.net/admin/admin.jsp",
+      "https://altoro.testfire.net/subscribe.jsp",
+      "https://altoro.testfire.net/jobs/20061024.htm",
+      "https://altoro.testfire.net/Privacypolicy.jsp?sec=Careers&template=US",
+      "https://altoro.testfire.net/my%20documents/JohnSmith/Bank%20Site%20Documents/grouplife.htm",
+      "https://altoro.testfire.net/pr/20060928.htm",
+      "https://altoro.testfire.net/default.jsp",
+      "https://altoro.testfire.net/default.jsp?content=FUZZ",
+      "https://altoro.testfire.net/survey_questions.jsp?step=FUZZ",
+      "https://altoro.testfire.net/swagger/multipart/",
+      "https://altoro.testfire.net/disclaimer.htm?url=FUZZ",
+      "https://altoro.testfire.net/swagger/configs/actions.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/auth-item.jsx",
+      "https://altoro.testfire.net/sameDomain",
+      "https://altoro.testfire.net/index.jsp?content=FUZZ",
+      "https://altoro.testfire.net/Privacypolicy.jsp?template=FUZZ",
+      "https://altoro.testfire.net/swagger/oas3/components/http-auth.jsx",
+      "https://altoro.testfire.net",
+      "https://altoro.testfire.net/swagger/deep-linking/operation-wrapper.jsx",
+      "https://altoro.testfire.net/pr/20061109.htm",
+      "https://altoro.testfire.net/swagger/oas3/reducers.js",
+      "https://altoro.testfire.net/swagger/oas3/spec-extensions/selectors.js",
+      "https://altoro.testfire.net/swagger/download-url.js",
+      "https://altoro.testfire.net/status_check.jsp",
+      "https://altoro.testfire.net/high",
+      "https://altoro.testfire.net/index.jsp?content=inside_jobs.htm&job=OperationalRiskManager:RiskManagement",
+      "https://altoro.testfire.net/swagger/err/error-transformers/transformers/parameter-oneof.js",
+      "https://altoro.testfire.net/security.htm",
+      "http://altoro.testfire.net/cgi.exe",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/version-stamp.jsx",
+      "https://altoro.testfire.net/swagger/oas3/index.js",
+      "https://altoro.testfire.net/swagger/oas3/components/operation-servers.jsx",
+      "https://altoro.testfire.net/swagger/spec/wrap-actions.js",
+      "https://altoro.testfire.net/swagger/auth/selectors.js",
+      "https://altoro.testfire.net/index.jsp",
+      "https://altoro.testfire.net/swagger/spec/selectors.js",
+      "https://altoro.testfire.net/util/serverStatusCheckService.jsp",
+      "https://altoro.testfire.net/bank/showAccount?listAccounts=800000",
+      "https://altoro.testfire.net/swagger/Autolinker.js",
+      "https://altoro.testfire.net/jobs/20061023.htm",
+      "https://altoro.testfire.net/swagger/samples/index.js",
+      "https://altoro.testfire.net/swagger/spec/reducers.js",
+      "https://altoro.testfire.net/swagger/swagger-ui-bundle.js",
+      "https://altoro.testfire.net/admin/clients.xls",
+      "https://altoro.testfire.net/bank/showAccount?listAccounts=FUZZ",
+      "https://altoro.testfire.net/swagger/configs/selectors.js",
+      "https://altoro.testfire.net/swagger/err/reducers.js",
+      "https://altoro.testfire.net/feedback.jsp",
+      "https://altoro.testfire.net/swagger/err/error-transformers/transformers/not-of-type.js",
+      "https://altoro.testfire.net/swagger/filter/opsFilter.js",
+      "https://altoro.testfire.net/swagger/deep-linking/helpers.js",
+      "https://altoro.testfire.net/util/serverStatusCheckService.jsp?HostName=",
+      "https://altoro.testfire.net/pr/20060921.htm",
+      "https://altoro.testfire.net/swagger/oas3/components/request-body-editor.jsx",
+      "https://altoro.testfire.net/swagger/err/selectors.js",
+      "http://altoro.testfire.net/abc",
+      "https://altoro.testfire.net/jobs/20061027.htm",
+      "https://altoro.testfire.net/swagger/properties.json",
+      "http://altoro.testfire.net/subscribe.swf",
+      "https://altoro.testfire.net/swagger/view/index.js",
+      "https://altoro.testfire.net/swagger/oas3/components/servers-container.jsx",
+      "https://altoro.testfire.net/swagger/auth/actions.js",
+      "https://altoro.testfire.net/swagger/swagger-js/index.js",
+      "https://altoro.testfire.net/swagger/deep-linking/index.js",
+      "https://altoro.testfire.net/swagger/index.html",
+      "https://altoro.testfire.net/swagger/configs/index.js",
+      "https://altoro.testfire.net/swagger/all.js",
+      "https://altoro.testfire.net/swagger/logs/index.js",
+      "https://altoro.testfire.net/swagger/spec/actions.js",
+      "https://altoro.testfire.net/swagger/configs/reducers.js",
+      "https://altoro.testfire.net/survey_questions.jsp?step=a",
+      "https://altoro.testfire.net/index.jsp?job=FUZZ",
+      "https://altoro.testfire.net/swagger/auth/index.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/model.jsx",
+      "https://altoro.testfire.net/",
+      "https://altoro.testfire.net/swagger/image/",
+      "https://altoro.testfire.net/swagger/oas3/helpers.js",
+      "http://altoro.testfire.net/.pdf",
+      "https://altoro.testfire.net/high_yield_investments.htm",
+      "https://altoro.testfire.net/swagger/samples/fn.js",
+      "https://altoro.testfire.net/swagger/auth/spec-wrap-actions.js",
+      "https://altoro.testfire.net/swagger/util/index.js",
+      "https://altoro.testfire.net/pr/20060413.htm",
+      "https://altoro.testfire.net/pr/20060817.htm",
+      "https://altoro.testfire.net/index.jsp?content=security.htm",
+      "https://altoro.testfire.net/swagger/swagger-ui-standalone-preset.js",
+      "https://altoro.testfire.net/swagger/t.json%7C%7Cs.call%28n,i%29%7C%7C%21s.call%28e,i%29%7C%7C%28t.line=u%7C%7Ct.line,t.position=a%7C%7Ct.position,C%28t,",
+      "https://altoro.testfire.net/swagger/layout/actions.js",
+      "https://altoro.testfire.net/login.jsp",
+      "https://altoro.testfire.net/swagger/on-complete/index.js",
+      "https://altoro.testfire.net/default.jsp?content=security.htm",
+      "https://altoro.testfire.net/survey_questions.jsp",
+      "https://altoro.testfire.net/disclaimer.htm?url=http://www.netscape.com",
+      "https://altoro.testfire.net/swagger/video/",
+      "https://altoro.testfire.net/pr/20060518.htm",
+      "https://altoro.testfire.net/jobs/20061019.htm",
+      "https://altoro.testfire.net/swagger/oas3/auth-extensions/wrap-selectors.js",
+      "https://altoro.testfire.net/swagger/Immutable.js",
+      "http://altoro.testfire.net/swagger/",
+      "https://altoro.testfire.net/swagger/auth/reducers.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/online-validator-badge.js",
+      "https://altoro.testfire.net/swagger/layout/reducers.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/markdown.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/parameters.jsx",
+      "https://altoro.testfire.net/swagger/oas3/components/index.js",
+      "https://altoro.testfire.net/swagger/deep-linking/layout.js",
+      "https://altoro.testfire.net/pr/20061005.htm",
+      "https://altoro.testfire.net/swagger/configs/helpers.js",
+      "https://altoro.testfire.net/static/personal_savings.htm",
+      "http://altoro.testfire.net/search.jsp?query=FUZZ",
+      "https://altoro.testfire.net/images/z",
+      "https://altoro.testfire.net/swagger/oas3/components/request-body.jsx",
+      "https://altoro.testfire.net/swagger/oas3/components/operation-link.jsx",
+      "https://altoro.testfire.net/inside_points_of_interest.htm",
+      "https://altoro.testfire.net/myfile6713.jsp/",
+      "http://demo-analytics.testfire.net/urchin.js"
+    ],
+    "validation_targets": [
+      "https://altoro.testfire.net/index.jsp?content=inside_jobs.htm&job=OperationalRiskManager:RiskManagement",
+      "https://altoro.testfire.net/swagger/3200/oauth2-redirect.html",
+      "https://altoro.testfire.net/login.jsp",
+      "http://altoro.testfire.net/admin/admin.jsp",
+      "https://altoro.testfire.net/disclaimer.htm?url=FUZZ",
+      "https://altoro.testfire.net/swagger/swagger-ui-standalone-preset.js",
+      "https://altoro.testfire.net/disclaimer.htm?url=http://www.netscape.com",
+      "https://altoro.testfire.net/Privacypolicy.jsp?sec=FUZZ",
+      "http://altoro.testfire.net/bank/queryxpath.jsp?content=FUZZ",
+      "http://altoro.testfire.net/bank/queryxpath.jsp?content=queryxpath.jsp&qu=",
+      "http://altoro.testfire.net/search.jsp?query=%3Cbody+bgcolor%3D%22red%22+%2F%3E%3Ch3+style%3D%22background-color%3Apowderblue%3B%22%3EThis+website+is+secretly+selling+the+data+of+customers+to+illegal+agency.+This+website+is+not+secure%2C+kindly+move+on+to+the+secure+site%3Cbr+%2F%3E%3Ca+href%3D%22evil.com%22%3Esecurewebsite%3C%2Fa%3E%3C%2Fh3%3E",
+      "https://altoro.testfire.net/Privacypolicy.jsp?sec=Careers&template=US",
+      "https://altoro.testfire.net/default.jsp?content=FUZZ",
+      "https://altoro.testfire.net/survey_questions.jsp?step=FUZZ",
+      "https://altoro.testfire.net/index.jsp?content=FUZZ",
+      "https://altoro.testfire.net/Privacypolicy.jsp?template=FUZZ",
+      "https://altoro.testfire.net/util/serverStatusCheckService.jsp?HostName=",
+      "https://altoro.testfire.net/survey_questions.jsp?step=a",
+      "https://altoro.testfire.net/index.jsp?job=FUZZ",
+      "https://altoro.testfire.net/index.jsp?content=security.htm",
+      "https://altoro.testfire.net/default.jsp?content=security.htm",
+      "http://altoro.testfire.net/search.jsp?query=FUZZ",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/auth-item.jsx",
+      "https://altoro.testfire.net/swagger/oas3/components/http-auth.jsx",
+      "https://altoro.testfire.net/swagger/auth/selectors.js",
+      "https://altoro.testfire.net/swagger/auth/actions.js",
+      "https://altoro.testfire.net/swagger/auth/index.js",
+      "https://altoro.testfire.net/swagger/auth/spec-wrap-actions.js",
+      "https://altoro.testfire.net/swagger/oas3/auth-extensions/wrap-selectors.js",
+      "https://altoro.testfire.net/swagger/auth/reducers.js",
+      "https://altoro.testfire.net/admin/clients.xls",
+      "https://altoro.testfire.net/search.jsp",
+      "http://altoro.testfire.net/bank/main.jsp",
+      "https://altoro.testfire.net/subscribe.jsp",
+      "https://altoro.testfire.net/default.jsp",
+      "https://altoro.testfire.net/status_check.jsp",
+      "https://altoro.testfire.net/index.jsp",
+      "https://altoro.testfire.net/util/serverStatusCheckService.jsp",
+      "https://altoro.testfire.net/feedback.jsp",
+      "https://altoro.testfire.net/survey_questions.jsp",
+      "https://altoro.testfire.net/bank/showAccount?listAccounts=800000",
+      "https://altoro.testfire.net/bank/showAccount?listAccounts=FUZZ",
+      "https://altoro.testfire.net/swagger/properties.json",
+      "https://altoro.testfire.net/swagger/oas3/components/callbacks.jsx",
+      "https://altoro.testfire.net/jobs/20061026.htm",
+      "https://altoro.testfire.net/swagger/oas3/selectors.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/index.js",
+      "https://altoro.testfire.net/swagger/configs/spec-actions.js",
+      "https://altoro.testfire.net/swagger/audio/",
+      "https://altoro.testfire.net/swagger/e.json%7C%7Cs.call%28n,o%29%7C%7C%21s.call%28t,o%29%7C%7C%28e.line=a%7C%7Ce.line,e.position=u%7C%7Ce.position,I%28e,",
+      "https://altoro.testfire.net/swagger/layout/selectors.js",
+      "https://altoro.testfire.net/swagger/spec/index.js",
+      "https://altoro.testfire.net/swagger/oas3/components/servers.jsx",
+      "https://altoro.testfire.net/swagger/oas3/actions.js",
+      "http://altoro.testfire.net/pr/communityannualreport.pdf",
+      "https://altoro.testfire.net/pr/20060720.htm",
+      "https://altoro.testfire.net/swagger/err/error-transformers/transformers/strip-instance.js",
+      "https://altoro.testfire.net/swagger/index.js",
+      "https://altoro.testfire.net/swagger/err/index.js",
+      "https://altoro.testfire.net/swagger/oas3/spec-extensions/wrap-selectors.js",
+      "https://altoro.testfire.net/retirement.htm",
+      "https://altoro.testfire.net/swagger/layout/index.js",
+      "https://altoro.testfire.net/swagger/deep-linking/operation-tag-wrapper.jsx",
+      "https://altoro.testfire.net/swagger/err/error-transformers/hook.js",
+      "https://altoro.testfire.net/swagger/view/root-injects.js",
+      "https://altoro.testfire.net/jobs/20061025.htm",
+      "https://altoro.testfire.net/swagger/filter/index.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/json-schema-string.js",
+      "https://altoro.testfire.net/swagger/err/actions.js",
+      "https://altoro.testfire.net/myfile6713.jsp/cgi.exe",
+      "https://altoro.testfire.net/jobs/20061024.htm",
+      "https://altoro.testfire.net/my%20documents/JohnSmith/Bank%20Site%20Documents/grouplife.htm",
+      "https://altoro.testfire.net/pr/20060928.htm",
+      "https://altoro.testfire.net/swagger/multipart/",
+      "https://altoro.testfire.net/swagger/configs/actions.js",
+      "https://altoro.testfire.net/sameDomain",
+      "https://altoro.testfire.net",
+      "https://altoro.testfire.net/swagger/deep-linking/operation-wrapper.jsx",
+      "https://altoro.testfire.net/pr/20061109.htm",
+      "https://altoro.testfire.net/swagger/oas3/reducers.js",
+      "https://altoro.testfire.net/swagger/oas3/spec-extensions/selectors.js",
+      "https://altoro.testfire.net/swagger/download-url.js",
+      "https://altoro.testfire.net/high",
+      "https://altoro.testfire.net/swagger/err/error-transformers/transformers/parameter-oneof.js",
+      "https://altoro.testfire.net/security.htm",
+      "http://altoro.testfire.net/cgi.exe",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/version-stamp.jsx",
+      "https://altoro.testfire.net/swagger/oas3/index.js",
+      "https://altoro.testfire.net/swagger/oas3/components/operation-servers.jsx",
+      "https://altoro.testfire.net/swagger/spec/wrap-actions.js",
+      "https://altoro.testfire.net/swagger/spec/selectors.js",
+      "https://altoro.testfire.net/swagger/Autolinker.js",
+      "https://altoro.testfire.net/jobs/20061023.htm",
+      "https://altoro.testfire.net/swagger/samples/index.js",
+      "https://altoro.testfire.net/swagger/spec/reducers.js",
+      "https://altoro.testfire.net/swagger/swagger-ui-bundle.js",
+      "https://altoro.testfire.net/swagger/configs/selectors.js",
+      "https://altoro.testfire.net/swagger/err/reducers.js",
+      "https://altoro.testfire.net/swagger/err/error-transformers/transformers/not-of-type.js",
+      "https://altoro.testfire.net/swagger/filter/opsFilter.js",
+      "https://altoro.testfire.net/swagger/deep-linking/helpers.js",
+      "https://altoro.testfire.net/pr/20060921.htm",
+      "https://altoro.testfire.net/swagger/oas3/components/request-body-editor.jsx",
+      "https://altoro.testfire.net/swagger/err/selectors.js",
+      "http://altoro.testfire.net/abc",
+      "https://altoro.testfire.net/jobs/20061027.htm",
+      "http://altoro.testfire.net/subscribe.swf",
+      "https://altoro.testfire.net/swagger/view/index.js",
+      "https://altoro.testfire.net/swagger/oas3/components/servers-container.jsx",
+      "https://altoro.testfire.net/swagger/swagger-js/index.js",
+      "https://altoro.testfire.net/swagger/deep-linking/index.js",
+      "https://altoro.testfire.net/swagger/index.html",
+      "https://altoro.testfire.net/swagger/configs/index.js",
+      "https://altoro.testfire.net/swagger/all.js",
+      "https://altoro.testfire.net/swagger/logs/index.js",
+      "https://altoro.testfire.net/swagger/spec/actions.js",
+      "https://altoro.testfire.net/swagger/configs/reducers.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/model.jsx",
+      "https://altoro.testfire.net/",
+      "https://altoro.testfire.net/swagger/image/",
+      "https://altoro.testfire.net/swagger/oas3/helpers.js",
+      "http://altoro.testfire.net/.pdf",
+      "https://altoro.testfire.net/high_yield_investments.htm",
+      "https://altoro.testfire.net/swagger/samples/fn.js",
+      "https://altoro.testfire.net/swagger/util/index.js",
+      "https://altoro.testfire.net/pr/20060413.htm",
+      "https://altoro.testfire.net/pr/20060817.htm",
+      "https://altoro.testfire.net/swagger/t.json%7C%7Cs.call%28n,i%29%7C%7C%21s.call%28e,i%29%7C%7C%28t.line=u%7C%7Ct.line,t.position=a%7C%7Ct.position,C%28t,",
+      "https://altoro.testfire.net/swagger/layout/actions.js",
+      "https://altoro.testfire.net/swagger/on-complete/index.js",
+      "https://altoro.testfire.net/swagger/video/",
+      "https://altoro.testfire.net/pr/20060518.htm",
+      "https://altoro.testfire.net/jobs/20061019.htm",
+      "https://altoro.testfire.net/swagger/Immutable.js",
+      "http://altoro.testfire.net/swagger/",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/online-validator-badge.js",
+      "https://altoro.testfire.net/swagger/layout/reducers.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/markdown.js",
+      "https://altoro.testfire.net/swagger/oas3/wrap-components/parameters.jsx",
+      "https://altoro.testfire.net/swagger/oas3/components/index.js",
+      "https://altoro.testfire.net/swagger/deep-linking/layout.js",
+      "https://altoro.testfire.net/pr/20061005.htm",
+      "https://altoro.testfire.net/swagger/configs/helpers.js",
+      "https://altoro.testfire.net/static/personal_savings.htm",
+      "https://altoro.testfire.net/images/z",
+      "https://altoro.testfire.net/swagger/oas3/components/request-body.jsx",
+      "https://altoro.testfire.net/swagger/oas3/components/operation-link.jsx",
+      "https://altoro.testfire.net/inside_points_of_interest.htm",
+      "https://altoro.testfire.net/myfile6713.jsp/",
+      "http://demo-analytics.testfire.net/urchin.js",
+      "http://altoro.testfire.net/"
+    ],
+    "ranked_targets": [
+      {
+        "url": "https://altoro.testfire.net/index.jsp?content=inside_jobs.htm&job=OperationalRiskManager:RiskManagement",
+        "score": 95,
+        "cats": [
+          "ADMIN"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/3200/oauth2-redirect.html",
+        "score": 85,
+        "cats": [
+          "AUTH",
+          "OPENREDIRECT"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/login.jsp",
+        "score": 80,
+        "cats": [
+          "AUTH"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/admin/admin.jsp",
+        "score": 70,
+        "cats": [
+          "ADMIN"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/disclaimer.htm?url=FUZZ",
+        "score": 60,
+        "cats": [
+          "OPENREDIRECT"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/swagger-ui-standalone-preset.js",
+        "score": 60,
+        "cats": [
+          "PASSWORD"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/disclaimer.htm?url=http://www.netscape.com",
+        "score": 60,
+        "cats": [
+          "OPENREDIRECT"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/Privacypolicy.jsp?sec=FUZZ",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/bank/queryxpath.jsp?content=FUZZ",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/bank/queryxpath.jsp?content=queryxpath.jsp&qu=",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/search.jsp?query=%3Cbody+bgcolor%3D%22red%22+%2F%3E%3Ch3+style%3D%22background-color%3Apowderblue%3B%22%3EThis+website+is+secretly+selling+the+data+of+customers+to+illegal+agency.+This+website+is+not+secure%2C+kindly+move+on+to+the+secure+site%3Cbr+%2F%3E%3Ca+href%3D%22evil.com%22%3Esecurewebsite%3C%2Fa%3E%3C%2Fh3%3E",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/Privacypolicy.jsp?sec=Careers&template=US",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/default.jsp?content=FUZZ",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/survey_questions.jsp?step=FUZZ",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/index.jsp?content=FUZZ",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/Privacypolicy.jsp?template=FUZZ",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/util/serverStatusCheckService.jsp?HostName=",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/survey_questions.jsp?step=a",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/index.jsp?job=FUZZ",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/index.jsp?content=security.htm",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/default.jsp?content=security.htm",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/search.jsp?query=FUZZ",
+        "score": 55,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/wrap-components/auth-item.jsx",
+        "score": 50,
+        "cats": [
+          "AUTH"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/components/http-auth.jsx",
+        "score": 50,
+        "cats": [
+          "AUTH"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/auth/selectors.js",
+        "score": 50,
+        "cats": [
+          "AUTH"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/auth/actions.js",
+        "score": 50,
+        "cats": [
+          "AUTH"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/auth/index.js",
+        "score": 50,
+        "cats": [
+          "AUTH"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/auth/spec-wrap-actions.js",
+        "score": 50,
+        "cats": [
+          "AUTH"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/auth-extensions/wrap-selectors.js",
+        "score": 50,
+        "cats": [
+          "AUTH"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/auth/reducers.js",
+        "score": 50,
+        "cats": [
+          "AUTH"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/admin/clients.xls",
+        "score": 40,
+        "cats": [
+          "ADMIN"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/search.jsp",
+        "score": 30,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/bank/main.jsp",
+        "score": 30,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/subscribe.jsp",
+        "score": 30,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/default.jsp",
+        "score": 30,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/status_check.jsp",
+        "score": 30,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/index.jsp",
+        "score": 30,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/util/serverStatusCheckService.jsp",
+        "score": 30,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/feedback.jsp",
+        "score": 30,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/survey_questions.jsp",
+        "score": 30,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/bank/showAccount?listAccounts=800000",
+        "score": 25,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/bank/showAccount?listAccounts=FUZZ",
+        "score": 25,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/properties.json",
+        "score": 20,
+        "cats": [
+          "API"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/components/callbacks.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/jobs/20061026.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/selectors.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/wrap-components/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/configs/spec-actions.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/audio/",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/e.json%7C%7Cs.call%28n,o%29%7C%7C%21s.call%28t,o%29%7C%7C%28e.line=a%7C%7Ce.line,e.position=u%7C%7Ce.position,I%28e,",
+        "score": 0,
+        "cats": [
+          "API"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/layout/selectors.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/spec/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/components/servers.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/actions.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/pr/communityannualreport.pdf",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/pr/20060720.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/err/error-transformers/transformers/strip-instance.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/err/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/spec-extensions/wrap-selectors.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/retirement.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/layout/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/deep-linking/operation-tag-wrapper.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/err/error-transformers/hook.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/view/root-injects.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/jobs/20061025.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/filter/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/wrap-components/json-schema-string.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/err/actions.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/myfile6713.jsp/cgi.exe",
+        "score": 0,
+        "cats": [
+          "UPLOAD"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/jobs/20061024.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/my%20documents/JohnSmith/Bank%20Site%20Documents/grouplife.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/pr/20060928.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/multipart/",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/configs/actions.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/sameDomain",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/deep-linking/operation-wrapper.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/pr/20061109.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/reducers.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/spec-extensions/selectors.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/download-url.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/high",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/err/error-transformers/transformers/parameter-oneof.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/security.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/cgi.exe",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/wrap-components/version-stamp.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/components/operation-servers.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/spec/wrap-actions.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/spec/selectors.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/Autolinker.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/jobs/20061023.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/samples/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/spec/reducers.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/swagger-ui-bundle.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/configs/selectors.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/err/reducers.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/err/error-transformers/transformers/not-of-type.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/filter/opsFilter.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/deep-linking/helpers.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/pr/20060921.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/components/request-body-editor.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/err/selectors.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/abc",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/jobs/20061027.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/subscribe.swf",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/view/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/components/servers-container.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/swagger-js/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/deep-linking/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/index.html",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/configs/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/all.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/logs/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/spec/actions.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/configs/reducers.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/wrap-components/model.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/image/",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/helpers.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/.pdf",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/high_yield_investments.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/samples/fn.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/util/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/pr/20060413.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/pr/20060817.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/t.json%7C%7Cs.call%28n,i%29%7C%7C%21s.call%28e,i%29%7C%7C%28t.line=u%7C%7Ct.line,t.position=a%7C%7Ct.position,C%28t,",
+        "score": 0,
+        "cats": [
+          "API"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/layout/actions.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/on-complete/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/video/",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/pr/20060518.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/jobs/20061019.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/Immutable.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "http://altoro.testfire.net/swagger/",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/wrap-components/online-validator-badge.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/layout/reducers.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/wrap-components/markdown.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/wrap-components/parameters.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/components/index.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/deep-linking/layout.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/pr/20061005.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/configs/helpers.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/static/personal_savings.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/images/z",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/components/request-body.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/swagger/oas3/components/operation-link.jsx",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/inside_points_of_interest.htm",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      },
+      {
+        "url": "https://altoro.testfire.net/myfile6713.jsp/",
+        "score": 0,
+        "cats": [
+          "UPLOAD"
+        ]
+      },
+      {
+        "url": "http://demo-analytics.testfire.net/urchin.js",
+        "score": 0,
+        "cats": [
+          "OTHER"
+        ]
+      }
+    ],
+    "params": {
+      "https://altoro.testfire.net/index.jsp": [
+        "job",
+        "content"
+      ],
+      "https://altoro.testfire.net/default.jsp": [
+        "content"
+      ],
+      "https://altoro.testfire.net/survey_questions.jsp": [
+        "step"
+      ],
+      "https://altoro.testfire.net/Privacypolicy.jsp": [
+        "sec",
+        "template"
+      ],
+      "https://altoro.testfire.net/disclaimer.htm": [
+        "url"
+      ],
+      "http://altoro.testfire.net/bank/queryxpath.jsp": [
+        "content"
+      ],
+      "https://altoro.testfire.net/bank/showAccount": [
+        "listAccounts"
+      ],
+      "http://altoro.testfire.net/search.jsp": [
+        "query"
+      ]
+    },
+    "categories": [
+      "ADMIN",
+      "API",
+      "AUTH",
+      "OPENREDIRECT",
+      "OTHER",
+      "PASSWORD",
+      "UPLOAD"
+    ],
+    "findings": [],
+    "vulnerabilities": [],
+    "response_analysis": {
+      "reflections": [
+        {
+          "url": "https://altoro.testfire.net/index.jsp?content=inside_jobs.htm&job=OperationalRiskManager:RiskManagement",
+          "param": "content",
+          "test_url": "https://altoro.testfire.net/index.jsp?content=yuvaXSS9182&job=OperationalRiskManager%3ARiskManagement",
+          "status": 200
+        },
+        {
+          "url": "http://altoro.testfire.net/search.jsp?query=%3Cbody+bgcolor%3D%22red%22+%2F%3E%3Ch3+style%3D%22background-color%3Apowderblue%3B%22%3EThis+website+is+secretly+selling+the+data+of+customers+to+illegal+agency.+This+website+is+not+secure%2C+kindly+move+on+to+the+secure+site%3Cbr+%2F%3E%3Ca+href%3D%22evil.com%22%3Esecurewebsite%3C%2Fa%3E%3C%2Fh3%3E",
+          "param": "query",
+          "test_url": "http://altoro.testfire.net/search.jsp?query=yuvaXSS9182",
+          "status": 200
+        },
+        {
+          "url": "https://altoro.testfire.net/index.jsp?content=FUZZ",
+          "param": "content",
+          "test_url": "https://altoro.testfire.net/index.jsp?content=yuvaXSS9182",
+          "status": 200
+        },
+        {
+          "url": "https://altoro.testfire.net/util/serverStatusCheckService.jsp?HostName=",
+          "param": "HostName",
+          "test_url": "https://altoro.testfire.net/util/serverStatusCheckService.jsp?HostName=yuvaXSS9182",
+          "status": 200
+        },
+        {
+          "url": "https://altoro.testfire.net/index.jsp?content=security.htm",
+          "param": "content",
+          "test_url": "https://altoro.testfire.net/index.jsp?content=yuvaXSS9182",
+          "status": 200
+        },
+        {
+          "url": "http://altoro.testfire.net/search.jsp?query=FUZZ",
+          "param": "query",
+          "test_url": "http://altoro.testfire.net/search.jsp?query=yuvaXSS9182",
+          "status": 200
+        }
+      ],
+      "errors": []
+    },
+    "source": "recon_zentry"
+  }
+}

@@ -1,109 +1,58 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
 
-show_help() {
-  cat <<EOF
-Usage: $0 [--venv DIR] [--system] [--run-scripts] [--help]
+# Exit on error
+set -e
 
-Options:
-  --venv DIR       Virtualenv directory to create/use (default: .venv)
-  --system         Install optional system packages via apt (requires sudo)
-  --run-scripts    Run existing project install scripts (RECON-ZENTRY/install.sh and security_pipeline/setup.sh). Default: enabled
-  --help           Show this help
-EOF
-}
+echo "======================================"
+echo "    Master Setup Script"
+echo "======================================"
 
-VENV_DIR=".venv"
-INSTALL_SYSTEM=0
-RUN_SCRIPTS=1
+echo "[1/4] Setting up virtual environment..."
+rm -rf venv
+python3 -m venv venv
+source venv/bin/activate
 
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --venv)
-      VENV_DIR="$2"
-      shift 2
-      ;;
-    --system)
-      INSTALL_SYSTEM=1
-      shift
-      ;;
-    --run-scripts)
-      RUN_SCRIPTS=1
-      shift
-      ;;
-    -h|--help)
-      show_help
-      exit 0
-      ;;
-    *)
-      echo "Unknown option: $1"
-      show_help
-      exit 1
-      ;;
-  esac
+echo "[2/4] Installing Python dependencies..."
+if [ -f requirements.txt ]; then
+    pip install -r requirements.txt
+else
+    echo "Warning: requirements.txt not found!"
+fi
+
+echo "[3/4] Installing Playwright driver locally..."
+# This fixes the large driver issue by installing it safely inside the local cache
+playwright install --with-deps
+
+echo "[4/4] Setting up local Go binaries in ./bin..."
+mkdir -p bin
+
+# Check if unzip is installed
+if ! command -v unzip &> /dev/null; then
+    echo "Error: 'unzip' is not installed. Please install unzip to automatically extract binaries."
+    exit 1
+fi
+
+TOOLS=("subfinder" "katana" "nuclei" "httpx")
+
+for tool in "${TOOLS[@]}"; do
+    if [ ! -f "bin/$tool" ]; then
+        echo " -> Downloading $tool..."
+        # Get latest release version dynamically
+        latest_url=$(curl -Ls -o /dev/null -w %{url_effective} "https://github.com/projectdiscovery/$tool/releases/latest")
+        version=$(basename "$latest_url" | sed 's/v//')
+        
+        # Download and extract binary
+        curl -L -o "$tool.zip" -s "https://github.com/projectdiscovery/$tool/releases/download/v${version}/${tool}_${version}_linux_amd64.zip"
+        unzip -q "$tool.zip" "$tool" -d bin/
+        rm "$tool.zip"
+        chmod +x "bin/$tool"
+    else
+        echo " -> $tool already exists in bin/, skipping."
+    fi
 done
 
-echo "[*] Using venv directory: $VENV_DIR"
-
-if [[ $INSTALL_SYSTEM -eq 1 ]]; then
-  if command -v apt-get &> /dev/null; then
-    echo "[*] Installing system packages (sudo will be used)..."
-    sudo apt-get update
-    sudo apt-get install -y nmap sqlmap unzip wget curl jq build-essential
-  else
-    echo "[!] Apt not found — skipping system package installation"
-  fi
-fi
-
-if [[ ! -d "$VENV_DIR" ]]; then
-  echo "[*] Creating virtual environment: $VENV_DIR"
-  python3 -m venv "$VENV_DIR"
-fi
-
-# shellcheck disable=SC1090
-source "$VENV_DIR/bin/activate"
-
-echo "[*] Upgrading pip and wheel..."
-pip install --upgrade pip setuptools wheel
-
-REQ_FILES=(
-  "RECON-ZENTRY/requirements.txt"
-  "RECON-ZENTRY/patches/requirements_additions.txt"
-  "security_pipeline/requirements.txt"
-)
-
-for f in "${REQ_FILES[@]}"; do
-  if [[ -f "$f" ]]; then
-    echo "[*] Installing packages from $f"
-    pip install -r "$f"
-  else
-    echo "[*] Not found: $f — skipping"
-  fi
-done
-
-echo "[*] Installing top-level extras (if any)"
-if [[ -f "requirements.txt" ]]; then
-  pip install -r requirements.txt || true
-fi
-
-if [[ $RUN_SCRIPTS -eq 1 ]]; then
-  if [[ -f "RECON-ZENTRY/install.sh" ]]; then
-    echo "[*] Running RECON-ZENTRY/install.sh"
-    (cd RECON-ZENTRY && bash install.sh)
-  else
-    echo "[*] RECON-ZENTRY/install.sh not found — skipping"
-  fi
-
-  if [[ -f "security_pipeline/setup.sh" ]]; then
-    echo "[*] Running security_pipeline/setup.sh"
-    (cd security_pipeline && bash setup.sh)
-  else
-    echo "[*] security_pipeline/setup.sh not found — skipping"
-  fi
-fi
-
-echo "\n════════════════════════════════════════════════════════════"
-echo "  ✅ Setup complete. Activate the venv with: source $VENV_DIR/bin/activate"
-echo "════════════════════════════════════════════════════════════"
-
-exit 0
+echo "======================================"
+echo " Setup Complete!"
+echo " Activate environment using: source venv/bin/activate"
+echo " Run scan using: python3 main.py -u https://target.com"
+echo "======================================"

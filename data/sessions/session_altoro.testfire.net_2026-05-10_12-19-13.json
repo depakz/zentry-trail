@@ -1,0 +1,24 @@
+{
+  "target": "http://altoro.testfire.net/",
+  "created": "2026-05-10_12-19-13",
+  "subdomains": [
+    "http://altoro.testfire.net/"
+  ],
+  "alive_hosts": [],
+  "normalized_state": {
+    "target": "http://altoro.testfire.net/",
+    "subdomains": [
+      "http://altoro.testfire.net/"
+    ],
+    "alive_hosts": [],
+    "endpoints": [],
+    "validation_targets": [],
+    "ranked_targets": [],
+    "params": [],
+    "categories": [],
+    "findings": [],
+    "vulnerabilities": [],
+    "response_analysis": {},
+    "source": "recon_zentry"
+  }
+}

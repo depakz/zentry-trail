@@ -62,24 +62,26 @@ class GraphBuilder:
             graph.add_edge(root_id, protocol_id)
 
         for spec in validator_specs:
-            if not self._matches(spec, ports, protocols, finding_keywords):
-                continue
-
+            matched = self._matches(spec, ports, protocols, finding_keywords)
             node_id = f"validator:{spec.id}"
             graph.add_node(
                 DAGNode(
                     id=node_id,
                     kind="validator",
                     label=spec.name,
-                    data={"spec": spec},
+                    data={"spec": spec, "matched_context": matched},
                 )
             )
 
             graph.add_edge(root_id, node_id)
             for port in spec.required_ports:
-                graph.add_edge(f"port:{port}", node_id)
+                port_node_id = f"port:{port}"
+                if port_node_id in graph.nodes:
+                    graph.add_edge(port_node_id, node_id)
             for protocol in spec.required_protocols:
-                graph.add_edge(f"protocol:{protocol}", node_id)
+                protocol_node_id = f"protocol:{protocol}"
+                if protocol_node_id in graph.nodes:
+                    graph.add_edge(protocol_node_id, node_id)
 
         # Create vulnerability nodes and link to validators as mandatory children.
         # A vulnerability node will have child validator nodes when keywords overlap.

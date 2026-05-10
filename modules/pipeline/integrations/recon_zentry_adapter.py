@@ -10,7 +10,7 @@ from typing import Any, Dict, Iterable, List, Optional
 from urllib.parse import urlsplit
 
 
-RECON_ROOT = Path(__file__).resolve().parents[2] / "RECON-ZENTRY"
+RECON_ROOT = Path(__file__).resolve().parents[2] / "recon"
 
 
 class _ReconSessionShim:

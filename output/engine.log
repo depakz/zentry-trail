@@ -1,0 +1,11 @@
+2026-05-10 12:19:39,482 [INFO] OWASP coverage: 0.00% categories (0/10) | 0.00% subcases (0/50)
+2026-05-10 12:20:41,589 [INFO] OWASP coverage: 0.00% categories (0/10) | 0.00% subcases (0/50)
+2026-05-10 12:27:04,386 [INFO] OWASP coverage: 0.00% categories (0/10) | 0.00% subcases (0/50)
+2026-05-10 13:44:53,179 [INFO] OWASP coverage: 0.00% categories (0/10) | 0.00% subcases (0/50)
+2026-05-10 14:45:10,902 [INFO] OWASP compliance labels: General Security Requirement
+2026-05-10 14:45:10,902 [INFO] OWASP coverage: 70.00% categories (7/10) | 14.00% subcases (7/50)
+2026-05-10 15:44:15,790 [INFO] OWASP coverage: 0.00% categories (0/10) | 0.00% subcases (0/50)
+2026-05-10 15:56:54,230 [INFO] OWASP compliance labels: General Security Requirement
+2026-05-10 15:56:54,230 [INFO] OWASP coverage: 100.00% categories (10/10) | 24.00% subcases (12/50)
+2026-05-10 16:14:24,479 [INFO] OWASP compliance labels: General Security Requirement
+2026-05-10 16:14:24,479 [INFO] OWASP coverage: 100.00% categories (10/10) | 24.00% subcases (12/50)
