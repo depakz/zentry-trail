@@ -6,6 +6,7 @@ so the exploiter can target them precisely.
 import logging, re, asyncio
 import requests
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+from core.logger import dashboard
 
 log = logging.getLogger(__name__)
 
@@ -69,7 +70,15 @@ async def analyze(urls, session):
 
     log.info(f"   ✓ Reflections: {len(reflective)} | Errors leaked: {len(errors)}")
     try:
+        dashboard.advance_validation(f"analyzer:reflect:{len(reflective)}")
+    except Exception:
+        pass
+    try:
         session.update("reflections", reflective)
         session.update("error_leaks", errors)
     except Exception: pass
+    try:
+        dashboard.advance_validation(f"analyzer:errors:{len(errors)}")
+    except Exception:
+        pass
     return {"reflections": reflective, "errors": errors}

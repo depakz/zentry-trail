@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 
 logger = logging.getLogger(__name__)
+from core.logger import dashboard
 
 USER_AGENT = "Mozilla/5.0 (HackWithYuva/3.0)"
 
@@ -52,6 +53,10 @@ def extract_params(urls: List[str]) -> List[Dict]:
         except Exception:
             continue
     logger.info(f"[POST] Extracted {len(params_list)} parameterized URLs")
+    try:
+        dashboard.advance_recon(f"post:extracted:{len(params_list)}")
+    except Exception:
+        pass
     return params_list
 
 
@@ -163,6 +168,10 @@ def run_post_tests(param_entries: List[Dict], threads: int = 15, timeout: int = 
                 continue
 
     logger.info(f"[POST] Total findings: {len(all_findings)}")
+    try:
+        dashboard.advance_recon(f"post:findings:{len(all_findings)}")
+    except Exception:
+        pass
     return all_findings
 
 

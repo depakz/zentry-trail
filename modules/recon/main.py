@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """HACK WITH YUVA v4.0 — Elite Bug Bounty Weapon"""
-import asyncio, sys
+import asyncio, os, sys
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt, Confirm
@@ -36,6 +36,33 @@ def _yuva_should_mine(url: str) -> bool:
 # === END YUVA PATCH ===
 
 
+def _scan_limits():
+    profile = os.getenv("YUVA_SCAN_PROFILE", "aggressive").strip().lower()
+    if profile == "balanced":
+        return {
+            "subdomains": 25,
+            "alive": 10,
+            "endpoints": 120,
+            "ranked": 40,
+            "response": 20,
+            "nuclei": 100,
+            "arjun": 8,
+            "arjun_concurrency": 4,
+            "top_urls": 30,
+        }
+    return {
+        "subdomains": 40,
+        "alive": 15,
+        "endpoints": 200,
+        "ranked": 60,
+        "response": 30,
+        "nuclei": 150,
+        "arjun": 12,
+        "arjun_concurrency": 6,
+        "top_urls": 40,
+    }
+
+
 console = Console()
 
 BANNER = r"""
@@ -66,11 +93,14 @@ def check_tools():
 
 async def run_recon_pipeline(target, fast=True):
     session = Session(target)
+    limits = _scan_limits()
 
     subs = recon.run_recon(target, fast=fast)
+    subs = subs[:limits["subdomains"]]
     session.update("subdomains", subs)
 
     alive = probe.run_probe(subs)
+    alive = alive[:limits["alive"]]
     session.update("alive_hosts", alive)
     if not alive:
         result = {
@@ -91,22 +121,26 @@ async def run_recon_pipeline(target, fast=True):
         return result
 
     endpoints = discovery.run_discovery(alive)
+    endpoints = endpoints[:limits["endpoints"]]
     session.update("endpoints", endpoints)
 
     extra_urls, params = await param_miner.mine_parameters(
         [a.replace("http://", "").replace("https://", "") for a in alive],
         endpoints,
         session,
+        max_arjun=limits["arjun"],
+        concurrency=limits["arjun_concurrency"],
     )
-    all_urls = list(set(endpoints + extra_urls + alive))
+    all_urls = list(dict.fromkeys(endpoints + extra_urls + alive))[:limits["endpoints"]]
     session.update("endpoints", all_urls)
 
     ranked = smart_filter.filter_and_rank(all_urls)
+    ranked = ranked[:limits["ranked"]]
     cats = smart_filter.summarize(ranked, session)
 
-    top_urls = [r["url"] for r in ranked[:30]]
-    response_summary = await response_analyzer.analyze(top_urls, session)
-    nuclei_findings = await nuclei_scanner.scan_with_nuclei(all_urls, session)
+    top_urls = [r["url"] for r in ranked[:limits["top_urls"]]]
+    response_summary = await response_analyzer.analyze(top_urls[:limits["response"]], session)
+    nuclei_findings = await nuclei_scanner.scan_with_nuclei(all_urls[:limits["nuclei"]], session)
 
     validation_targets = []
     seen = set()
@@ -141,16 +175,19 @@ async def run_recon_pipeline(target, fast=True):
 
 async def full_scan(target, fast=True):
     session = Session(target)
+    limits = _scan_limits()
     console.print(Panel(f"🎯 Target: [bold]{target}[/]  Fast: {fast}", border_style="cyan"))
 
     # 1. Recon
     console.rule("[bold]1/9 RECON")
     subs = recon.run_recon(target, fast=fast)
+    subs = subs[:limits["subdomains"]]
     session.update("subdomains", subs)
 
     # 2. Probe
     console.rule("[bold]2/9 PROBE")
     alive = probe.run_probe(subs)
+    alive = alive[:limits["alive"]]
     session.update("alive_hosts", alive)
     if not alive:
         console.print("[red]No alive hosts. Aborting.[/]"); return
@@ -158,29 +195,33 @@ async def full_scan(target, fast=True):
     # 3. Discovery
     console.rule("[bold]3/9 DISCOVERY")
     endpoints = discovery.run_discovery(alive)
+    endpoints = endpoints[:limits["endpoints"]]
     session.update("endpoints", endpoints)
 
     # 4. Param Mining
     console.rule("[bold]4/9 PARAM MINING")
     extra_urls, params = await param_miner.mine_parameters(
         [a.replace("http://","").replace("https://","") for a in alive],
-        endpoints, session)
-    all_urls = list(set(endpoints + extra_urls))
+        endpoints, session,
+        max_arjun=limits["arjun"],
+        concurrency=limits["arjun_concurrency"])
+    all_urls = list(dict.fromkeys(endpoints + extra_urls))[:limits["endpoints"]]
     session.update("endpoints", all_urls)
 
     # 5. Smart Filter
     console.rule("[bold]5/9 SMART FILTER")
     ranked = smart_filter.filter_and_rank(all_urls)
+    ranked = ranked[:limits["ranked"]]
     cats = smart_filter.summarize(ranked, session)
 
     # 6. Fuzzing
     console.rule("[bold]6/9 FUZZING")
-    top_urls = [r["url"] for r in ranked[:30]]
+    top_urls = [r["url"] for r in ranked[:limits["top_urls"]]]
     await fuzzer.fuzz_all(alive, top_urls, session)
 
     # 7. Response Analysis (must run BEFORE exploit to feed reflections)
     console.rule("[bold]7/9 RESPONSE ANALYSIS")
-    await response_analyzer.analyze(top_urls, session)
+    await response_analyzer.analyze(top_urls[:limits["response"]], session)
 
     # 8. Exploitation (reflection-driven)
     console.rule("[bold]8/9 EXPLOITATION")
@@ -188,7 +229,7 @@ async def full_scan(target, fast=True):
 
     # 9. Nuclei (full coverage)
     console.rule("[bold]9/9 NUCLEI")
-    nuclei_findings = await nuclei_scanner.scan_with_nuclei(all_urls, session)
+    nuclei_findings = await nuclei_scanner.scan_with_nuclei(all_urls[:limits["nuclei"]], session)
 
     # Validation
     console.rule("[bold]VALIDATION")

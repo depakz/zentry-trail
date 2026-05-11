@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 
 logger = logging.getLogger(__name__)
+from core.logger import dashboard
 
 USER_AGENT = "Mozilla/5.0 (HackWithYuva/3.0)"
 
@@ -79,6 +80,10 @@ def extract_js_endpoints(urls: List[str], threads: int = 20, timeout: int = 10) 
 
     js_files = _filter_js(urls)
     logger.info(f"[JS] Found {len(js_files)} JS files to analyze")
+    try:
+        dashboard.advance_recon(f"js:files:{len(js_files)}")
+    except Exception:
+        pass
 
     all_endpoints: Set[str] = set()
 
@@ -101,6 +106,10 @@ def extract_js_endpoints(urls: List[str], threads: int = 20, timeout: int = 10) 
     endpoints = sorted(all_endpoints)
     api_eps = [e for e in endpoints if API_HINTS.search(e)]
     logger.info(f"[JS] Extracted {len(endpoints)} endpoints ({len(api_eps)} API-like)")
+    try:
+        dashboard.advance_recon(f"js:endpoints:{len(endpoints)}")
+    except Exception:
+        pass
 
     return {"js_files": js_files, "endpoints": endpoints}
 

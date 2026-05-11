@@ -10,6 +10,7 @@ import requests
 from urllib.parse import urlparse
 
 log = logging.getLogger(__name__)
+from core.logger import dashboard
 
 DIR_WORDLIST  = os.environ.get("YUVA_DIR_WL",
     "/usr/share/seclists/Discovery/Web-Content/common.txt")
@@ -137,6 +138,10 @@ async def fuzz_all(alive_hosts, top_urls, session):
         for r in validated:
             r["_source"] = host
             all_dirs.append(r)
+        try:
+            dashboard.advance_recon(f"ffuf:dir:{host}")
+        except Exception:
+            pass
 
     # ----- Param fuzzing on top dynamic URLs -----
     dyn_urls = [u for u in top_urls if any(
@@ -152,6 +157,10 @@ async def fuzz_all(alive_hosts, top_urls, session):
         for r in validated:
             r["_source"] = url
             all_params.append(r)
+        try:
+            dashboard.advance_recon(f"ffuf:param:{url[:40]}")
+        except Exception:
+            pass
 
     log.info(f"   └─ Validated: dirs={len(all_dirs)}  params={len(all_params)}")
     try:

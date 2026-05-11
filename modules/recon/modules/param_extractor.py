@@ -18,6 +18,7 @@ except ImportError:
     HTTPX_AVAILABLE = False
 
 logger = logging.getLogger("HWY.param_extractor")
+from core.logger import dashboard
 
 PARAM_KEY_RE    = re.compile(r"[?&]([a-zA-Z_][a-zA-Z0-9_]*)=")
 JSON_KEY_RE     = re.compile(r'"([a-zA-Z_][a-zA-Z0-9_]{1,40})"\s*:')
@@ -43,6 +44,10 @@ def extract_query_params(urls: List[str]) -> Dict[str, List[str]]:
         if keys:
             result[url] = keys
     logger.info("[PARAM] %d parameterized URLs from %d total", len(result), len(urls))
+    try:
+        dashboard.advance_recon(f"param:query:{len(result)}")
+    except Exception:
+        pass
     return result
 
 
@@ -149,6 +154,10 @@ def extract_all_params(
         "[PARAM] Summary — %d param URLs, %d unique keys, %d arjun hits",
         len(parameterized), len(all_keys), len(arjun_results),
     )
+    try:
+        dashboard.advance_recon(f"param:summary:urls{len(parameterized)}:keys{len(all_keys)}")
+    except Exception:
+        pass
     return {
         "parameterized_urls": parameterized,
         "all_param_keys":     sorted(all_keys),

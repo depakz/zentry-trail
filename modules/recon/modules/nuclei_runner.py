@@ -8,6 +8,7 @@ import shutil
 import tempfile
 import os
 from typing import List, Dict
+from core.logger import dashboard
 
 logger = logging.getLogger(__name__)
 
@@ -114,6 +115,11 @@ def run_nuclei(
                     os.unlink(p)
                 except Exception:
                     pass
+        try:
+            batch_no = (i // batch_size) + 1
+            dashboard.advance_recon(f"nuclei:batch{batch_no}")
+        except Exception:
+            pass
 
     logger.info(f"[NUCLEI] Total findings: {len(findings)}")
     return findings

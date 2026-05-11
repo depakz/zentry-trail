@@ -24,6 +24,7 @@ from modules.pipeline.brain.endpoint_normalizer import EndpointNormalizer
 from modules.pipeline.brain.attack_chain_manager import AttackChainManager, ChainedExploitationNode
 from modules.pipeline.engine.validation_engine_enhanced import ValidationResultProcessor
 from modules.pipeline.engine.executor import run_sqlmap, test_xss, run_git_extractor, run_ssh_brute, run_config_reader
+from core.logger import dashboard
 
 from .cve_mapper import CVEMapper
 from .graph_builder import DAGGraph, GraphBuilder, GraphEngineAdapter
@@ -456,22 +457,47 @@ class ConcurrentValidationEngine:
 
         return candidates[:75] if candidates else [str(state.get("url") or state.get("target") or "")]
 
-    async def run_pipeline(self) -> Dict[str, Any]:
+    async def run_pipeline(self, progress: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Run the DAG pipeline using an asyncio queue and worker pool."""
         pipeline_started = perf_counter()
         state = dict(self.state)
         if not state:
+            if isinstance(progress, dict):
+                progress.update({"total": 0, "completed": 0, "detail": "idle"})
             return {"results": [], "snapshot": {}, "scheduler_metrics": self._finalize_metrics(0.0)}
 
         self.dag_brain.build_graph(state)
         runtime = getattr(self.dag_brain.graph_builder, "engine", None)
         if runtime is None:
+            if isinstance(progress, dict):
+                progress.update({"total": 0, "completed": 0, "detail": "no-runtime"})
             return {"results": [], "snapshot": {}, "scheduler_metrics": self._finalize_metrics(0.0)}
 
         spec_map = {spec.id: spec for spec in self.dag_brain.validator_specs}
         queue: asyncio.Queue = asyncio.Queue()
         queued_edge_ids: set[str] = set()
         results: List[Dict[str, Any]] = []
+
+        def publish_progress(detail: str = "") -> None:
+            if not isinstance(progress, dict):
+                return
+            total = int(self._metrics.get("queued_edges", 0) or 0)
+            completed = int(self._metrics.get("executed_edges", 0) or 0)
+            if total < completed:
+                total = completed
+            progress.update(
+                {
+                    "total": total,
+                    "completed": completed,
+                    "detail": detail,
+                    "executed_batches": int(self._metrics.get("executed_batches", 0) or 0),
+                    "queued_batches": int(self._metrics.get("queued_batches", 0) or 0),
+                }
+            )
+            try:
+                dashboard.advance_recon(detail or "dag:progress")
+            except Exception:
+                pass
 
         def enqueue_ready_edges() -> None:
             batched: Dict[str, List[Any]] = {}
@@ -494,6 +520,8 @@ class ConcurrentValidationEngine:
                 self._metrics["queued_batches"] += 1
                 self._metrics["queued_edges"] += len(items)
 
+            publish_progress("queued")
+
         enqueue_ready_edges()
         if queue.empty():
             snapshot = runtime.get_graph_snapshot()
@@ -506,6 +534,7 @@ class ConcurrentValidationEngine:
                 save_graph_snapshot(snapshot)
             except Exception:
                 pass
+            publish_progress("idle")
             return {"results": [], "snapshot": snapshot, "scheduler_metrics": metrics}
 
         async def worker() -> None:
@@ -536,6 +565,7 @@ class ConcurrentValidationEngine:
                     self._metrics["batch_durations_ms"].append(duration_ms)
                     self._metrics["batch_sizes"].append(batch_size)
                     enqueue_ready_edges()
+                    publish_progress(f"executed {self._metrics['executed_edges']} edges")
                 finally:
                     queue.task_done()
 
@@ -556,6 +586,8 @@ class ConcurrentValidationEngine:
             save_graph_snapshot(snapshot)
         except Exception:
             pass
+
+        publish_progress("done")
 
         return {"results": results, "snapshot": snapshot, "scheduler_metrics": metrics}
 

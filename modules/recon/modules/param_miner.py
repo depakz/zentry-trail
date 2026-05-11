@@ -5,6 +5,7 @@ Guarantees baseline parameter detection even when network is hostile.
 """
 import asyncio, json, logging, os, re, shutil, tempfile
 from urllib.parse import urlparse, parse_qs
+from core.logger import dashboard
 
 log = logging.getLogger(__name__)
 
@@ -148,6 +149,10 @@ async def mine_parameters(hosts, endpoints, session,
             for p in plist:
                 sep = '&' if '?' in url else '?'
                 extra_urls.append(f"{url}{sep}{p}=FUZZ")
+        try:
+            dashboard.advance_recon(f"param_miner:regex:{len(regex_params)}")
+        except Exception:
+            pass
 
     # ----- Strategy 2: paramspider (fast, passive) -----
     for host in hosts[:2]:
@@ -160,6 +165,10 @@ async def mine_parameters(hosts, endpoints, session,
                     params.setdefault(k, []).extend(v)
                     params[k] = list(set(params[k]))
                 extra_urls.extend(psp[:200])
+                try:
+                    dashboard.advance_recon(f"param_miner:paramspider:{host}")
+                except Exception:
+                    pass
         except Exception as e:
             log.debug(f"paramspider error: {e}")
 
@@ -186,12 +195,20 @@ async def mine_parameters(hosts, endpoints, session,
                         extra_urls.append(f"{url}{sep}{p}=FUZZ")
                     log.info(f"   │  [{done}/{len(candidates)}] ✓ "
                              f"{url[:55]} +{len(found)}")
+                    try:
+                        dashboard.advance_recon(f"param_miner:arjun:{done}/{len(candidates)}")
+                    except Exception:
+                        pass
     else:
         log.warning("   ├─ arjun not installed")
 
     total_params = sum(len(v) for v in params.values())
     log.info(f"   └─ Total: {total_params} params / {len(params)} URLs "
              f"/ +{len(extra_urls)} fuzz URLs")
+    try:
+        dashboard.advance_recon(f"param_miner:total:{total_params}")
+    except Exception:
+        pass
 
     try: session.update("mined_params", params)
     except Exception: pass

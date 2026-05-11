@@ -8,6 +8,7 @@ import re
 import os
 from pathlib import Path
 from modules.pipeline.utils.logger import logger
+from core.logger import dashboard
 
 OUTPUT_FILE = "output/nuclei.json"
 
@@ -241,6 +242,10 @@ def run_nuclei_multi(targets, progress=None, cookie=None):
             all_warnings.append(f"Nuclei exit {returncode}. {stderr_text[:500]}")
 
         logger.info(f"nuclei multi: completed batched scan targets={len(cleaned_targets)} elapsed={int(time.time() - start_time)}s findings={len(all_normalized)} return={returncode}")
+        try:
+            dashboard.advance_recon(f"nuclei:multi_complete:targets{len(cleaned_targets)}")
+        except Exception:
+            pass
 
     except Exception as e:
         logger.exception("nuclei multi: batched scan failed")
@@ -266,6 +271,11 @@ def run_nuclei_multi(targets, progress=None, cookie=None):
             "exit_code": 0 if all_normalized else 1,
             "raw_warnings": all_warnings,
         }, f, indent=4)
+
+    try:
+        dashboard.advance_recon(f"nuclei:multi_written:{len(all_normalized)}")
+    except Exception:
+        pass
 
     return OUTPUT_FILE
 
@@ -431,6 +441,11 @@ def run_nuclei(target, progress=None, cookie=None):
                 "exit_code": returncode,
                 "raw_warnings": warning_msgs
             }, f, indent=4)
+
+        try:
+            dashboard.advance_recon(f"nuclei:target_complete:{str(target)[:60]}")
+        except Exception:
+            pass
 
         return OUTPUT_FILE
 

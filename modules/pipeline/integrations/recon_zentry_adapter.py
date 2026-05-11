@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import importlib
 import importlib.util
+import os
 import sys
 from pathlib import Path
 from types import ModuleType
@@ -11,7 +12,6 @@ from urllib.parse import urlsplit
 
 
 RECON_ROOT = Path(__file__).resolve().parents[2] / "recon"
-
 
 class _ReconSessionShim:
     def __init__(self, target: str):
@@ -37,15 +37,17 @@ def _ensure_recon_path() -> None:
 
 def _load_recon_modules() -> Dict[str, ModuleType]:
     _ensure_recon_path()
-    return {
-        "recon": importlib.import_module("modules.recon"),
-        "probe": importlib.import_module("modules.probe"),
-        "discovery": importlib.import_module("modules.discovery"),
-        "param_miner": importlib.import_module("modules.param_miner"),
-        "smart_filter": importlib.import_module("modules.smart_filter"),
-        "response_analyzer": importlib.import_module("modules.response_analyzer"),
-        "nuclei_scanner": importlib.import_module("modules.nuclei_scanner"),
-    }
+    modules_dir = RECON_ROOT / "modules"
+    modules = {}
+    for module_name in ["recon", "probe", "discovery", "param_miner", "smart_filter", "response_analyzer", "nuclei_scanner"]:
+        module_path = modules_dir / f"{module_name}.py"
+        if module_path.exists():
+            spec = importlib.util.spec_from_file_location(module_name, module_path)
+            if spec and spec.loader:
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                modules[module_name] = module
+    return modules
 
 
 def _load_recon_main_module() -> ModuleType:
@@ -171,6 +173,52 @@ def _build_summary(findings: List[Any]) -> Dict[str, int]:
     return _severity_summary(findings)
 
 
+def _scan_limits() -> Dict[str, int]:
+    profile = os.getenv("YUVA_SCAN_PROFILE", "aggressive").strip().lower()
+    if profile == "balanced":
+        return {
+            "subdomains": 25,
+            "alive": 10,
+            "endpoints": 120,
+            "ranked": 40,
+            "response": 20,
+            "nuclei": 100,
+            "arjun": 8,
+            "arjun_concurrency": 4,
+        }
+    return {
+        "subdomains": 40,
+        "alive": 15,
+        "endpoints": 200,
+        "ranked": 60,
+        "response": 30,
+        "nuclei": 150,
+        "arjun": 12,
+        "arjun_concurrency": 6,
+    }
+
+
+def _limit_urls(values: Iterable[Any], limit: int) -> List[str]:
+    return _dedupe_http_urls(list(values)[: max(0, int(limit))])
+
+
+def _apply_scan_limits(report: Dict[str, Any]) -> Dict[str, Any]:
+    limits = _scan_limits()
+    normalized = dict(report)
+    normalized["subdomains"] = [item for item in normalized.get("subdomains", []) if isinstance(item, str)][: limits["subdomains"]]
+    normalized["alive_hosts"] = _limit_urls(normalized.get("alive_hosts", []), limits["alive"])
+    normalized["endpoints"] = _limit_urls(normalized.get("endpoints", []), limits["endpoints"])
+    normalized["validation_targets"] = _limit_urls(normalized.get("validation_targets", []), limits["endpoints"])
+    ranked = normalized.get("ranked_targets", []) if isinstance(normalized.get("ranked_targets", []), list) else []
+    normalized["ranked_targets"] = ranked[: limits["ranked"]]
+    normalized["params"] = normalized.get("params", []) if isinstance(normalized.get("params", []), list) else []
+    normalized["categories"] = normalized.get("categories", []) if isinstance(normalized.get("categories", []), list) else []
+    normalized["findings"] = normalized.get("findings", []) if isinstance(normalized.get("findings", []), list) else []
+    normalized["vulnerabilities"] = normalized.get("vulnerabilities", normalized["findings"])
+    normalized["response_analysis"] = normalized.get("response_analysis", {}) if isinstance(normalized.get("response_analysis", {}), dict) else {}
+    return normalized
+
+
 async def run_recon_zentry(target: str) -> Dict[str, Any]:
     try:
         main_module = _load_recon_main_module()
@@ -178,27 +226,19 @@ async def run_recon_zentry(target: str) -> Dict[str, Any]:
         if callable(runner):
             parsed = await runner(target)
             if isinstance(parsed, dict):
-                normalized = dict(parsed)
-                normalized["target"] = target
-                normalized["source"] = "recon_zentry"
-                normalized.setdefault("scan_info", {})
-                normalized.setdefault("summary", _build_summary(normalized.get("findings", [])))
-                normalized["subdomains"] = [item for item in normalized.get("subdomains", []) if isinstance(item, str)]
-                normalized["alive_hosts"] = _dedupe_http_urls(normalized.get("alive_hosts", []))
-                normalized["endpoints"] = _dedupe_http_urls(normalized.get("endpoints", []))
-                normalized["validation_targets"] = _dedupe_http_urls(normalized.get("validation_targets", []))
-                normalized["ranked_targets"] = normalized.get("ranked_targets", []) if isinstance(normalized.get("ranked_targets", []), list) else []
-                normalized["params"] = normalized.get("params", []) if isinstance(normalized.get("params", []), list) else []
-                normalized["categories"] = normalized.get("categories", []) if isinstance(normalized.get("categories", []), list) else []
-                normalized["findings"] = normalized.get("findings", []) if isinstance(normalized.get("findings", []), list) else []
-                normalized["vulnerabilities"] = normalized.get("vulnerabilities", normalized["findings"])
-                normalized["response_analysis"] = normalized.get("response_analysis", {}) if isinstance(normalized.get("response_analysis", {}), dict) else {}
-                return normalized
+                return _apply_scan_limits({
+                    **parsed,
+                    "target": target,
+                    "source": "recon_zentry",
+                    "scan_info": parsed.get("scan_info", {}),
+                    "summary": _build_summary(parsed.get("findings", [])),
+                })
     except Exception:
         pass
 
     modules = _load_recon_modules()
     session = _ReconSessionShim(target=target)
+    limits = _scan_limits()
 
     target_domain = _as_target_domain(target)
     if not target_domain:
@@ -231,16 +271,17 @@ async def run_recon_zentry(target: str) -> Dict[str, Any]:
     subdomains = await asyncio.to_thread(recon.run_recon, target_domain)
     if not isinstance(subdomains, list):
         subdomains = []
+    subdomains = subdomains[: limits["subdomains"]]
 
     alive_hosts = await asyncio.to_thread(probe.run_probe, subdomains)
     if not isinstance(alive_hosts, list):
         alive_hosts = []
-    alive_hosts = _dedupe_http_urls(alive_hosts)
+    alive_hosts = _limit_urls(alive_hosts, limits["alive"])
 
     endpoints = await asyncio.to_thread(discovery.run_discovery, alive_hosts)
     if not isinstance(endpoints, list):
         endpoints = []
-    endpoints = _dedupe_http_urls(endpoints)
+    endpoints = _limit_urls(endpoints, limits["endpoints"])
 
     alive_hostnames = []
     for host in alive_hosts:
@@ -257,24 +298,26 @@ async def run_recon_zentry(target: str) -> Dict[str, Any]:
     if not isinstance(param_map, dict):
         param_map = {}
 
-    all_endpoints = _dedupe_http_urls([*endpoints, *extra_urls, *alive_hosts])
+    all_endpoints = _limit_urls([*endpoints, *extra_urls, *alive_hosts], limits["endpoints"])
 
     ranked_targets = smart_filter.filter_and_rank(all_endpoints)
     if not isinstance(ranked_targets, list):
         ranked_targets = []
+    ranked_targets = ranked_targets[: limits["ranked"]]
 
     category_map = smart_filter.summarize(ranked_targets, session)
     if not isinstance(category_map, dict):
         category_map = {}
 
     ranked_urls = _urls_from_ranked_targets(ranked_targets)
-    validation_targets = _dedupe_http_urls([*ranked_urls, *all_endpoints, target])
+    validation_targets = _limit_urls([*ranked_urls, *all_endpoints, target], limits["endpoints"])
 
-    response_analysis = await response_analyzer.analyze(ranked_urls, session)
+    response_analysis = await response_analyzer.analyze(ranked_urls[:limits["response"]], session)
     if not isinstance(response_analysis, dict):
         response_analysis = {}
 
-    nuclei_findings = await nuclei_scanner.scan_with_nuclei(all_endpoints, session)
+    nuclei_scan_urls = _limit_urls([*ranked_urls, *all_endpoints], limits["nuclei"])
+    nuclei_findings = await nuclei_scanner.scan_with_nuclei(nuclei_scan_urls, session)
     if not isinstance(nuclei_findings, list):
         nuclei_findings = []
 

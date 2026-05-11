@@ -6,18 +6,18 @@ SESSIONS_DIR = BASE_DIR / "data" / "sessions"
 PAYLOADS_DIR = BASE_DIR / "payloads"
 
 # Performance
-MAX_CONCURRENT_TASKS = 20
-HTTP_TIMEOUT = 15
-TOOL_TIMEOUT = 300
-RETRY_COUNT = 2
+MAX_CONCURRENT_TASKS = 12
+HTTP_TIMEOUT = 12
+TOOL_TIMEOUT = 180
+RETRY_COUNT = 1
 
 # Rate limiting (requests/sec per host)
 RATE_LIMIT = 30
-NUCLEI_RATE = 150
+NUCLEI_RATE = 200
 FFUF_RATE = 50
 
 # Batching
-NUCLEI_BATCH_SIZE = 500   # was 50 — removed bottleneck
+NUCLEI_BATCH_SIZE = 100   # faster batches for 20-minute scans
 FFUF_BATCH_SIZE = 100
 
 # Scan controls

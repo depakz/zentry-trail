@@ -19,6 +19,7 @@ import os
 from modules.pipeline.engine.decision import decide_actions
 from modules.pipeline.engine.executor import run_sqlmap, test_xss, run_git_extractor, run_ssh_brute, run_config_reader
 from modules.pipeline.utils.logger import logger
+from core.logger import dashboard
 from modules.pipeline.utils.retry import retry
 from modules.pipeline.utils.session import save_session
 from modules.pipeline.utils.session import load_session
@@ -441,6 +442,10 @@ def run_with_progress(label, func, *args, **kwargs):
 
     elapsed = int(time.time() - start)
     print(f"{label} done in {elapsed}s")
+    try:
+        dashboard.advance_recon(f"run_with_progress:{label}")
+    except Exception:
+        pass
     return value
 
 def display_terminal_summary(results):
@@ -585,7 +590,7 @@ def main():
         logger.info("Building DAG-driven state machine...")
         state = build_validation_state(parsed_data, session_context=session_context)
         dag_brain = DAGBrain(use_graph_engine=True)
-        concurrent_engine = ConcurrentValidationEngine(dag_brain=dag_brain, state=state, max_workers=20)
+        concurrent_engine = ConcurrentValidationEngine(dag_brain=dag_brain, state=state, max_workers=14)
 
         logger.info("Starting concurrent DAG execution loop...")
         pipeline_result = asyncio.run(concurrent_engine.run_pipeline())

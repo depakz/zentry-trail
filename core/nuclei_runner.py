@@ -9,8 +9,8 @@ import json
 class NucleiRunner:
     """Smart batched nuclei execution with timeouts"""
     
-    BATCH_SIZE = 50  # URLs per batch
-    BATCH_TIMEOUT = 300  # 5 minutes per batch
+    BATCH_SIZE = 25  # URLs per batch
+    BATCH_TIMEOUT = 180  # 3 minutes per batch
     
     TEMPLATES = [
         'cves/',

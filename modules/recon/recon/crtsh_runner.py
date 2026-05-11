@@ -1,4 +1,5 @@
 import aiohttp
+from core.logger import dashboard
 
 async def run(target: str, timeout: int = 30) -> list[str]:
     url = f"https://crt.sh/?q=%25.{target}&output=json"
@@ -12,6 +13,15 @@ async def run(target: str, timeout: int = 30) -> list[str]:
                 n = n.strip().lower().lstrip("*.")
                 if n.endswith(target):
                     names.add(n)
-        return sorted(names)
+        results = sorted(names)
+        try:
+            dashboard.advance_recon("crt.sh finished")
+        except Exception:
+            pass
+        return results
     except Exception:
+        try:
+            dashboard.advance_recon("crt.sh failed")
+        except Exception:
+            pass
         return []

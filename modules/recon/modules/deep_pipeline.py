@@ -9,6 +9,7 @@ from modules.recon.modules.gau_module import run_gau
 from modules.recon.modules.js_extractor import extract_js_endpoints
 from modules.recon.modules.api_discovery import discover_apis
 from modules.recon.modules.post_tester import extract_params, run_post_tests
+from core.logger import dashboard
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,10 @@ def run_deep_pipeline(
         gau_urls = run_gau(domains) if domains else []
     except Exception as e:
         logger.error(f"[DEEP] GAU failed: {e}")
+    try:
+        dashboard.advance_recon(f"deep:gau:{len(gau_urls)}")
+    except Exception:
+        pass
 
     # 2. Merge
     merged = set(katana_urls) | set(gau_urls)
@@ -65,6 +70,10 @@ def run_deep_pipeline(
         js_data = extract_js_endpoints(merged_list)
     except Exception as e:
         logger.error(f"[DEEP] JS extractor failed: {e}")
+    try:
+        dashboard.advance_recon(f"deep:js_extracted:{len(js_data.get('endpoints', []))}")
+    except Exception:
+        pass
 
     if js_data["endpoints"]:
         merged.update(js_data["endpoints"])
@@ -76,6 +85,10 @@ def run_deep_pipeline(
         apis = discover_apis(merged_list)
     except Exception as e:
         logger.error(f"[DEEP] API discovery failed: {e}")
+    try:
+        dashboard.advance_recon(f"deep:apis:{len(apis)}")
+    except Exception:
+        pass
 
     # 5. Param extraction
     params: List[Dict] = []
@@ -83,6 +96,10 @@ def run_deep_pipeline(
         params = extract_params(merged_list)
     except Exception as e:
         logger.error(f"[DEEP] Param extraction failed: {e}")
+    try:
+        dashboard.advance_recon(f"deep:params:{len(params)}")
+    except Exception:
+        pass
 
     # 6. POST testing
     post_findings: List[Dict] = []
@@ -91,6 +108,10 @@ def run_deep_pipeline(
             post_findings = run_post_tests(params)
         except Exception as e:
             logger.error(f"[DEEP] POST tester failed: {e}")
+        try:
+            dashboard.advance_recon(f"deep:post_tests:{len(post_findings)}")
+        except Exception:
+            pass
     else:
         logger.info("[DEEP] POST testing skipped")
 

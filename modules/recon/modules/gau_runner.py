@@ -7,6 +7,7 @@ import shutil
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 log = logging.getLogger("gau_runner")
+from core.logger import dashboard
 
 
 def _have(tool: str) -> bool:
@@ -53,6 +54,10 @@ def _run_gau_single(domain: str, threads: int = 3, timeout: int = 30) -> list:
         if out.strip():
             urls = [u.strip() for u in out.splitlines() if u.strip().startswith("http")]
             log.info(f"   ✓ gau({domain}): {len(urls)} URLs")
+            try:
+                dashboard.advance_recon(f"gau:{domain}")
+            except Exception:
+                pass
             return urls
     return []
 
@@ -65,6 +70,10 @@ def _run_waybackurls(domain: str, timeout: int = 30) -> list:
     urls = [u.strip() for u in out.splitlines() if u.strip().startswith("http")]
     if urls:
         log.info(f"   ✓ waybackurls({domain}): {len(urls)} URLs")
+        try:
+            dashboard.advance_recon(f"wayback:{domain}")
+        except Exception:
+            pass
     return urls
 
 

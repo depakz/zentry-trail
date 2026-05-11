@@ -6,6 +6,7 @@ import logging
 import shutil
 from typing import List, Set
 from urllib.parse import urldefrag
+from core.logger import dashboard
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +55,11 @@ def _run_gau(domains: List[str], timeout: int = 300) -> Set[str]:
             if norm:
                 urls.add(norm)
 
+        try:
+            dashboard.advance_recon(f"gau:source:{len(urls)}")
+        except Exception:
+            pass
+
     except subprocess.TimeoutExpired:
         logger.warning(f"[GAU] Timed out after {timeout}s")
     except Exception as e:
@@ -85,6 +91,10 @@ def run_gau(domains: List[str], timeout: int = 300, retries: int = 2) -> List[st
 
     result = sorted(all_urls)
     logger.info(f"[GAU] Total unique URLs collected: {len(result)}")
+    try:
+        dashboard.advance_recon(f"gau:total:{len(result)}")
+    except Exception:
+        pass
     return result
 
 
