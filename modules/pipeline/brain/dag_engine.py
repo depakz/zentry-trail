@@ -46,6 +46,7 @@ VALIDATOR_CLASS_MAP = {
 class DAGPlan:
     graph: DAGGraph
     ordered_nodes: List[str] = field(default_factory=list)
+    execution_layers: List[List[str]] = field(default_factory=list)
     validators: List[Any] = field(default_factory=list)
     context: Optional[ExecutionContext] = None
 
@@ -98,10 +99,31 @@ class DAGBrain:
 
         return instance
 
+    def get_execution_layers(self, graph: DAGGraph) -> List[List[str]]:
+        in_degree = {node: 0 for node in graph.nodes}
+        for u in graph.adj:
+            for v, _ in graph.adj[u]:
+                in_degree[v] += 1
+        
+        layers = []
+        queue = [node for node, deg in in_degree.items() if deg == 0]
+        while queue:
+            layers.append(queue)
+            next_queue = []
+            for u in queue:
+                if u in graph.adj:
+                    for v, _ in graph.adj[u]:
+                        in_degree[v] -= 1
+                        if in_degree[v] == 0:
+                            next_queue.append(v)
+            queue = next_queue
+        return layers
+
     def plan_validations(self, state: Dict[str, Any]) -> DAGPlan:
         context = ExecutionContext.from_state(state)
         graph = self.build_graph(state)
         ordered_nodes = self.graph_builder.topological_sort(graph)
+        execution_layers = self.get_execution_layers(graph)
 
         validators: List[Any] = []
         selected_spec_ids: Set[str] = set()
@@ -139,7 +161,7 @@ class DAGBrain:
             except Exception:
                 continue
 
-        return DAGPlan(graph=graph, ordered_nodes=ordered_nodes, validators=validators, context=context)
+        return DAGPlan(graph=graph, ordered_nodes=ordered_nodes, execution_layers=execution_layers, validators=validators, context=context)
 
     def plan_cve_validations(
         self,

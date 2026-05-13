@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from rich.progress import Progress
 import importlib
 import importlib.util
 import os
@@ -219,7 +220,24 @@ def _apply_scan_limits(report: Dict[str, Any]) -> Dict[str, Any]:
     return normalized
 
 
-async def run_recon_zentry(target: str) -> Dict[str, Any]:
+async def _run_binary(cmd: List[str]) -> str:
+    """Run a subprocess command non-blocking and return stdout."""
+    try:
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, _ = await process.communicate()
+        return stdout.decode(errors="ignore") if stdout else ""
+    except Exception:
+        return ""
+
+async def run_recon_zentry(target: str, progress: Progress = None, recon_task: int = None) -> Dict[str, Any]:
+    def _update_prog(detail: str):
+        if progress and recon_task is not None:
+            progress.update(recon_task, advance=10, description=f"[cyan]Reconnaissance: {detail}")
+
     try:
         main_module = _load_recon_main_module()
         runner = getattr(main_module, "run_recon_pipeline", None)
@@ -268,20 +286,56 @@ async def run_recon_zentry(target: str) -> Dict[str, Any]:
     response_analyzer = modules["response_analyzer"]
     nuclei_scanner = modules["nuclei_scanner"]
 
-    subdomains = await asyncio.to_thread(recon.run_recon, target_domain)
-    if not isinstance(subdomains, list):
-        subdomains = []
-    subdomains = subdomains[: limits["subdomains"]]
+    _update_prog("running subfinder and assetfinder concurrently")
+    # A. Concurrent Recon using subprocess.PIPE with non-blocking reads and asyncio.gather
+    subfinder_cmd = ["subfinder", "-d", target_domain, "-silent"]
+    assetfinder_cmd = ["assetfinder", "--subs-only", target_domain]
+    
+    results = await asyncio.gather(
+        _run_binary(subfinder_cmd),
+        _run_binary(assetfinder_cmd),
+        return_exceptions=True
+    )
+    
+    sub_set = set()
+    for res in results:
+        if isinstance(res, str):
+            for line in res.splitlines():
+                if line.strip():
+                    sub_set.add(line.strip())
+                    
+    subdomains = list(sub_set)[: limits["subdomains"]]
+    if not subdomains:
+        subdomains = await asyncio.to_thread(recon.run_recon, target_domain)
+        subdomains = subdomains[: limits["subdomains"]] if isinstance(subdomains, list) else []
 
+    _update_prog("probing alive hosts")
     alive_hosts = await asyncio.to_thread(probe.run_probe, subdomains)
     if not isinstance(alive_hosts, list):
         alive_hosts = []
     alive_hosts = _limit_urls(alive_hosts, limits["alive"])
 
-    endpoints = await asyncio.to_thread(discovery.run_discovery, alive_hosts)
-    if not isinstance(endpoints, list):
-        endpoints = []
-    endpoints = _limit_urls(endpoints, limits["endpoints"])
+    _update_prog("running gau and discovery concurrently")
+    # discovery concurrently using non-blocking commands
+    gau_cmd = ["gau", "--subs", target_domain]
+    disc_results = await asyncio.gather(
+        _run_binary(gau_cmd),
+        asyncio.to_thread(discovery.run_discovery, alive_hosts),
+        return_exceptions=True
+    )
+    
+    end_set = set()
+    for res in disc_results:
+        if isinstance(res, str):
+            for line in res.splitlines():
+                if line.strip():
+                    end_set.add(line.strip())
+        elif isinstance(res, list):
+            for item in res:
+                if isinstance(item, str):
+                    end_set.add(item)
+                    
+    endpoints = list(end_set)[: limits["endpoints"]]
 
     alive_hostnames = []
     for host in alive_hosts:
@@ -316,6 +370,7 @@ async def run_recon_zentry(target: str) -> Dict[str, Any]:
     if not isinstance(response_analysis, dict):
         response_analysis = {}
 
+    _update_prog("scanning with nuclei")
     nuclei_scan_urls = _limit_urls([*ranked_urls, *all_endpoints], limits["nuclei"])
     nuclei_findings = await nuclei_scanner.scan_with_nuclei(nuclei_scan_urls, session)
     if not isinstance(nuclei_findings, list):

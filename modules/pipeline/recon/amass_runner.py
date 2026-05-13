@@ -1,0 +1,15 @@
+"""Amass passive — short timeout because it's notoriously slow."""
+from modules.recon.utils.runner import run_cmd
+from core.logger import dashboard
+
+async def run(target: str, passive: bool = True, timeout: int = 120) -> list[str]:
+    mode = "-passive" if passive else ""
+    # -timeout is in MINUTES for amass
+    cmd = f"amass enum {mode} -d {target} -timeout 2 -silent"
+    code, out, err = await run_cmd(cmd, timeout=timeout)
+    results = [s.strip() for s in out.splitlines() if s.strip() and target in s]
+    try:
+        dashboard.advance_recon("amass finished")
+    except Exception:
+        pass
+    return results

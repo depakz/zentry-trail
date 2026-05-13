@@ -386,9 +386,11 @@ def run_with_progress(label, func, *args, **kwargs):
     This does not estimate percent complete; it confirms the task is still running
     and shows elapsed time.
     """
+    # If not a TTY, run normally.
     if not sys.stdout.isatty():
         return func(*args, **kwargs)
 
+    # Pass a lightweight progress dict when supported by the function.
     progress = {"detail": ""}
     try:
         if "progress" in inspect.signature(func).parameters:
@@ -397,51 +399,22 @@ def run_with_progress(label, func, *args, **kwargs):
     except Exception:
         pass
 
-    stop = threading.Event()
     start = time.time()
-
-    def _spin():
-        spinner = "|/-\\"
-        idx = 0
-        while not stop.is_set():
-            elapsed = int(time.time() - start)
-            ch = spinner[idx % len(spinner)]
-            detail = progress.get("detail") or ""
-            if len(detail) > 120:
-                detail = detail[:117] + "..."
-            sys.stdout.write(f"\r[{ch}] {label}... {elapsed}s elapsed{detail}")
-            sys.stdout.flush()
-            time.sleep(0.5)
-            idx += 1
-
-    spin_thread = threading.Thread(target=_spin, daemon=True)
-    spin_thread.start()
-
     try:
+        dashboard.print_log(f"Starting: {label}")
         value = func(*args, **kwargs)
     except KeyboardInterrupt:
-        stop.set()
-        spin_thread.join(timeout=2)
-        sys.stdout.write("\r" + (" " * 120) + "\r")
-        sys.stdout.flush()
-        print(f"{label} interrupted by user")
+        elapsed = int(time.time() - start)
+        dashboard.print_log(f"{label} interrupted by user after {elapsed}s")
         raise
     except Exception as e:
-        stop.set()
-        spin_thread.join(timeout=2)
-        sys.stdout.write("\r" + (" " * 120) + "\r")
-        sys.stdout.flush()
         elapsed = int(time.time() - start)
-        print(f"{label} failed after {elapsed}s: {e}")
+        dashboard.print_log(f"{label} failed after {elapsed}s: {e}")
         raise
     finally:
-        stop.set()
-        spin_thread.join(timeout=2)
-        sys.stdout.write("\r" + (" " * 120) + "\r")
-        sys.stdout.flush()
+        elapsed = int(time.time() - start)
+        dashboard.print_log(f"{label} done in {elapsed}s")
 
-    elapsed = int(time.time() - start)
-    print(f"{label} done in {elapsed}s")
     try:
         dashboard.advance_recon(f"run_with_progress:{label}")
     except Exception:

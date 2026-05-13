@@ -7,6 +7,7 @@ validator.py — YUVA Precision Edition
 """
 import logging, re, asyncio
 import requests
+import aiohttp
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -37,13 +38,13 @@ def _ensure_dict(item, default_type="generic"):
     return d
 
 
-def _probe(url, timeout=10):
+async def _probe(url, session, timeout=10):
     if not url:
         return None, 0
     try:
-        r = requests.get(url, timeout=timeout, verify=False,
-                         allow_redirects=False, headers=UA)
-        return r.text, r.status_code
+        async with session.get(url, timeout=timeout, allow_redirects=False, headers=UA, ssl=False) as r:
+            body = await r.text()
+            return body, r.status
     except Exception as e:
         log.debug(f"validator probe failed: {url} → {e}")
         return None, 0
@@ -127,17 +128,21 @@ async def validate_all(findings_dict, session):
 
     log.info(f"   ├─ Re-probing {len(flat)} findings...")
 
-    loop = asyncio.get_event_loop()
     validated = []
     high_conf = 0
-    for f in flat:
-        score, ok, reason = await loop.run_in_executor(None, _confidence, f)
-        f["confidence"] = score
-        f["validated"] = ok
-        f["reason"] = reason
-        if ok:
-            high_conf += 1
-        validated.append(f)
+    sem = asyncio.Semaphore(20) # Limit concurrent requests
+    
+    async with aiohttp.ClientSession() as http_session:
+        tasks = [_confidence(f, http_session, sem) for f in flat]
+        results = await asyncio.gather(*tasks)
+        
+        for f, (score, ok, reason) in zip(flat, results):
+            f["confidence"] = score
+            f["validated"] = ok
+            f["reason"] = reason
+            if ok:
+                high_conf += 1
+            validated.append(f)
 
     # Sort by confidence
     validated.sort(key=lambda x: x.get("confidence", 0), reverse=True)
