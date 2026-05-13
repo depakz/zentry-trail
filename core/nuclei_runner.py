@@ -20,7 +20,7 @@ class NucleiRunner:
     ]
     
     @staticmethod
-    def run_batch(urls: List[str], batch_num: int, templates: List[str] = None) -> Dict:
+    def run_batch(urls: List[str], batch_num: int, templates: List[str] = None, tags: List[str] = None) -> Dict:
         """
         Run nuclei on batch of URLs
         Returns: {'findings': [...], 'scanned': count}
@@ -40,10 +40,11 @@ class NucleiRunner:
             
             # Build nuclei command - conservative settings
             template_flags = ' '.join([f'-t {t}' for t in templates])
+            tags_flag = f"-tags {','.join(tags)}" if tags else ""
             cmd = (
-                f'nuclei -l "{batch_file}" {template_flags} '
-                f'-json -silent -timeout 5 -rate-limit 50 '
-                f'-retries 0 -severity critical,high,medium '
+                f'nuclei -l "{batch_file}" {template_flags} {tags_flag} '
+                f'-json -silent -timeout 5 -rate-limit 150 -c 50 -bulk-size 25 '
+                f'-retries 0 -severity critical,high '
                 f'-no-color 2>/dev/null'
             )
             

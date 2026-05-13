@@ -160,11 +160,37 @@ class Orchestrator:
         self.session.endpoints = sorted(endpoints)
         progress.console.log(f"   [bold green]→ {len(self.session.endpoints)} endpoints found[/]")
 
-        # ----- 5. NUCLEI SCAN -----
+        # ----- 5. NUCLEI & NAABU SCAN (Parallel) -----
         progress.console.log("[cyan]► Phase 2: Validation[/]")
-        progress.update(validation_task, advance=10, description="[magenta]Phase 2: Validation (Nuclei scan)")
+        progress.update(validation_task, advance=10, description="[magenta]Phase 2: Validation (Parallel Naabu & Nuclei)")
         scan_targets = [h["url"] for h in alive]
-        nuclei_findings = await _timed("nuclei", nuclei_runner.scan(scan_targets), timeout=1800, progress=progress)
+        
+        # Smart Filtering: Extract tech stack tags
+        tech_tags = set()
+        for host in alive:
+            if isinstance(host, dict) and host.get("tech"):
+                for t in host["tech"]:
+                    if isinstance(t, str):
+                        tech_tags.add(t.lower())
+        tech_tags_list = list(tech_tags)
+        if tech_tags_list:
+            progress.console.log(f"   [yellow]ℹ Smart Filtering Nuclei with tags: {','.join(tech_tags_list[:5])}...[/]")
+        
+        # Parallel Probing
+        from modules.pipeline.recon.naabu_scan import run_naabu
+        
+        async def async_naabu():
+            try:
+                loop = asyncio.get_running_loop()
+                return await loop.run_in_executor(None, run_naabu, self.target)
+            except Exception:
+                return {}
+        
+        naabu_task = asyncio.create_task(_timed("naabu", async_naabu(), timeout=600, progress=progress))
+        nuclei_task = asyncio.create_task(_timed("nuclei", nuclei_runner.scan(scan_targets, tags=tech_tags_list), timeout=900, progress=progress))
+        
+        await asyncio.gather(naabu_task, nuclei_task)
+        nuclei_findings = await nuclei_task
 
         # ----- 6. VALIDATION -----
         validated: list[Finding] = []

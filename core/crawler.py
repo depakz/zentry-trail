@@ -15,7 +15,7 @@ class Crawler:
         try:
             cmd = (
                 f'katana -u "{url}" -d {depth} -silent '
-                f'-timeout {timeout} -rate-limit 20 '
+                f'-timeout {timeout} -rate-limit 150 -c 50 '
                 f'-no-color 2>/dev/null'
             )
             stdout, code = Utils.run_command(cmd, timeout=timeout + 10)

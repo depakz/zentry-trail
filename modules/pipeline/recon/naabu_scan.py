@@ -41,7 +41,8 @@ def run_naabu(target):
             naabu_bin,
             "-host", target,
             "-json",
-            "-silent"
+            "-silent",
+            "-top-ports", "1000"
         ]
 
         process = subprocess.Popen(
