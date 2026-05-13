@@ -5,7 +5,7 @@ from typing import Iterable
 
 # Valid domain regex (RFC 1035-ish, allows subdomains)
 DOMAIN_RE = re.compile(
-    r"^(?=.{1,253}$)(?!-)[A-Za-z0-9-]{1,63}(?<!-)(?:\.(?!-)[A-Za-z0-9-]{1,63}(?<!-))+$"
+    r"^(?=.{1,253}$)(?!-)[A-Za-z0-9-]{1,63}(?<!-)(?:\.(?!-)[A-Za-z0-9-]{1,63}(?<!-))*(?:\:\d{1,5})?$"
 )
 
 
@@ -26,8 +26,8 @@ def sanitize_domains(raw: Iterable[str]) -> list[str]:
         d = item.strip().lower()
         # Strip scheme
         d = re.sub(r"^https?://", "", d)
-        # Strip path/port
-        d = d.split("/")[0].split(":")[0]
+        # Strip path
+        d = d.split("/")[0]
         # Strip wildcard
         if d.startswith("*."):
             d = d[2:]

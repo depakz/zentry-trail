@@ -13,7 +13,7 @@ PAYLOADS = [
     "<img src=x onerror=window.__xss_pwn=1>",
 ]
 
-async def validate_xss(url: str, param: str, timeout: int = 15) -> dict | None:
+async def validate_xss(url: str, param: str, timeout: int = 20) -> dict | None:
     """
     Returns confirmed finding dict or None.
     Strategy:

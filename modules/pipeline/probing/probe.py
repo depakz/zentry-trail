@@ -33,6 +33,7 @@ def find_httpx_binary() -> str:
 
     # 2. Known Go paths
     candidates = [
+        Path.home() / "bin" / "httpx",
         Path.home() / "go" / "bin" / "httpx",
         Path("/usr/local/bin/httpx"),
         Path("/usr/bin/httpx"),
@@ -40,8 +41,11 @@ def find_httpx_binary() -> str:
         Path("/snap/bin/httpx"),
     ]
     for c in candidates:
-        if c.is_file() and _is_go_httpx(str(c)):
-            return str(c)
+        try:
+            if c.is_file() and _is_go_httpx(str(c)):
+                return str(c)
+        except PermissionError:
+            continue
 
     # 3. PATH lookup (but verify it's Go version)
     path_bin = shutil.which("httpx")
@@ -69,8 +73,9 @@ def _is_go_httpx(path: str) -> bool:
 async def _resolve(domain: str) -> str | None:
     loop = asyncio.get_event_loop()
     try:
+        host = domain.split(":")[0]
         info = await asyncio.wait_for(
-            loop.getaddrinfo(domain, None, family=socket.AF_INET), timeout=5,
+            loop.getaddrinfo(host, None, family=socket.AF_INET), timeout=5,
         )
         return info[0][4][0]
     except Exception:

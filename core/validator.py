@@ -33,7 +33,7 @@ class Validator:
             else:
                 test_url = url
             
-            resp = requests.get(test_url, timeout=10, allow_redirects=False)
+            resp = requests.get(test_url, timeout=20, allow_redirects=False)
             
             # Check reflection
             if payload in resp.text:
@@ -63,7 +63,7 @@ class Validator:
                     test_url = url
                 
                 try:
-                    resp = requests.get(test_url, timeout=10)
+                    resp = requests.get(test_url, timeout=20)
                     
                     if any(re.search(pattern, resp.text, re.I) 
                            for pattern in error_patterns):

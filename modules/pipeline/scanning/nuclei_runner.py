@@ -5,6 +5,13 @@ from modules.recon.utils.runner import run_cmd
 async def scan(targets: list[str], tags: list[str] = None) -> list[dict]:
     if not targets:
         return []
+    
+    if tags is None:
+        tags = []
+    # Always include base tags for critical/high severity generic templates
+    base_tags = {"generic", "misconfig", "exposure"}
+    tags = list(set(tags).union(base_tags))
+    
     out_file = Path(tempfile.mktemp(suffix=".jsonl"))
     inp = "\n".join(targets)
     

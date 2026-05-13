@@ -1,0 +1,9 @@
+{
+  "target": "http://localhost:3000/",
+  "created": "2026-05-14_00-33-53",
+  "waf": {},
+  "subdomains": [
+    "http://localhost:3000/"
+  ],
+  "alive_hosts": []
+}

@@ -2,7 +2,21 @@ import re
 import os
 import json
 from datetime import datetime
+from dataclasses import dataclass, field, asdict
 
+@dataclass
+class Finding:
+    id: str
+    title: str
+    severity: str
+    endpoint: str = ""
+    payload: str = ""
+    evidence: str = ""
+    validated: bool = False
+    reproduction: list = field(default_factory=list)
+    impact: str = ""
+    cve: list = field(default_factory=list)
+    score: float = 0.0
 
 class Session:
     def __init__(self, target, base_dir="data/sessions"):
@@ -20,6 +34,7 @@ class Session:
         self.path = os.path.join(base_dir, filename)
         self.target = target
         self.data = {"target": target, "created": timestamp}
+        self.waf = {}
         self.save()
 
     def update(self, key, value):
@@ -30,7 +45,15 @@ class Session:
         return self.data.get(key, default)
 
     def save(self):
+        # Serialize dynamically added attributes
+        for attr in ["subdomains", "alive_hosts", "endpoints", "waf"]:
+            if hasattr(self, attr):
+                self.data[attr] = getattr(self, attr)
+        if hasattr(self, "findings"):
+            self.data["findings"] = [asdict(f) if hasattr(f, "__dataclass_fields__") else f for f in getattr(self, "findings")]
+            
         # Ensure parent directory exists before writing
         os.makedirs(os.path.dirname(self.path), exist_ok=True)
         with open(self.path, "w") as f:
             json.dump(self.data, f, indent=2, default=str)
+        return self.path
