@@ -17,3 +17,4 @@
 2026-05-12 01:40:10,893 [INFO] OWASP coverage: 100.00% categories (10/10) | 26.00% subcases (13/50)
 2026-05-12 02:14:10,976 [INFO] OWASP compliance labels: General Security Requirement
 2026-05-12 02:14:10,977 [INFO] OWASP coverage: 100.00% categories (10/10) | 26.00% subcases (13/50)
+2026-05-14 15:43:01,333 [INFO] BrokenAccessControlValidator: probing access control on http://testphp.vulnweb.com

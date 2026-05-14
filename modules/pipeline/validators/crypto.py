@@ -117,6 +117,8 @@ def _probe_tls_versions(host: str, port: int, timeout: int) -> Dict[str, Any]:
 class CryptoValidator:
     """OWASP A02 validator for weak cryptography, plaintext transport, and missing security headers."""
 
+    SIGNALS = {"ports": [443, 8443]}
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

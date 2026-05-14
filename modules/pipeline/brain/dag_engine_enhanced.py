@@ -120,6 +120,12 @@ class DAGBrain:
     def build_graph(self, state: Dict[str, Any]) -> DAGGraph:
         return self.graph_builder.build(state, self.validator_specs)
 
+    def build_plan(self, state: Dict[str, Any], selected_validators: Optional[List[Any]] = None) -> DAGPlan:
+        plan = self.plan_validations(state)
+        if selected_validators is not None:
+            plan.validators = list(selected_validators)
+        return plan
+
     def _instantiate_validator(
         self,
         validator_cls,

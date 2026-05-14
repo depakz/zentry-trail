@@ -149,10 +149,10 @@ class LiveDashboard:
                 if self._live is not None:
                     try:
                         self._live.update(self._renderable(), refresh=True)
-                    except Exception:
-                        pass
-            except Exception:
-                pass
+                    except Exception as e:
+                        logger.warning(f"advance_recon live render failed: {e}")
+            except Exception as e:
+                logger.warning(f"advance_recon failed: {e}")
 
     def advance_validation(self, detail: str = "") -> None:
         with self._lock:
@@ -165,10 +165,10 @@ class LiveDashboard:
                 if self._live is not None:
                     try:
                         self._live.update(self._renderable(), refresh=True)
-                    except Exception:
-                        pass
-            except Exception:
-                pass
+                    except Exception as e:
+                        print(f"advance_validation live render failed: {e}")
+            except Exception as e:
+                print(f"advance_validation failed: {e}")
 
     def update_recon(self, completed: int, detail: str) -> None:
         self._update_task(self._recon_task_id, completed, detail)

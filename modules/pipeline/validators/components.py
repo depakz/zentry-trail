@@ -35,6 +35,8 @@ def _collect_text(value: Any, out: List[str]) -> None:
 class OutdatedComponentsValidator:
     """OWASP A06 validator for vulnerable/outdated component evidence."""
 
+    SIGNALS = {}
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

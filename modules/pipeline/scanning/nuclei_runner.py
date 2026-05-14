@@ -17,7 +17,7 @@ async def scan(targets: list[str], tags: list[str] = None) -> list[dict]:
     
     tags_flag = f"-tags {','.join(tags)}" if tags else ""
     # Smart filtering & Performance tuning
-    cmd = f"nuclei -silent {tags_flag} -severity critical,high -jsonl -o {out_file} -rl 150 -c 50 -bs 25"
+    cmd = f"nuclei -silent {tags_flag} -severity critical,high,medium -jsonl -o {out_file} -rl 150 -c 50 -bs 25"
     
     await run_cmd(cmd, timeout=900, input_data=inp)
     findings = []

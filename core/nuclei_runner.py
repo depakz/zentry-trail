@@ -44,7 +44,7 @@ class NucleiRunner:
             cmd = (
                 f'nuclei -l "{batch_file}" {template_flags} {tags_flag} '
                 f'-json -silent -timeout 5 -rate-limit 150 -c 50 -bulk-size 25 '
-                f'-retries 0 -severity critical,high '
+                f'-retries 0 -severity critical,high,medium '
                 f'-no-color 2>/dev/null'
             )
             

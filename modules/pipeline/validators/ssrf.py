@@ -60,6 +60,25 @@ def _candidate_params(state: Dict[str, Any], target_url: str) -> List[str]:
 class SSRFValidator:
     """OWASP A10 validator that probes a loopback fetch through a suspected URL parameter."""
 
+    SIGNALS = {
+        "param_patterns": [
+            "url",
+            "uri",
+            "dest",
+            "redirect",
+            "callback",
+            "webhook",
+            "endpoint",
+            "target",
+            "feed",
+            "path",
+            "src",
+            "link",
+            "next",
+            "host",
+        ]
+    }
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

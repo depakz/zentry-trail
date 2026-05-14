@@ -68,6 +68,8 @@ class IntegritySignal:
 
 
 class IntegrityValidator:
+    SIGNALS = {}
+
     def __init__(self, context: Optional[ExecutionContext] = None, fact_store: Optional[Any] = None):
         self.context = context
         self.fact_store = fact_store

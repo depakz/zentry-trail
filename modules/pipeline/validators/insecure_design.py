@@ -112,6 +112,17 @@ def _workflow_templates(state: Dict[str, Any]) -> List[Dict[str, Any]]:
 class InsecureDesignValidator:
     """OWASP A04 validator for workflow abuse and state-transition bypass."""
 
+    SIGNALS = {
+        "endpoint_patterns": [
+            "/checkout",
+            "/payment",
+            "/order",
+            "/transfer",
+            "/reset",
+            "/confirm",
+        ]
+    }
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

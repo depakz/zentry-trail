@@ -8,38 +8,50 @@ from modules.pipeline.engine.models import ExecutionContext
 from .cve_mapper import CVEMapper
 from .graph_builder import DAGGraph, GraphBuilder, GraphEngineAdapter
 from .kb import ValidatorSpec, get_default_validator_specs
-from modules.pipeline.validators.access_control import BrokenAccessControlValidator
-from modules.pipeline.validators.auth import AuthValidator
-from modules.pipeline.validators.components import OutdatedComponentsValidator
-from modules.pipeline.validators.crypto import CryptoValidator
-from modules.pipeline.validators.deserialization import InsecureDeserializationValidator
-from modules.pipeline.validators.injection import InjectionValidator
-from modules.pipeline.validators.insecure_design import InsecureDesignValidator
-from modules.pipeline.validators.ftp import FTPAnonymousLoginValidator
-from modules.pipeline.validators.http import MissingSecurityHeadersValidator
-from modules.pipeline.validators.idor import IDORValidator
-from modules.pipeline.validators.logging import LoggingValidator
-from modules.pipeline.validators.misconfiguration import SecurityMisconfigurationValidator
-from modules.pipeline.validators.redis import RedisNoAuthValidator
-from modules.pipeline.validators.ssrf import SSRFValidator
+# Lazy imports to avoid circular dependencies
+# These validators import from brain modules, creating a circular dependency
+# if imported at module level. They are imported on-demand inside functions.
+_VALIDATOR_CLASS_MAP_CACHE = None
 
 
-VALIDATOR_CLASS_MAP = {
-    "validators.redis.RedisNoAuthValidator": RedisNoAuthValidator,
-    "validators.http.MissingSecurityHeadersValidator": MissingSecurityHeadersValidator,
-    "validators.injection.InjectionValidator": InjectionValidator,
-    "validators.insecure_design.InsecureDesignValidator": InsecureDesignValidator,
-    "validators.access_control.BrokenAccessControlValidator": BrokenAccessControlValidator,
-    "validators.crypto.CryptoValidator": CryptoValidator,
-    "validators.auth.AuthValidator": AuthValidator,
-    "validators.logging.LoggingValidator": LoggingValidator,
-    "validators.misconfiguration.SecurityMisconfigurationValidator": SecurityMisconfigurationValidator,
-    "validators.components.OutdatedComponentsValidator": OutdatedComponentsValidator,
-    "validators.ssrf.SSRFValidator": SSRFValidator,
-    "validators.ftp.FTPAnonymousLoginValidator": FTPAnonymousLoginValidator,
-    "validators.idor.IDORValidator": IDORValidator,
-    "validators.deserialization.InsecureDeserializationValidator": InsecureDeserializationValidator,
-}
+def _get_validator_class_map():
+    """Lazily build and cache the validator class map to avoid circular imports."""
+    global _VALIDATOR_CLASS_MAP_CACHE
+    if _VALIDATOR_CLASS_MAP_CACHE is not None:
+        return _VALIDATOR_CLASS_MAP_CACHE
+    
+    from modules.pipeline.validators.access_control import BrokenAccessControlValidator
+    from modules.pipeline.validators.auth import AuthValidator
+    from modules.pipeline.validators.components import OutdatedComponentsValidator
+    from modules.pipeline.validators.crypto import CryptoValidator
+    from modules.pipeline.validators.deserialization import InsecureDeserializationValidator
+    from modules.pipeline.validators.injection import InjectionValidator
+    from modules.pipeline.validators.insecure_design import InsecureDesignValidator
+    from modules.pipeline.validators.ftp import FTPAnonymousLoginValidator
+    from modules.pipeline.validators.http import MissingSecurityHeadersValidator
+    from modules.pipeline.validators.idor import IDORValidator
+    from modules.pipeline.validators.logging import LoggingValidator
+    from modules.pipeline.validators.misconfiguration import SecurityMisconfigurationValidator
+    from modules.pipeline.validators.redis import RedisNoAuthValidator
+    from modules.pipeline.validators.ssrf import SSRFValidator
+
+    _VALIDATOR_CLASS_MAP_CACHE = {
+        "validators.redis.RedisNoAuthValidator": RedisNoAuthValidator,
+        "validators.http.MissingSecurityHeadersValidator": MissingSecurityHeadersValidator,
+        "validators.injection.InjectionValidator": InjectionValidator,
+        "validators.insecure_design.InsecureDesignValidator": InsecureDesignValidator,
+        "validators.access_control.BrokenAccessControlValidator": BrokenAccessControlValidator,
+        "validators.crypto.CryptoValidator": CryptoValidator,
+        "validators.auth.AuthValidator": AuthValidator,
+        "validators.logging.LoggingValidator": LoggingValidator,
+        "validators.misconfiguration.SecurityMisconfigurationValidator": SecurityMisconfigurationValidator,
+        "validators.components.OutdatedComponentsValidator": OutdatedComponentsValidator,
+        "validators.ssrf.SSRFValidator": SSRFValidator,
+        "validators.ftp.FTPAnonymousLoginValidator": FTPAnonymousLoginValidator,
+        "validators.idor.IDORValidator": IDORValidator,
+        "validators.deserialization.InsecureDeserializationValidator": InsecureDeserializationValidator,
+    }
+    return _VALIDATOR_CLASS_MAP_CACHE
 
 
 @dataclass
@@ -136,7 +148,7 @@ class DAGBrain:
             if not spec:
                 continue
 
-            validator_cls = VALIDATOR_CLASS_MAP.get(spec.class_path)
+            validator_cls = _get_validator_class_map().get(spec.class_path)
             if not validator_cls:
                 continue
 
@@ -147,7 +159,7 @@ class DAGBrain:
             if spec.id in selected_spec_ids:
                 continue
 
-            validator_cls = VALIDATOR_CLASS_MAP.get(spec.class_path)
+            validator_cls = _get_validator_class_map().get(spec.class_path)
             if not validator_cls:
                 continue
 
@@ -215,7 +227,7 @@ class DAGBrain:
             if spec.id not in needed_validator_ids:
                 continue
 
-            validator_cls = VALIDATOR_CLASS_MAP.get(spec.class_path)
+            validator_cls = _get_validator_class_map().get(spec.class_path)
             if not validator_cls:
                 continue
 

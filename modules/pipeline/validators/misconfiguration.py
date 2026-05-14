@@ -56,6 +56,8 @@ COMMON_APPS = [
 class SecurityMisconfigurationValidator:
     """OWASP A05 validator for insecure HTTP/server configuration, default credentials, and information disclosure."""
 
+    SIGNALS = {}
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

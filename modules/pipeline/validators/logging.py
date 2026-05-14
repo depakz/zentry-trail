@@ -30,6 +30,8 @@ SECURITY_HEADERS = [
 class LoggingValidator:
     """OWASP A09 passive audit for security headers as a hardening signal."""
 
+    SIGNALS = {}
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

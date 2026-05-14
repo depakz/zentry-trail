@@ -129,6 +129,8 @@ def _candidate_params(state: Dict[str, Any], target_url: str) -> List[str]:
 class InjectionValidator:
     """OWASP A03 validator for reflected XSS and basic SQL error-based injection signals."""
 
+    SIGNALS = {}
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False
@@ -159,7 +161,14 @@ class InjectionValidator:
             "headers": dict(response.headers),
         }
 
-    def _confirm_xss_execution(self, probe_url: str, cookie: Optional[str], timeout: int, payload: str) -> Dict[str, Any]:
+    def _confirm_xss_execution(
+        self,
+        probe_url: str,
+        cookie: Optional[str],
+        timeout: int,
+        payload: str,
+        browser: Any = None,
+    ) -> Dict[str, Any]:
         try:
             from playwright.sync_api import TimeoutError as PlaywrightTimeoutError  # type: ignore
             from playwright.sync_api import sync_playwright  # type: ignore
@@ -170,9 +179,14 @@ class InjectionValidator:
         timeout_ms = max(5000, int(timeout) * 1000)
 
         try:
-            with sync_playwright() as playwright:
+            if browser is not None:
+                context = browser.new_context(ignore_https_errors=True)
+                _close_browser = False
+            else:
+                playwright = sync_playwright().start()
                 browser = playwright.chromium.launch(headless=True)
                 context = browser.new_context(ignore_https_errors=True)
+                _close_browser = True
                 if isinstance(cookie, str) and cookie.strip() and ";" in cookie:
                     domain = urlsplit(probe_url).hostname or "localhost"
                     cookies = []
@@ -225,9 +239,19 @@ class InjectionValidator:
                 result["alert_message"] = dialog_messages[0] if dialog_messages else ""
 
                 try:
-                    browser.close()
+                    context.close()
                 except Exception:
                     pass
+
+                if _close_browser:
+                    try:
+                        browser.close()
+                    except Exception:
+                        pass
+                    try:
+                        playwright.stop()
+                    except Exception:
+                        pass
         except Exception as exc:
             result["error"] = str(exc)
 
@@ -371,7 +395,13 @@ class InjectionValidator:
                 )
 
             if xss and xss["xss_reflected"]:
-                browser_confirmation = self._confirm_xss_execution(xss.get("probe_url") or baseline_url, state.get("cookie"), timeout, xss_payload_used)
+                browser_confirmation = self._confirm_xss_execution(
+                    xss.get("probe_url") or baseline_url,
+                    state.get("cookie"),
+                    timeout,
+                    xss_payload_used,
+                    browser=state.get("browser"),
+                )
                 browser_executed = bool(browser_confirmation.get("alert_seen"))
                 findings.append(
                     ValidationResult(

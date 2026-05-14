@@ -147,6 +147,7 @@ async def probe(
     domains: Iterable[str],
     enable_waf_detect: bool = True,
     verbose: bool = True,
+    max_tiers: int = 3,
 ) -> list[dict]:
     # Resolve binary once
     try:
@@ -171,7 +172,8 @@ async def probe(
     candidates = list(resolved.keys())
     results: list[dict] = []
 
-    for tier in (TIER_FAST, TIER_SAFE, TIER_DEEP):
+    tiers = [TIER_FAST, TIER_SAFE, TIER_DEEP][: max(1, int(max_tiers or 1))]
+    for tier in tiers:
         log.info(f"🚀 Probing with {tier.name}")
         stdout, stderr = await _run_httpx(candidates, tier, httpx_bin)
 

@@ -1,0 +1,5 @@
+{
+  "target": "http://testphp.vulnweb.com",
+  "created": "2026-05-14_15-31-59",
+  "waf": {}
+}

@@ -26,6 +26,13 @@ class InsecureDeserializationValidator:
     3) If timing delta aligns with configured sleep window, return validated finding.
     """
 
+    SIGNALS = {
+        "header_patterns": [
+            "application/x-java-serialized",
+            "application/octet-stream",
+        ]
+    }
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

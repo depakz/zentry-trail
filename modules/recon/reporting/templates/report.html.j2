@@ -1,35 +1,87 @@
-<!doctype html><html><head><meta charset="utf-8">
-<title>{{ s.target }} - Bug Bounty Report</title>
-<style>
-body{font-family:-apple-system,Segoe UI,sans-serif;background:#0d1117;color:#c9d1d9;margin:0;padding:30px}
-h1,h2{color:#58a6ff}.f{background:#161b22;border-left:4px solid;padding:15px;margin:15px 0;border-radius:6px}
-.critical{border-color:#f85149}.high{border-color:#ff7b72}.medium{border-color:#d29922}.low{border-color:#3fb950}
-code{background:#21262d;padding:2px 6px;border-radius:3px;font-size:13px}
-table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #30363d;text-align:left}
-.score{float:right;background:#1f6feb;padding:3px 10px;border-radius:12px;color:white}
-</style></head><body>
-<h1>🎯 Bug Bounty Report — {{ s.target }}</h1>
-<p>Started: {{ s.started }} • Validated findings: <b>{{ s.findings|length }}</b></p>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ r.target }} Security Report</title>
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; background: #0f131a; color: #d8dee9; margin: 0; padding: 24px; }
+    h1, h2, h3 { color: #9dd7ff; margin-bottom: 8px; }
+    .card { background: #18202a; border: 1px solid #2c3a49; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+    .sev-critical { border-left: 5px solid #ff4d4d; }
+    .sev-high { border-left: 5px solid #ff8a3d; }
+    .sev-medium { border-left: 5px solid #f4c152; }
+    .sev-low { border-left: 5px solid #7bc96f; }
+    .sev-info { border-left: 5px solid #6fa8dc; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; border-bottom: 1px solid #2c3a49; padding: 8px; vertical-align: top; }
+    code { background: #111821; padding: 2px 6px; border-radius: 4px; color: #ffd58a; }
+    .mono { font-family: Consolas, Menlo, monospace; }
+    .muted { color: #9fb0c0; }
+    ul, ol { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Security Report: {{ r.target }}</h1>
+  <p class="muted">Generated at {{ r.generated_at }}</p>
 
-<h2>📊 Summary</h2>
-<table>
-  <tr><th>Subdomains</th><td>{{ s.subdomains|length }}</td></tr>
-  <tr><th>Alive hosts</th><td>{{ s.alive_hosts|length }}</td></tr>
-  <tr><th>Endpoints</th><td>{{ s.endpoints|length }}</td></tr>
-</table>
+  <div class="card">
+    <h2>Executive Summary</h2>
+    <table>
+      <tr><th>Total Findings</th><td>{{ r.executive_summary.total_findings }}</td></tr>
+      <tr><th>Critical</th><td>{{ r.executive_summary.severity.critical }}</td></tr>
+      <tr><th>High</th><td>{{ r.executive_summary.severity.high }}</td></tr>
+      <tr><th>Medium</th><td>{{ r.executive_summary.severity.medium }}</td></tr>
+      <tr><th>Low</th><td>{{ r.executive_summary.severity.low }}</td></tr>
+      <tr><th>Info</th><td>{{ r.executive_summary.severity.info }}</td></tr>
+    </table>
+  </div>
 
-<h2>🔥 Validated Findings</h2>
-{% for f in s.findings %}
-<div class="f {{ f.severity }}">
-  <span class="score">Score {{ f.score }}</span>
-  <h3>[{{ f.severity|upper }}] {{ f.title }}</h3>
-  <b>Endpoint:</b> <code>{{ f.endpoint }}</code><br>
-  {% if f.payload %}<b>Payload:</b> <code>{{ f.payload }}</code><br>{% endif %}
-  <b>Evidence:</b> {{ f.evidence }}<br>
-  {% if f.reproduction %}
-    <b>Reproduction:</b><ol>{% for r in f.reproduction %}<li>{{ r }}</li>{% endfor %}</ol>
-  {% endif %}
-  {% if f.impact %}<b>Impact:</b> {{ f.impact }}{% endif %}
-</div>
-{% else %}<p>✅ No validated vulnerabilities (no false positives reported).</p>{% endfor %}
-</body></html>
+  <div class="card">
+    <h2>Attack Chains</h2>
+    {% if r.attack_chains %}
+      {% for c in r.attack_chains %}
+      <div class="card">
+        <h3>{{ c.chain_id }}</h3>
+        <ol>
+          {% for step in c.narrative_steps %}
+            <li>{{ step }}</li>
+          {% endfor %}
+        </ol>
+        {% if c.evidence %}
+          <p><b>Evidence:</b> {{ c.evidence }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No confirmed chains were emitted by the chain engine.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Per-Finding Detail</h2>
+    {% if r.findings %}
+      {% for f in r.findings %}
+      <div class="card sev-{{ f.severity|lower }}">
+        <h3>{{ f.validator_name }} — {{ f.vulnerability or f.title }}</h3>
+        <p><b>Severity:</b> {{ f.severity|upper }} | <b>CVSS:</b> {{ "%.1f"|format(f.cvss) }}</p>
+        <p><b>Target URL:</b> <span class="mono">{{ f.target_url }}</span></p>
+        <p><b>Payload:</b> <span class="mono">{{ f.payload or "n/a" }}</span></p>
+        <p><b>Response Snippet:</b> {{ f.response_snippet or "n/a" }}</p>
+        <p><b>OWASP Mapping:</b> {{ f.owasp }}</p>
+        <p><b>Remediation:</b> {{ f.remediation or "Apply specific input validation, authentication checks, and secure defaults appropriate for this finding." }}</p>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No findings were confirmed.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Signal Coverage</h2>
+    <p><b>Detected Signals:</b></p>
+    <pre class="mono">{{ r.signal_coverage.detected_signals | tojson(indent=2) }}</pre>
+    <p><b>Selected Validators and Reasons:</b></p>
+    <pre class="mono">{{ r.signal_coverage.selected_validators | tojson(indent=2) }}</pre>
+  </div>
+</body>
+</html>

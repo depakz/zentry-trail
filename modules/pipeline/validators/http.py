@@ -15,6 +15,8 @@ A09_COVERAGE_MARKERS = [
 
 
 class MissingSecurityHeadersValidator:
+    SIGNALS = {}
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

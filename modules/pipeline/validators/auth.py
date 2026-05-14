@@ -48,6 +48,10 @@ def _collect_set_cookies(response: requests.Response) -> List[str]:
 class AuthValidator:
     """OWASP A07 validator for missing login rate limiting and insecure remember-me cookies."""
 
+    SIGNALS = {
+        "endpoint_patterns": ["/login", "/signin", "/auth", "/session", "/account"]
+    }
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

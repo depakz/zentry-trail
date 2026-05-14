@@ -1,0 +1,28 @@
+{
+  "target": "http://testphp.vulnweb.com",
+  "created": "2026-05-14_15-41-30",
+  "waf": {
+    "http://testphp.vulnweb.com": "none"
+  },
+  "mined_params": {},
+  "subdomains": [
+    "http://testphp.vulnweb.com"
+  ],
+  "alive_hosts": [
+    {
+      "url": "http://testphp.vulnweb.com",
+      "input": "http://testphp.vulnweb.com",
+      "status": 200,
+      "title": "fallback-target",
+      "tech": [],
+      "ip": "",
+      "host": "testphp.vulnweb.com",
+      "scheme": "http",
+      "webserver": "",
+      "content_type": "",
+      "content_length": 0,
+      "cdn": false,
+      "cdn_name": ""
+    }
+  ]
+}

@@ -7,6 +7,8 @@ from modules.pipeline.engine.models import Evidence, ExecutionContext, Validatio
 
 
 class FTPAnonymousLoginValidator:
+    SIGNALS = {"ports": [21]}
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

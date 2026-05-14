@@ -141,6 +141,10 @@ def _test_privilege_escalation(base_url: str, headers: Dict[str, str], admin_hea
 class BrokenAccessControlValidator:
     """OWASP A01 validator for unauthenticated access to sensitive routes, IDOR, and privilege escalation."""
 
+    SIGNALS = {
+        "endpoint_patterns": ["/admin", "/api", "/dashboard", "/profile", "/user", "/account"]
+    }
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False

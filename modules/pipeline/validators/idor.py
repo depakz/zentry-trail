@@ -71,6 +71,19 @@ class IDORValidator:
     (id=2 by default), then compares response body similarity.
     """
 
+    SIGNALS = {
+        "param_patterns": [
+            "id",
+            "user_id",
+            "account_id",
+            "order_id",
+            "doc_id",
+            "file_id",
+            "record_id",
+            "item_id",
+        ]
+    }
+
     def __init__(self, context: Optional[ExecutionContext] = None):
         self.context = context
         self.destructive = False
