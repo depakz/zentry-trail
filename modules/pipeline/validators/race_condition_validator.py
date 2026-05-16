@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import asyncio
 from typing import Any, Dict, List, Optional
 
-import aiohttp
+import requests
+import threading
 
 from modules.pipeline.brain.fact_store import FactStore
 from modules.pipeline.engine.models import Evidence, ExecutionContext, ValidationResult
@@ -37,21 +37,32 @@ class RaceConditionValidator:
             for marker in ["checkout", "payment", "coupon", "redeem", "transfer", "vote", "apply", "claim"]
         )
 
-    async def _burst(self, endpoint: str, body: Dict[str, Any], headers: Dict[str, str], count: int, timeout: int) -> List[Dict[str, Any]]:
-        barrier = asyncio.Barrier(count)
-        timeout_obj = aiohttp.ClientTimeout(total=float(timeout))
+    def _burst_sync(self, endpoint: str, body: Dict[str, Any], headers: Dict[str, str], count: int, timeout: int) -> List[Dict[str, Any]]:
+        barrier = threading.Barrier(count)
+        results: List[Dict[str, Any]] = []
 
-        async with aiohttp.ClientSession(timeout=timeout_obj, headers=headers) as session:
-            async def _one(idx: int):
-                await barrier.wait()
-                try:
-                    async with session.post(endpoint, data=body, allow_redirects=False) as resp:
-                        text = await resp.text()
-                        return {"idx": idx, "status": resp.status, "body": text[:200]}
-                except Exception as exc:
-                    return {"idx": idx, "error": str(exc)}
+        def worker(idx: int) -> None:
+            try:
+                barrier.wait()
+            except Exception:
+                pass
+            try:
+                resp = requests.post(endpoint, data=body, headers=headers, timeout=timeout, allow_redirects=False)
+                text = resp.text or ""
+                results.append({"idx": idx, "status": resp.status_code, "body": text[:200]})
+            except Exception as exc:
+                results.append({"idx": idx, "error": str(exc)})
 
-            return await asyncio.gather(*[_one(i) for i in range(count)])
+        threads: List[threading.Thread] = []
+        for i in range(count):
+            t = threading.Thread(target=worker, args=(i,), daemon=True)
+            threads.append(t)
+            t.start()
+
+        for t in threads:
+            t.join(timeout + 5)
+
+        return results
 
     def run(self, state: Dict[str, Any]):
         endpoints = [ep for ep in (state.get("endpoints") or []) if isinstance(ep, str)]
@@ -69,13 +80,9 @@ class RaceConditionValidator:
         payload = state.get("race_payload") if isinstance(state.get("race_payload"), dict) else {"amount": "1", "coupon": "SINGLE_USE"}
 
         try:
-            responses = asyncio.run(self._burst(target, payload, headers, 20, timeout))
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            try:
-                responses = loop.run_until_complete(self._burst(target, payload, headers, 20, timeout))
-            finally:
-                loop.close()
+            responses = self._burst_sync(target, payload, headers, 20, timeout)
+        except Exception:
+            responses = []
 
         success_responses = [r for r in responses if r.get("status") in {200, 201, 202}]
         confirmed = len(success_responses) > 1

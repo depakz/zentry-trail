@@ -1,0 +1,42 @@
+{
+  "target": "http://altoro.testfire.net/",
+  "created": "2026-05-17_00-40-53",
+  "waf": {
+    "https://altoro.testfire.net": "none"
+  },
+  "mined_params": {},
+  "subdomains": [
+    "http://altoro.testfire.net/"
+  ],
+  "alive_hosts": [
+    {
+      "url": "https://altoro.testfire.net",
+      "input": "altoro.testfire.net",
+      "status": 200,
+      "title": "Altoro Mutual",
+      "tech": [
+        "Apache Tomcat",
+        "Java"
+      ],
+      "ip": "65.61.137.117",
+      "host": "65.61.137.117",
+      "scheme": "https",
+      "webserver": "Apache-Coyote/1.1",
+      "content_type": "text/html",
+      "content_length": 9405,
+      "cdn": false,
+      "cdn_name": "",
+      "waf": "wafw00f-not-installed"
+    }
+  ],
+  "recon_report_paths": {
+    "json": "reports/altoro.testfire.net-2026-05-17_00-40-53-recon-report.json"
+  },
+  "recon_fact_count": 2,
+  "endpoints": [],
+  "findings": [],
+  "report_paths": {
+    "html": "reports/altoro.testfire.net-2026-05-17_00-40-53-report.html",
+    "json": "reports/altoro.testfire.net-2026-05-17_00-40-53-report.json"
+  }
+}

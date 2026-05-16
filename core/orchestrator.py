@@ -8,6 +8,7 @@ from rich.panel import Panel
 from modules.pipeline.recon import subfinder_runner, amass_runner, crtsh_runner
 from modules.pipeline.probing import httpx_probe, waf_detect
 from modules.pipeline.discovery import katana_crawler, gau_runner
+from modules.recon.config import settings as recon_settings
 from modules.pipeline.scanning import nuclei_runner
 
 from modules.recon.modules.js_extractor import extract_js_endpoints
@@ -269,12 +270,19 @@ class Orchestrator:
             async with sem_katana:
                 return await _timed(f"katana {host['url']}", katana_crawler.crawl(host["url"], depth=depth), timeout=20 if self.fast else 180, progress=progress)
                 
-        katana_tasks = [run_katana(host, depth=4 if deep_crawl else 2) for host in alive[:10]]
+        # Use configured tool timeout if available (longer than fast-mode default)
+        katana_timeout = getattr(recon_settings, "TOOL_TIMEOUT", 180)
+        # wrap run_katana to pass a per-call timeout via the _timed helper
+        async def run_katana_with_timeout(host, depth=2):
+            return await _timed(f"katana {host['url']}", katana_crawler.crawl(host["url"], depth=depth), timeout=katana_timeout if katana_timeout else (20 if self.fast else 180), progress=progress)
+
+        katana_tasks = [run_katana_with_timeout(host, depth=4 if deep_crawl else 2) for host in alive[:10]]
         katana_results = await asyncio.gather(*katana_tasks)
         for crawled in katana_results:
             if crawled: endpoints.update(crawled)
             
-        gau_eps = await _timed("gau", gau_runner.run(self.target), timeout=20 if self.fast else 300, progress=progress)
+        gau_timeout = getattr(recon_settings, "TOOL_TIMEOUT", 180)
+        gau_eps = await _timed("gau", gau_runner.run(self.target), timeout=gau_timeout if gau_timeout else (20 if self.fast else 300), progress=progress)
         if gau_eps: endpoints.update(gau_eps)
         
         endpoints = {ep for ep in endpoints if self.is_in_scope(ep)}
@@ -297,26 +305,92 @@ class Orchestrator:
             progress.console.log(f"   [yellow]⚠ Param Miner skipped/failed: {e}[/]")
             param_map = {}
 
-        self.session.endpoints = sorted(endpoints)
-        progress.console.log(f"   [bold green]→ {len(self.session.endpoints)} total endpoints found[/]")
+        # Build a compact inference map: endpoint -> param -> inferred vuln types (pre-nuclei)
+        inference_map: Dict[str, Dict[str, List[str]]] = {}
+        try:
+            from urllib.parse import urlsplit, parse_qsl
 
-        progress.console.log("[cyan]► Phase 2: Validation[/]")
+            for ep in list(endpoints)[:200]:
+                params_for_ep = []
+                if isinstance(param_map, dict) and ep in param_map:
+                    params_for_ep = param_map.get(ep) or []
+                else:
+                    try:
+                        qs_pairs = parse_qsl(urlsplit(ep).query or "", keep_blank_values=True)
+                        params_for_ep = [k for k, _ in qs_pairs]
+                    except Exception:
+                        params_for_ep = []
+
+                if not params_for_ep:
+                    continue
+
+                local = {}
+                for p in params_for_ep:
+                    try:
+                        inferred = registry.infer_vuln_types(p, nuclei_tags=None) or []
+                    except Exception:
+                        inferred = []
+                    if inferred:
+                        local[p] = inferred
+                if local:
+                    inference_map[ep] = local
+        except Exception:
+            inference_map = {}
+
+        # Prepare a single recon panel with counts and inferred vuln hints
+        recon_lines: List[str] = []
+        try:
+            if inference_map:
+                cnt = sum(len(v) for v in inference_map.values())
+                recon_lines.append(f"Inferred {cnt} vuln-hints across {len(inference_map)} endpoints")
+                shown = 0
+                for ep, params in list(inference_map.items())[:12]:
+                    parts = [f"{p}->[{', '.join(params[p])}]" for p in params]
+                    recon_lines.append(f"  {ep} : {', '.join(parts)}")
+                    shown += 1
+                    if shown >= 12:
+                        break
+        except Exception:
+            recon_lines.append("(inference unavailable)")
+
+        self.session.endpoints = sorted(endpoints)
+
+        # Recon summary: show basic counts
+        try:
+            js_count = len(js_res.get("endpoints") or []) if js_res else 0
+        except Exception:
+            js_count = 0
+
+        recon_summary = {
+            "alive_hosts": len(alive),
+            "endpoints_found": len(self.session.endpoints),
+            "js_endpoints": js_count,
+        }
+        progress.console.log(f"   [blue]Recon Summary:[/] alive={recon_summary['alive_hosts']} endpoints={recon_summary['endpoints_found']} js={recon_summary['js_endpoints']}")
+
+        # Start lightweight scanning tasks (naabu + nuclei) during recon so we
+        # can present a single consolidated recon summary before validators.
         scan_targets = [h["url"] for h in alive]
-        
+
         tech_tags = set()
         for host in alive:
             if isinstance(host, dict) and host.get("tech"):
                 for t in host["tech"]:
-                    if isinstance(t, str): tech_tags.add(t.lower())
-        
+                    if isinstance(t, str):
+                        tech_tags.add(t.lower())
+
         from modules.pipeline.recon.naabu_scan import run_naabu
+
         async def async_naabu():
-            try: return await asyncio.get_running_loop().run_in_executor(None, run_naabu, self.target)
-            except Exception: return {}
-        
+            try:
+                return await asyncio.get_running_loop().run_in_executor(None, run_naabu, self.target)
+            except Exception:
+                return {}
+
         naabu_task = asyncio.create_task(_timed("naabu", async_naabu(), timeout=30 if self.fast else 600, progress=progress))
         nuclei_task = asyncio.create_task(_timed("nuclei", nuclei_runner.scan(scan_targets, tags=list(tech_tags)), timeout=60 if self.fast else 900, progress=progress))
-        
+
+        # Wait for reconnaissance scans to finish so we can print a single summary
         await asyncio.gather(naabu_task, nuclei_task)
         nuclei_findings = await nuclei_task
         port_results = await naabu_task
@@ -334,7 +408,101 @@ class Orchestrator:
             self.session.nuclei_tags = list(sorted(nuclei_tags))
             self.session.data["nuclei_tags"] = list(sorted(nuclei_tags))
 
-        validated = []
+        # Recompute inference map using nuclei tags to refine suggestions and add to recon_lines
+        try:
+            if inference_map and nuclei_tags:
+                recon_lines.append(f"Refined with nuclei tags: {', '.join(sorted(list(nuclei_tags))[:6])}")
+                refined_cnt = 0
+                shown = 0
+                for ep, params in list(inference_map.items())[:12]:
+                    new_parts = []
+                    for p in params:
+                        try:
+                            new_inferred = registry.infer_vuln_types(p, nuclei_tags=list(nuclei_tags)) or []
+                        except Exception:
+                            new_inferred = []
+                        if new_inferred:
+                            new_parts.append(f"{p}->[{', '.join(new_inferred)}]")
+                            refined_cnt += len(new_inferred)
+                    if new_parts:
+                        recon_lines.append(f"  {ep} : {', '.join(new_parts)}")
+                        shown += 1
+                    if shown >= 12:
+                        break
+                if refined_cnt == 0:
+                    recon_lines.append("  (no additional refinements from nuclei tags)")
+        except Exception:
+            recon_lines.append("(refinement unavailable)")
+
+        # Print a single, readable recon summary panel
+        try:
+            from rich.panel import Panel as _Panel
+            panel_lines = [f"Alive hosts: {len(alive)}", f"Subdomains: {len(merged)}", f"Endpoints: {len(self.session.endpoints)}", f"JS endpoints: {js_count}"]
+            panel_lines.extend(recon_lines[:50])
+            progress.console.log(_Panel("\n".join(panel_lines), title="Recon Summary", style="cyan"))
+        except Exception:
+            # Fallback to simple logging
+            progress.console.log(f"   Recon: hosts={len(alive)} subs={len(merged)} endpoints={len(self.session.endpoints)} js={js_count}")
+
+        # Run targeted validations inferred from recon (params + nuclei tags)
+        pre_validated: List[Finding] = []
+        try:
+            progress.console.log("   [cyan]→ Running targeted recon-inferred validations...[/]")
+            sem_target = asyncio.Semaphore(10)
+
+            async def _run_infer(ep: str, param: str, vuln_type: str):
+                async with sem_target:
+                    try:
+                        return vuln_type, ep, param, await registry.validate(vuln_type, ep, param, state=state)
+                    except Exception:
+                        return vuln_type, ep, param, None
+
+            tasks = []
+            for ep in self.session.endpoints:
+                params_for_ep = param_map.get(ep, []) if isinstance(param_map, dict) else []
+                if not params_for_ep:
+                    from urllib.parse import urlsplit, parse_qsl
+                    try:
+                        qs_pairs = parse_qsl(urlsplit(ep).query or "", keep_blank_values=True)
+                        params_for_ep = [k for k, _ in qs_pairs]
+                    except Exception:
+                        params_for_ep = []
+
+                for p in params_for_ep:
+                    vuln_types = registry.infer_vuln_types(p, nuclei_tags=list(nuclei_tags) if isinstance(nuclei_tags, set) else nuclei_tags)
+                    for vt in vuln_types:
+                        tasks.append(asyncio.create_task(_run_infer(ep, p, vt)))
+
+            if tasks:
+                completed = await asyncio.gather(*tasks)
+                for vt, ep, p, res in completed:
+                    if res:
+                        out = res if isinstance(res, dict) else {"result": res}
+                        out.setdefault("validator_id", vt)
+                        out.setdefault("vulnerability", out.get("type") or vt)
+                        try:
+                            processed = self.validation_engine.result_processor.process_result(out)
+                        except Exception:
+                            processed = out
+                        if processed.get("success"):
+                            evidence = processed.get("evidence") if isinstance(processed.get("evidence"), dict) else {}
+                            request_blob = evidence.get("request") if isinstance(evidence, dict) else {}
+                            endpoint = request_blob.get("target") or request_blob.get("url") or ep
+                            title = processed.get("vulnerability") or processed.get("validator_id") or vt
+                            f = Finding(
+                                id=str(uuid.uuid4())[:8],
+                                title=str(title),
+                                severity=str(processed.get("severity") or "medium"),
+                                endpoint=str(endpoint),
+                                evidence=str(evidence.get("matched") or ""),
+                                validated=True,
+                            )
+                            f.score = score_finding({"severity": f.severity, "validated": True})
+                            pre_validated.append(f)
+        except Exception:
+            pre_validated = []
+
+        validated = list(pre_validated)
         for nf in nuclei_findings:
             info = nf.get("info", {})
             sev = info.get("severity", "info")
