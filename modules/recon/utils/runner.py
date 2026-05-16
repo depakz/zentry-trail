@@ -17,7 +17,15 @@ async def run_cmd(cmd: str, timeout: int = 300, input_data: Optional[str] = None
         )
         return proc.returncode, stdout.decode(errors="ignore"), stderr.decode(errors="ignore")
     except asyncio.TimeoutError:
-        proc.kill()
+        try:
+            proc.kill()
+        except Exception:
+            pass
+        try:
+            # Ensure the process is reaped to avoid dangling transports
+            await proc.wait()
+        except Exception:
+            pass
         return -1, "", f"Timeout after {timeout}s"
 
 def which(tool: str) -> bool:
