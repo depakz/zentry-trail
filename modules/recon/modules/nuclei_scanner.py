@@ -2,16 +2,17 @@
 import asyncio
 import tempfile
 import json
-import shutil
 from pathlib import Path
-from core.runner import run_cmd, have
+from core.runner import run_cmd
 from core.logger import logger, dashboard
 from modules.recon.config.settings import NUCLEI_RATE, NUCLEI_BATCH_SIZE
+from modules.pipeline.utils.binaries import resolve_binary
 
 
 async def run_nuclei_batch(urls, tags=None, severity="low,medium,high,critical", batch_id=1):
-    if not have("nuclei"):
-        logger.warning("⚠️  nuclei not found in PATH")
+    nuclei_bin = resolve_binary("nuclei")
+    if not nuclei_bin:
+        logger.warning("⚠️  nuclei not found in ./bin or PATH")
         return []
     
     if not urls:
@@ -22,7 +23,7 @@ async def run_nuclei_batch(urls, tags=None, severity="low,medium,high,critical",
     inp.write_text("\n".join(urls))
     
     tag_arg = f"-tags {tags}" if tags else ""
-    cmd = (f"nuclei -l {inp} {tag_arg} -severity {severity} "
+    cmd = (f"{nuclei_bin} -l {inp} {tag_arg} -severity {severity} "
            f"-rate-limit {NUCLEI_RATE} -c 50 -bulk-size 30 "
            f"-jsonl -o {out} -silent -timeout 10 -retries 1 2>/dev/null")
     
@@ -55,8 +56,8 @@ async def scan_with_nuclei(all_urls, session):
         session.update("nuclei_findings", [])
         return []
     
-    if not have("nuclei"):
-        logger.warning("⚠️  nuclei tool not found - skipping nuclei scan")
+    if not resolve_binary("nuclei"):
+        logger.warning("⚠️  nuclei tool not found in ./bin or PATH - skipping nuclei scan")
         session.update("nuclei_findings", [])
         return []
     

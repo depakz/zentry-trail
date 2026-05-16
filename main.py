@@ -11,6 +11,7 @@ from rich.table import Table
 
 from core.orchestrator import Orchestrator
 from core.logger import logger
+from modules.recon.reporting import json_report
 
 
 def _severity_summary(session) -> Dict[str, int]:
@@ -84,6 +85,12 @@ def main() -> None:
             orchestrator = Orchestrator(target=target, fast=fast_mode, scope=scope_list, output_dir=args.output)
             # Pass the single progress bar and task IDs to the orchestrator
             session = asyncio.run(orchestrator.run(progress, recon_task, validation_task))
+
+        report_paths = getattr(session, "data", {}).get("recon_report_paths", {}) if hasattr(session, "data") else {}
+        if isinstance(report_paths, dict):
+            report_path = report_paths.get("json")
+            if isinstance(report_path, str) and report_path:
+                json_report.load_into_fact_store(report_path, orchestrator.fact_store)
 
         _print_final_summary(session)
 

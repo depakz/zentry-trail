@@ -1,0 +1,52 @@
+{
+  "target": "http://localhost:3000/",
+  "created": "2026-05-15_01-30-14",
+  "waf": {
+    "http://localhost:3000": "none"
+  },
+  "mined_params": {
+    "http://localhost:3000/redirect": [
+      "to"
+    ],
+    "https://www.googleapis.com/oauth2/v1/userinfo": [
+      "alt"
+    ],
+    "http://localhost:3000/api/Challenges/": [
+      "key"
+    ],
+    "https://w.soundcloud.com/player/": [
+      "show_comments",
+      "hide_related",
+      "url",
+      "show_reposts",
+      "show_teaser",
+      "auto_play",
+      "show_user",
+      "color"
+    ],
+    "https://www.youtube.com/watch": [
+      "v"
+    ]
+  },
+  "subdomains": [
+    "http://localhost:3000/"
+  ],
+  "alive_hosts": [
+    {
+      "url": "http://localhost:3000",
+      "input": "localhost:3000",
+      "status": 200,
+      "title": "OWASP Juice Shop",
+      "tech": [],
+      "ip": "127.0.0.1",
+      "host": "127.0.0.1",
+      "scheme": "http",
+      "webserver": "",
+      "content_type": "text/html",
+      "content_length": 75002,
+      "cdn": false,
+      "cdn_name": "",
+      "waf": "wafw00f-not-installed"
+    }
+  ]
+}

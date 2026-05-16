@@ -4,6 +4,7 @@ import tempfile
 from typing import List, Dict, Tuple
 from .utils import Utils, logger
 import json
+from modules.pipeline.utils.binaries import resolve_binary
 
 
 class NucleiRunner:
@@ -41,8 +42,9 @@ class NucleiRunner:
             # Build nuclei command - conservative settings
             template_flags = ' '.join([f'-t {t}' for t in templates])
             tags_flag = f"-tags {','.join(tags)}" if tags else ""
+            nuclei_bin = resolve_binary("nuclei") or "nuclei"
             cmd = (
-                f'nuclei -l "{batch_file}" {template_flags} {tags_flag} '
+                f'"{nuclei_bin}" -l "{batch_file}" {template_flags} {tags_flag} '
                 f'-json -silent -timeout 5 -rate-limit 150 -c 50 -bulk-size 25 '
                 f'-retries 0 -severity critical,high,medium '
                 f'-no-color 2>/dev/null'

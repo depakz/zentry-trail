@@ -5,12 +5,13 @@ Adds baseline validation to filter ffuf noise.
 - Filters results matching baseline (boring)
 - Auto-calibration via ffuf -ac
 """
-import asyncio, json, logging, os, shutil, tempfile, statistics
+import asyncio, json, logging, os, tempfile, statistics
 import requests
 from urllib.parse import urlparse
 
 log = logging.getLogger(__name__)
 from core.logger import dashboard
+from modules.pipeline.utils.binaries import resolve_binary
 
 DIR_WORDLIST  = os.environ.get("YUVA_DIR_WL",
     "/usr/share/seclists/Discovery/Web-Content/common.txt")
@@ -34,8 +35,9 @@ def _baseline(url, timeout=10):
 
 # ---------- ffuf runner ----------
 async def _run_ffuf(url, wordlist, mode="dir", timeout=240):
-    if not shutil.which("ffuf"):
-        log.warning("ffuf not found")
+    ffuf_bin = resolve_binary("ffuf")
+    if not ffuf_bin:
+        log.warning("ffuf not found in ./bin or PATH")
         return []
     if not os.path.exists(wordlist):
         log.warning(f"wordlist missing: {wordlist}")
@@ -51,7 +53,7 @@ async def _run_ffuf(url, wordlist, mode="dir", timeout=240):
         sep = '&' if '?' in url else '?'
         target = f"{url}{sep}FUZZ=test"
 
-    cmd = ["ffuf", "-u", target, "-w", wordlist,
+    cmd = [ffuf_bin, "-u", target, "-w", wordlist,
            "-mc", "200,201,204,301,302,307,401,403,500",
            "-fc", "404",
            "-ac",                # auto-calibration

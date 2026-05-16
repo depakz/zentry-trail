@@ -7,6 +7,7 @@ import requests
 
 from modules.pipeline.brain.fact_store import FactStore
 from modules.pipeline.engine.models import Evidence, ExecutionContext, ValidationResult
+from modules.pipeline.utils.binaries import resolve_binary
 
 try:
     import dns.resolver
@@ -84,8 +85,11 @@ class SubdomainTakeoverValidator:
 
     def _confirm_with_nuclei(self, subdomain: str) -> bool:
         try:
+            nuclei_bin = resolve_binary("nuclei")
+            if not nuclei_bin:
+                return False
             proc = subprocess.run(
-                ["nuclei", "-u", subdomain, "-tags", "takeover", "-silent"],
+                [nuclei_bin, "-u", subdomain, "-tags", "takeover", "-silent"],
                 capture_output=True,
                 text=True,
                 timeout=45,

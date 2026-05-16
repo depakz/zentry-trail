@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 from modules.pipeline.utils.logger import logger
 from core.logger import dashboard
+from modules.pipeline.utils.binaries import resolve_binary
 
 OUTPUT_FILE = "output/nuclei.json"
 
@@ -42,18 +43,6 @@ def _stop_process(process):
             process.wait(timeout=2)
         except Exception:
             pass
-
-
-def _resolve_binary(name):
-    in_path = shutil.which(name)
-    if in_path:
-        return in_path
-
-    local = Path(__file__).resolve().parents[1] / "bin" / name
-    if local.exists() and local.is_file():
-        return str(local)
-
-    return None
 
 
 def _truncate(value, limit):
@@ -123,7 +112,7 @@ def run_nuclei_multi(targets, progress=None, cookie=None):
             json.dump({"findings": [], "exit_code": 0, "raw_warnings": ["No valid targets provided after validation"]}, f, indent=4)
         return OUTPUT_FILE
 
-    nuclei_bin = _resolve_binary("nuclei")
+    nuclei_bin = resolve_binary("nuclei")
     if nuclei_bin is None:
         with open(OUTPUT_FILE, "w") as f:
             json.dump({"findings": [], "exit_code": 1, "raw_warnings": ["nuclei binary not found"]}, f, indent=4)
@@ -294,7 +283,7 @@ def run_nuclei(target, progress=None, cookie=None):
     process = None
     temp_json_out = None
     try:
-        nuclei_bin = _resolve_binary("nuclei")
+        nuclei_bin = resolve_binary("nuclei")
         if nuclei_bin is None:
             raise EnvironmentError("nuclei not installed or not in PATH")
 

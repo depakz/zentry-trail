@@ -4,11 +4,11 @@ Optimized Nuclei Runner
 import subprocess
 import logging
 import json
-import shutil
 import tempfile
 import os
 from typing import List, Dict
 from core.logger import dashboard
+from modules.pipeline.utils.binaries import resolve_binary
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +41,9 @@ def run_nuclei(
     only_high_value: bool = True,
 ) -> List[Dict]:
     """Run nuclei against URL list, return parsed findings."""
-    if not shutil.which("nuclei"):
-        logger.error("[NUCLEI] nuclei binary not found")
+    nuclei_bin = resolve_binary("nuclei")
+    if not nuclei_bin:
+        logger.error("[NUCLEI] nuclei binary not found in ./bin or PATH")
         return []
 
     if not urls:
@@ -71,7 +72,7 @@ def run_nuclei(
         out_path = tempfile.NamedTemporaryFile("w", delete=False, suffix=".jsonl").name
 
         cmd = [
-            "nuclei",
+            nuclei_bin,
             "-l", in_path,
             "-severity", severity,
             "-rate-limit", str(rate_limit),

@@ -1,12 +1,13 @@
 # Environments
-.venv/
 venv/
+.venv/
 __pycache__/
 
 # Binaries & Large Tools
 bin/
 tools/archives/
 *.zip
+*.tar.gz
 
 # Project Outputs
 output/

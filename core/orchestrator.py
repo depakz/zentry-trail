@@ -12,7 +12,7 @@ from modules.pipeline.scanning import nuclei_runner
 
 from modules.recon.modules.js_extractor import extract_js_endpoints
 from modules.recon.modules.param_miner import mine_parameters
-from modules.recon.reporting import html_report
+from modules.recon.reporting import html_report, json_report
 from modules.pipeline.brain.attack_chain_manager import AttackChainManager
 from modules.pipeline.brain.fact_store import FactStore, FactCategory
 from modules.pipeline.brain.dag_engine_enhanced import DAGBrain
@@ -295,7 +295,6 @@ class Orchestrator:
         progress.console.log(f"   [bold green]→ {len(self.session.endpoints)} total endpoints found[/]")
 
         progress.console.log("[cyan]► Phase 2: Validation[/]")
-        progress.update(validation_task, advance=10, description="[magenta]Phase 2: Validation (Nuclei)")
         scan_targets = [h["url"] for h in alive]
         
         tech_tags = set()
@@ -333,8 +332,6 @@ class Orchestrator:
             f.score = score_finding({"severity": sev, "validated": True})
             validated.append(f)
 
-        progress.update(validation_task, advance=20, description="[magenta]Phase 2: Validation (Signal Selection)")
-
         header_map = {}
         for host in alive:
             if not isinstance(host, dict):
@@ -349,6 +346,12 @@ class Orchestrator:
         signal_bag = extract_signals(alive, port_results, self.session.endpoints, header_map, fact_store=self.fact_store)
         discovered_validators = discover_validators()
         selected_validators, selection_reasons = select_validators(signal_bag, discovered_validators, return_reasons=True)
+        tech_confirmed = bool(signal_bag.get("tech"))
+
+        if tech_confirmed:
+            progress.update(validation_task, advance=10, description="[magenta]Phase 2: Validation (Tech fingerprint confirmed)")
+        else:
+            progress.update(validation_task, description="[magenta]Phase 2: Validation (Awaiting tech fingerprint)")
 
         if self.fast and len(selected_validators) > 8:
             selected_validators = selected_validators[:8]
@@ -356,6 +359,24 @@ class Orchestrator:
 
         if selected_validators:
             progress.console.log(f"   [bold green]→ Selected {len(selected_validators)} validators based on runtime signals[/]")
+
+        recon_report_payload = {
+            "findings": [nf for nf in nuclei_findings if isinstance(nf, dict)],
+            "signal_coverage": {
+                "detected_signals": signal_bag,
+                "selected_validators": {
+                    "validators": [v.__class__.__name__ for v in selected_validators],
+                    "why": selection_reasons,
+                },
+            },
+            "attack_chains": [],
+        }
+        try:
+            recon_report_paths = json_report.write(self.session, out_dir=self.output_dir, report_payload=recon_report_payload)
+            self.session.data["recon_report_paths"] = recon_report_paths
+            self.session.data["recon_fact_count"] = json_report.load_into_fact_store(recon_report_paths.get("json", ""), self.fact_store)
+        except Exception as exc:
+            progress.console.log(f"[yellow]► Recon JSON report bridge skipped → {exc}[/]")
 
         for validator in selected_validators:
             if not getattr(validator, "validator_id", None):
