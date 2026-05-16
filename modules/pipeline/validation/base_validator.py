@@ -1,10 +1,14 @@
 """Validation dispatcher — discards anything not confirmed."""
 from modules.pipeline.validation.xss_validator import validate_xss
 from modules.pipeline.validation.sqli_validator import validate_sqli
+from modules.pipeline.validation.lfi_validator import validate_lfi
+from modules.pipeline.validation.ssrf_validator import validate_ssrf
 
 VALIDATORS = {
     "xss": validate_xss,
     "sqli": validate_sqli,
+    "lfi": validate_lfi,
+    "ssrf": validate_ssrf,
 }
 
 async def validate(vuln_type: str, url: str, param: str):

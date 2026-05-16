@@ -46,7 +46,7 @@ class Session:
 
     def save(self):
         # Serialize dynamically added attributes
-        for attr in ["subdomains", "alive_hosts", "endpoints", "waf"]:
+        for attr in ["subdomains", "alive_hosts", "endpoints", "waf", "nuclei_tags"]:
             if hasattr(self, attr):
                 self.data[attr] = getattr(self, attr)
         if hasattr(self, "findings"):

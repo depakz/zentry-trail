@@ -58,5 +58,34 @@ def get_attack_variants(category: str, key: str, defaults: List[str]) -> List[st
     section = ATTACK_VARIANT_CATALOG.get(category, {})
     variants = section.get(key)
     if not isinstance(variants, list) or not variants:
-        return list(defaults)
+            variants = list(defaults)
+
+        # Try to augment variants with local payload engine suggestions when available.
+        try:
+            from core.local_payload_engine import suggest_payloads
+
+            # Map certain catalog keys to vuln types for suggestions
+            key_map = {
+                "sqli_payloads": "sqli",
+                "xss_payloads": "xss",
+                "command_payloads": "cmdi",
+                "file_payloads": "lfi",
+                "template_payloads": "ssti",
+                "ldap_payloads": "ldap",
+            }
+            vuln = key_map.get(key)
+            if vuln:
+                suggested = suggest_payloads(vuln, n=max(5, len(variants))) or []
+                # Prepend suggestions while preserving order and deduplicating
+                new_list: List[str] = []
+                for p in suggested + variants:
+                    if not isinstance(p, str) or not p.strip():
+                        continue
+                    if p not in new_list:
+                        new_list.append(p)
+                variants = new_list
+        except Exception:
+            # Best-effort: ignore suggestion failures
+            pass
+
     return [item for item in variants if isinstance(item, str) and item.strip()]

@@ -23,6 +23,7 @@ from core.scoring import score_finding
 from core.signal_extractor import extract_signals
 from core.validator_selector import discover_validators, select_validators
 from core.chain_expander import ChainExpander
+from modules.pipeline.validation import registry
 
 async def _timed(name: str, coro, timeout: int, progress=None):
     start = time.monotonic()
@@ -62,6 +63,11 @@ class Orchestrator:
         self.chain_expander = ChainExpander(self.attack_chain_manager)
         self._playwright = None
         self._browser = None
+        # Ensure validators are imported and registered
+        try:
+            registry.auto_discover()
+        except Exception:
+            pass
 
     def _start_shared_browser(self) -> None:
         try:
@@ -314,6 +320,19 @@ class Orchestrator:
         await asyncio.gather(naabu_task, nuclei_task)
         nuclei_findings = await nuclei_task
         port_results = await naabu_task
+
+        # Store nuclei tags in session for downstream use
+        nuclei_tags = set()
+        for nf in nuclei_findings:
+            info = nf.get("info", {}) if isinstance(nf, dict) else {}
+            tags = info.get("tags") or info.get("reference") or []
+            if isinstance(tags, (list, tuple)):
+                for t in tags:
+                    if isinstance(t, str):
+                        nuclei_tags.add(t.lower())
+        if nuclei_tags:
+            self.session.nuclei_tags = list(sorted(nuclei_tags))
+            self.session.data["nuclei_tags"] = list(sorted(nuclei_tags))
 
         validated = []
         for nf in nuclei_findings:
