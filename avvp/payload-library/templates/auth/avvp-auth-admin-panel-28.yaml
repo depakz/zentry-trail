@@ -1,0 +1,14 @@
+id: avvp-auth-admin-panel-28
+info:
+  author: avvp
+  name: Admin Panel Discovery
+  severity: medium
+requests:
+- matchers:
+  - part: body
+    type: word
+    words:
+    - admin
+  method: GET
+  path:
+  - /admin/

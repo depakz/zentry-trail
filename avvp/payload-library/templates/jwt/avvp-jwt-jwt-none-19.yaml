@@ -1,0 +1,25 @@
+id: avvp-jwt-jwt-none-19
+info:
+  name: JWT None Algorithm Probe
+  severity: high
+  tags:
+  - jwt
+  - alg-none
+  author: avvp
+  description: JWT None Algorithm Probe nuclei-style detection template.
+metadata:
+  category: jwt
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /api/profile
+  matchers:
+  - type: word
+    words:
+    - token
+    - unauthorized
+    part: body
+  headers:
+    Authorization: Bearer eyJhbGciOiJub25lIn0.eyJzdWIiOiIxIn0.

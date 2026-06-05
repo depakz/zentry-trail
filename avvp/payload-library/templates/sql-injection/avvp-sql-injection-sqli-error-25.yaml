@@ -1,0 +1,14 @@
+id: avvp-sql-injection-sqli-error-25
+info:
+  author: avvp
+  name: SQLi Error-based
+  severity: high
+requests:
+- matchers:
+  - part: body
+    type: word
+    words:
+    - sqli
+  method: GET
+  path:
+  - /search.php?q=" OR '1'='1'

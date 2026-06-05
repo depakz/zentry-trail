@@ -1,0 +1,24 @@
+id: avvp-sql-injection-sqli-time-22
+info:
+  name: SQL Injection Time Probe
+  severity: high
+  tags:
+  - sqli
+  - time-based
+  author: avvp
+  description: SQL Injection Time Probe nuclei-style detection template.
+metadata:
+  category: sql-injection
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /search?q=1' OR SLEEP(5)-- -
+  matchers:
+  - type: word
+    words:
+    - timeout
+    - sleep
+    - delay
+    part: body

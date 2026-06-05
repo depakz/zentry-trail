@@ -1,0 +1,23 @@
+id: avvp-xss-xss-stored-4
+info:
+  name: Stored XSS Probe
+  severity: high
+  tags:
+  - xss
+  - stored
+  author: avvp
+  description: Stored XSS Probe nuclei-style detection template.
+metadata:
+  category: xss
+  template_type: detection
+  source: avvp
+requests:
+- method: POST
+  path:
+  - /comment?body=<svg/onload=alert(1)>
+  matchers:
+  - type: word
+    words:
+    - <svg
+    - alert(1)
+    part: body

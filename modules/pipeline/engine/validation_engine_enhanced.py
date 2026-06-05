@@ -402,8 +402,6 @@ class ValidationEngine:
                     if not isinstance(out, dict):
                         continue
 
-                    out = self.result_processor.process_result(out)
-
                     if validator_id:
                         out.setdefault("validator_id", validator_id)
                     out.setdefault("validator_class", validator_class)

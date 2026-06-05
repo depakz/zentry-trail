@@ -16,7 +16,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+from urllib.parse import quote, urlparse, parse_qs
 
 
 @dataclass
@@ -110,8 +110,9 @@ class EndpointNormalizer:
 
             # Reconstruct query string with normalized values
             if normalized_params:
-                normalized_query = urlencode(
-                    {k: v for k, v in normalized_params.items()}, doseq=True
+                normalized_query = "&".join(
+                    f"{quote(str(k), safe='')}={v}"
+                    for k, v in normalized_params.items()
                 )
                 return f"{path}?{normalized_query}"
             else:

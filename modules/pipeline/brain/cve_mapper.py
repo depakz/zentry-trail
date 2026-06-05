@@ -59,6 +59,18 @@ REDIS_CVE_SPECS: List[CVESpec] = [
 # All CVE specs (can expand with more)
 ALL_CVE_SPECS: List[CVESpec] = REDIS_CVE_SPECS
 
+# Example: OpenSSL-related CVE for broader mapping
+ALL_CVE_SPECS.append(
+    CVESpec(
+        cve_id="CVE-2026-0001",
+        title="OpenSSL vulnerable heartbeat overflow",
+        description="Heartbeat implementation allows out-of-bounds read leading to data leakage",
+        severity="high",
+        applicable_validators=["openssl_heartbeat_check"],
+        keywords=["openssl", "heartbeat", "heartbleed", "tls"],
+    )
+)
+
 
 def get_cve_specs() -> Dict[str, CVESpec]:
     """Get all CVE specs indexed by CVE ID"""

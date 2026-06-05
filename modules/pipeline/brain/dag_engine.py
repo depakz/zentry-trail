@@ -54,6 +54,13 @@ def _get_validator_class_map():
     return _VALIDATOR_CLASS_MAP_CACHE
 
 
+# Backwards-compatibility alias expected by some tests
+try:
+    VALIDATOR_CLASS_MAP = _get_validator_class_map()
+except Exception:
+    VALIDATOR_CLASS_MAP = {}
+
+
 @dataclass
 class DAGPlan:
     graph: DAGGraph
@@ -113,21 +120,22 @@ class DAGBrain:
 
     def get_execution_layers(self, graph: DAGGraph) -> List[List[str]]:
         in_degree = {node: 0 for node in graph.nodes}
-        for u in graph.adj:
-            for v, _ in graph.adj[u]:
-                in_degree[v] += 1
-        
+        outgoing: Dict[str, List[str]] = {node: [] for node in graph.nodes}
+
+        for source, target in graph.edges:
+            outgoing.setdefault(source, []).append(target)
+            in_degree[target] = in_degree.get(target, 0) + 1
+
         layers = []
         queue = [node for node, deg in in_degree.items() if deg == 0]
         while queue:
             layers.append(queue)
             next_queue = []
             for u in queue:
-                if u in graph.adj:
-                    for v, _ in graph.adj[u]:
-                        in_degree[v] -= 1
-                        if in_degree[v] == 0:
-                            next_queue.append(v)
+                for v in outgoing.get(u, []):
+                    in_degree[v] -= 1
+                    if in_degree[v] == 0:
+                        next_queue.append(v)
             queue = next_queue
         return layers
 

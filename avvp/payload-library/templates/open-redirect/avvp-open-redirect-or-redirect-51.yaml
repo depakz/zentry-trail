@@ -1,0 +1,23 @@
+id: avvp-open-redirect-or-redirect-51
+info:
+  name: Open Redirect Probe
+  severity: medium
+  tags:
+  - redirect
+  - open-redirect
+  author: avvp
+  description: Open Redirect Probe nuclei-style detection template.
+metadata:
+  category: open-redirect
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /redirect?to=https://evil.example/
+  matchers:
+  - type: word
+    words:
+    - location
+    - evil.example
+    part: body

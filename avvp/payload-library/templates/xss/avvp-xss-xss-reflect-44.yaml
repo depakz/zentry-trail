@@ -1,0 +1,23 @@
+id: avvp-xss-xss-reflect-44
+info:
+  name: Reflected XSS Probe
+  severity: high
+  tags:
+  - xss
+  - reflected
+  author: avvp
+  description: Reflected XSS Probe nuclei-style detection template.
+metadata:
+  category: xss
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /?q=<script>alert(1)</script>
+  matchers:
+  - type: word
+    words:
+    - <script>alert(1)</script>
+    - alert(1)
+    part: body

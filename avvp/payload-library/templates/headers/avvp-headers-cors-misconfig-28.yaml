@@ -1,0 +1,25 @@
+id: avvp-headers-cors-misconfig-28
+info:
+  name: CORS Wildcard Misconfiguration
+  severity: medium
+  tags:
+  - headers
+  - cors
+  author: avvp
+  description: CORS Wildcard Misconfiguration nuclei-style detection template.
+metadata:
+  category: headers
+  template_type: detection
+  source: avvp
+requests:
+- method: OPTIONS
+  path:
+  - /
+  matchers:
+  - type: word
+    words:
+    - access-control-allow-origin
+    part: body
+  headers:
+    Origin: https://evil.example
+    Access-Control-Request-Method: GET

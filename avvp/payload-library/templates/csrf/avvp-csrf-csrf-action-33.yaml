@@ -1,0 +1,23 @@
+id: avvp-csrf-csrf-action-33
+info:
+  name: State Changing Action Without Token
+  severity: medium
+  tags:
+  - csrf
+  - state-change
+  author: avvp
+  description: State Changing Action Without Token nuclei-style detection template.
+metadata:
+  category: csrf
+  template_type: detection
+  source: avvp
+requests:
+- method: POST
+  path:
+  - /account/email/change
+  matchers:
+  - type: word
+    words:
+    - csrf
+    - forbidden
+    part: body
