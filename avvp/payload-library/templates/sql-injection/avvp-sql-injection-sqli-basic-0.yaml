@@ -1,0 +1,25 @@
+id: avvp-sql-injection-sqli-basic-0
+info:
+  name: SQL Injection Boolean Probe
+  severity: high
+  tags:
+  - sqli
+  - boolean
+  - db
+  author: avvp
+  description: SQL Injection Boolean Probe nuclei-style detection template.
+metadata:
+  category: sql-injection
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /?q=1' OR '1'='1
+  matchers:
+  - type: word
+    words:
+    - syntax error
+    - mysql
+    - postgresql
+    part: body

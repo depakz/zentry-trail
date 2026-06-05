@@ -18,3 +18,231 @@
 2026-05-12 02:14:10,976 [INFO] OWASP compliance labels: General Security Requirement
 2026-05-12 02:14:10,977 [INFO] OWASP coverage: 100.00% categories (10/10) | 26.00% subcases (13/50)
 2026-05-14 15:43:01,333 [INFO] BrokenAccessControlValidator: probing access control on http://testphp.vulnweb.com
+2026-05-26 00:12:26,669 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-05-26 00:12:26,699 [INFO] CryptoValidator: probing https://example.test
+2026-05-26 00:12:26,979 [INFO] CryptoValidator: probing https://example.test
+2026-05-26 00:12:27,015 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-05-26 00:12:27,265 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-05-26 00:17:31,599 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-05-26 00:17:31,599 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-05-26 00:17:31,600 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-05-26 00:17:31,601 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-05-26 00:17:31,602 [INFO] CryptoValidator: probing http://example.test
+2026-05-26 00:19:05,850 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-05-26 00:19:05,882 [INFO] CryptoValidator: probing https://example.test
+2026-05-26 00:19:06,177 [INFO] CryptoValidator: probing https://example.test
+2026-05-26 00:19:06,199 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-05-26 00:19:06,457 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-05-26 00:19:08,377 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-05-26 00:19:08,378 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-05-26 00:19:08,382 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-05-26 00:19:08,387 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-05-26 00:19:08,390 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 11:53:36,065 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 11:53:36,137 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 11:53:36,504 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 11:53:36,691 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 11:53:36,897 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 11:53:43,130 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 11:53:43,130 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 11:53:43,134 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 11:53:43,139 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 11:53:43,144 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 11:55:58,589 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 11:55:58,664 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 11:55:58,997 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 11:55:59,038 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 11:55:59,346 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 11:56:01,776 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 11:56:01,777 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 11:56:01,780 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 11:56:01,783 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 11:56:01,786 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 11:58:08,773 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 11:58:08,773 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 11:58:08,775 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 11:58:40,395 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 11:58:40,470 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 11:58:40,836 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 11:58:40,988 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 11:58:41,209 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 11:58:48,507 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 11:58:48,508 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 11:58:48,510 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 11:58:48,513 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 11:58:48,515 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 11:58:48,517 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 11:58:48,518 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 11:58:48,519 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:00:48,032 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:00:48,033 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:00:48,303 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:02:02,162 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:02:02,208 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:02:02,536 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:02:02,732 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:02:02,986 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 12:02:05,499 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:02:05,500 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:02:05,508 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:02:05,515 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:02:05,521 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 12:02:05,527 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:02:05,527 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:02:05,532 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:02:05,537 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:02:05,541 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:02:05,851 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:04:21,164 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:04:21,242 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:04:21,607 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:04:21,712 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:04:22,070 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 12:04:24,732 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:04:24,732 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:04:24,735 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:04:24,737 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:04:24,740 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 12:04:24,743 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:04:24,743 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:04:24,745 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:04:24,748 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:04:24,750 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:04:25,116 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:07:17,756 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:07:17,813 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:07:18,122 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:07:18,317 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:07:18,503 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 12:07:23,041 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:07:23,041 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:07:23,044 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:07:23,046 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:07:23,049 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 12:07:23,051 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:07:23,051 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:07:23,053 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:07:23,055 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:07:23,056 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:07:23,385 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:09:30,481 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:09:30,483 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-01 12:09:50,485 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:09:50,487 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-01 12:09:50,487 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-01 12:10:39,579 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:10:39,652 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:10:40,029 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:10:40,123 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:10:40,323 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 12:10:42,894 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:10:42,895 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:10:42,896 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:10:42,898 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:10:42,899 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 12:10:42,901 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:10:42,901 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:10:42,902 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:10:42,903 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:10:42,905 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:10:43,195 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:10:43,388 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:10:43,399 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-01 12:10:43,399 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-01 12:13:04,451 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:13:04,452 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:13:04,472 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:13:22,329 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:13:22,329 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:13:22,330 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:14:43,014 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:14:43,016 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:14:43,018 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:15:14,178 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:15:14,226 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:15:14,483 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:15:14,712 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:15:14,850 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 12:15:17,470 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:15:17,470 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:15:17,473 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:15:17,475 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:15:17,477 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 12:15:17,479 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:15:17,480 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:15:17,481 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:15:17,483 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:15:17,485 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:15:17,783 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:15:17,909 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:15:17,916 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-01 12:15:17,917 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-01 12:17:27,625 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:17:27,626 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:17:27,627 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:17:29,216 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:17:29,281 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:17:29,710 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:17:29,847 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:17:30,189 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 12:17:33,436 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:17:33,436 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:17:33,439 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:17:33,442 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:17:33,444 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 12:17:33,446 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:17:33,446 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:17:33,448 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:17:33,450 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:17:33,451 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:17:33,728 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:17:33,907 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:17:33,913 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-01 12:17:33,913 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-01 12:20:21,524 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:20:21,528 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:20:21,531 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:20:23,260 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:20:23,325 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:20:23,677 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:20:23,768 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:20:24,065 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 12:20:26,696 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:20:26,696 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:20:26,699 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:20:26,701 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:20:26,703 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 12:20:26,705 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:20:26,706 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:20:26,707 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:20:26,709 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:20:26,710 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:20:26,986 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:20:27,128 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:20:27,134 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-01 12:20:27,134 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-01 12:23:17,414 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
+2026-06-01 12:25:35,936 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
+2026-06-01 12:26:13,700 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:26:13,702 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:26:13,704 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:26:16,189 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:26:16,230 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:26:16,555 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:26:16,809 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-01 12:26:16,940 [INFO] SSRFValidator: probing https://example.test with parameters ['url', 'uri', 'dest', 'destination', 'next', 'redirect', 'path', 'callback', 'endpoint', 'target', 'host']
+2026-06-01 12:26:19,478 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:26:19,478 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:26:19,481 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:26:19,484 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:26:19,487 [INFO] CryptoValidator: probing http://example.test
+2026-06-01 12:26:19,490 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-01 12:26:19,490 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-01 12:26:19,492 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:26:19,495 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:26:19,498 [INFO] CryptoValidator: probing https://example.test
+2026-06-01 12:26:19,790 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-01 12:26:19,971 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-01 12:26:19,984 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-01 12:26:19,985 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-01 12:26:21,808 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test

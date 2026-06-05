@@ -1,0 +1,23 @@
+id: avvp-open-redirect-or-next-10
+info:
+  name: Next Parameter Redirect
+  severity: medium
+  tags:
+  - redirect
+  - next
+  author: avvp
+  description: Next Parameter Redirect nuclei-style detection template.
+metadata:
+  category: open-redirect
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /login?next=https://evil.example/
+  matchers:
+  - type: word
+    words:
+    - location
+    - evil.example
+    part: body

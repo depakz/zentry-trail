@@ -1,0 +1,23 @@
+id: avvp-lfi-lfi-basic-55
+info:
+  name: Local File Inclusion Probe
+  severity: high
+  tags:
+  - lfi
+  - file-read
+  author: avvp
+  description: Local File Inclusion Probe nuclei-style detection template.
+metadata:
+  category: lfi
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /download?file=../../../../etc/passwd
+  matchers:
+  - type: word
+    words:
+    - 'root:x:'
+    - 'daemon:'
+    part: body

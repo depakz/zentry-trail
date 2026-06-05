@@ -14,7 +14,7 @@ from __future__ import annotations
 import threading
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 
@@ -39,7 +39,7 @@ class Fact:
     confidence: float = 0.8  # 0.0-1.0: how confident we are
     source_validator_id: Optional[str] = None  # Which validator discovered this
     source_chain: Optional[List[str]] = None  # Chain of vulnerabilities leading here
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:

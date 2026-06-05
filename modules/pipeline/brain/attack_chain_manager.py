@@ -437,7 +437,7 @@ class AttackChainManager:
         """
         self.injection_callbacks.append(callback)
 
-    def validator_completed(self, validator_id: str, result: Optional[Dict[str, Any]] = None) -> None:
+    def validator_completed(self, validator_id: str, result: Optional[Dict[str, Any]] = None) -> List[ChainedExploitationNode]:
         """
         Notify manager that a validator has completed successfully.
 
@@ -450,11 +450,13 @@ class AttackChainManager:
             self.completed_validators.append(validator_id)
 
         # Check which chains are now triggered
-        self._evaluate_chains()
+        emitted_nodes = self._evaluate_chains()
         self._evaluate_fact_chains(result)
+        return emitted_nodes
 
-    def _evaluate_chains(self) -> None:
+    def _evaluate_chains(self) -> List[ChainedExploitationNode]:
         """Evaluate all chains to see if exploitation nodes should be injected."""
+        emitted_nodes: List[ChainedExploitationNode] = []
         for chain in self.chains.values():
             if chain.can_trigger(self.completed_validators, self.fact_store):
                 # Get exploitation nodes for this chain
@@ -462,11 +464,13 @@ class AttackChainManager:
 
                 # Inject each node via callbacks
                 for node in exploitation_nodes:
+                    emitted_nodes.append(node)
                     for callback in self.injection_callbacks:
                         try:
                             callback(node)
                         except Exception as e:
                             print(f"Error invoking injection callback: {e}")
+        return emitted_nodes
 
     def enable_chain(self, chain_id: str) -> None:
         """Enable a specific attack chain."""
@@ -488,11 +492,11 @@ class AttackChainManager:
 
     def get_pending_exploitation_nodes(self) -> List[ChainedExploitationNode]:
         """Get all exploitation nodes that should be injected."""
-        nodes = []
+        nodes: List[ChainedExploitationNode] = []
         for chain in self.chains.values():
             if chain.can_trigger(self.completed_validators, self.fact_store):
                 nodes.extend(chain.get_exploitation_nodes(self.fact_store))
-        return self._new_nodes_only(nodes)
+        return [node for node in nodes if node.node_id not in self._emitted_node_ids]
 
     def get_chain_statistics(self) -> Dict[str, Any]:
         """Get statistics about registered chains."""

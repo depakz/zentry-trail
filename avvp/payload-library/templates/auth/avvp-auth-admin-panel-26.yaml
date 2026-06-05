@@ -1,0 +1,23 @@
+id: avvp-auth-admin-panel-26
+info:
+  name: Admin Panel Discovery
+  severity: medium
+  tags:
+  - auth
+  - exposure
+  author: avvp
+  description: Admin Panel Discovery nuclei-style detection template.
+metadata:
+  category: auth
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /admin/
+  matchers:
+  - type: word
+    words:
+    - admin
+    - dashboard
+    part: body

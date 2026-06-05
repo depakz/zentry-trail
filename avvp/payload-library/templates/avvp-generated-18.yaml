@@ -1,0 +1,14 @@
+id: avvp-generated-18
+info:
+  author: avvp
+  name: AVVP Generated Template 18
+  severity: medium
+requests:
+- matchers:
+  - part: body
+    type: word
+    words:
+    - example
+  method: GET
+  path:
+  - '{{BaseURL}}/'

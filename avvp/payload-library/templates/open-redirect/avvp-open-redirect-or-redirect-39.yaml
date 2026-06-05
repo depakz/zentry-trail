@@ -1,0 +1,14 @@
+id: avvp-open-redirect-or-redirect-39
+info:
+  author: avvp
+  name: Open Redirect
+  severity: medium
+requests:
+- matchers:
+  - part: body
+    type: word
+    words:
+    - open
+  method: GET
+  path:
+  - /redirect?to=https://evil.example/

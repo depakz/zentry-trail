@@ -1,0 +1,14 @@
+id: avvp-headers-cors-misconfig-22
+info:
+  author: avvp
+  name: CORS Wildcard
+  severity: medium
+requests:
+- matchers:
+  - part: body
+    type: word
+    words:
+    - cors
+  method: GET
+  path:
+  - /

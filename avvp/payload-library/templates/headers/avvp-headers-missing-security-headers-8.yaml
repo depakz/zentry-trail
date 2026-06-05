@@ -1,0 +1,23 @@
+id: avvp-headers-missing-security-headers-8
+info:
+  name: Missing Security Headers
+  severity: low
+  tags:
+  - headers
+  - hardening
+  author: avvp
+  description: Missing Security Headers nuclei-style detection template.
+metadata:
+  category: headers
+  template_type: detection
+  source: avvp
+requests:
+- method: GET
+  path:
+  - /
+  matchers:
+  - type: word
+    words:
+    - content-security-policy
+    - x-frame-options
+    part: body
