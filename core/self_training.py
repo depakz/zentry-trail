@@ -11,12 +11,23 @@ class OutcomeDB:
 
     def __init__(self, db_path: str = "data/outcomes.db"):
         self.db_path = db_path
-        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        if db_path != ":memory:":
+            Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        # For :memory: we keep a single persistent connection because each
+        # sqlite3.connect(':memory:') call creates a brand-new empty database.
+        self._conn = sqlite3.connect(db_path) if db_path == ":memory:" else None
         self._init_schema()
+
+    def _get_conn(self):
+        """Return existing connection (for :memory:) or open a new one."""
+        if self._conn is not None:
+            return self._conn, False  # (conn, should_close)
+        return sqlite3.connect(self.db_path), True
 
     def _init_schema(self):
         """Initialize database schema."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn, should_close = self._get_conn()
+        try:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS scans (
                     scan_id TEXT PRIMARY KEY,
@@ -51,39 +62,55 @@ class OutcomeDB:
                 )
             """)
             conn.commit()
+        finally:
+            if should_close:
+                conn.close()
 
     def record_scan(self, scan_id: str, target: str, started_at: int):
         """Record scan start."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn, should_close = self._get_conn()
+        try:
             conn.execute("""
-                INSERT OR REPLACE INTO scans (scan_id, target, started_at, started_at)
-                VALUES (?, ?, ?, ?)
-            """, (scan_id, target, started_at, started_at))
+                INSERT OR REPLACE INTO scans (scan_id, target, started_at)
+                VALUES (?, ?, ?)
+            """, (scan_id, target, started_at))
             conn.commit()
+        finally:
+            if should_close:
+                conn.close()
 
     def record_finding(self, finding_id: str, scan_id: str, vuln_class: str, url: str, confidence: float):
         """Record a finding."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn, should_close = self._get_conn()
+        try:
             conn.execute("""
                 INSERT OR IGNORE INTO findings
                 (finding_id, scan_id, vuln_class, endpoint_url, confidence, created_at)
                 VALUES (?, ?, ?, ?, ?, ?)
             """, (finding_id, scan_id, vuln_class, url, confidence, int(time.time())))
             conn.commit()
+        finally:
+            if should_close:
+                conn.close()
 
     def record_node_decision(self, scan_id: str, node_id: str, policy_score: float, order: int, led_to_finding: int):
         """Record a node validation decision."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn, should_close = self._get_conn()
+        try:
             conn.execute("""
                 INSERT INTO node_decisions
                 (scan_id, node_id, policy_score, validation_order, led_to_finding, created_at)
                 VALUES (?, ?, ?, ?, ?, ?)
             """, (scan_id, node_id, policy_score, order, led_to_finding, int(time.time())))
             conn.commit()
+        finally:
+            if should_close:
+                conn.close()
 
     def get_training_data(self, scan_id: str) -> List[Dict]:
         """Get training data (node decisions + outcomes) for a scan."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn, should_close = self._get_conn()
+        try:
             cursor = conn.execute("""
                 SELECT nd.node_id, nd.policy_score, nd.led_to_finding
                 FROM node_decisions nd
@@ -95,6 +122,10 @@ class OutcomeDB:
                 {"node_id": row[0], "policy_score": row[1], "led_to_finding": row[2]}
                 for row in rows
             ]
+        finally:
+            if should_close:
+                conn.close()
+
 
 
 class PostScanFineTuner:
@@ -106,18 +137,27 @@ class PostScanFineTuner:
 
     def fine_tune(self, gnn, scan_id: str, db: OutcomeDB):
         """Update GNN weights based on scan results."""
+        import numpy as np
         training_data = db.get_training_data(scan_id)
-        if len(training_data) < 3:
+        if len(training_data) < 2:
             return gnn
 
         # Extract labels: 1 if node led to finding, 0 otherwise
-        labels = [d["led_to_finding"] for d in training_data]
+        labels = np.array([d["led_to_finding"] for d in training_data], dtype=float)
+        policy_scores = np.array([d["policy_score"] for d in training_data], dtype=float)
 
-        # Simple weight update: nudge W2 towards correct predictions
+        # Gradient update: push W2 to separate positive and negative examples
+        # Use error signal: error[i] = labels[i] - sigmoid(policy_scores[i])
+        def sigmoid(x):
+            return 1.0 / (1.0 + np.exp(-np.clip(x, -10, 10)))
+
         for _ in range(self.n_steps):
-            import numpy as np
-            pred = np.mean(labels)  # Simplified
-            gnn.W2 = gnn.W2 * (1.0 + self.learning_rate * (pred - 0.5))
+            preds = sigmoid(policy_scores)
+            errors = labels - preds  # shape: (N,)
+            # Gradient for W2: sum of (error * policy_score) as a scalar signal
+            grad = np.mean(errors * policy_scores)
+            # Apply gradient to W2 (nudge all weights in same direction)
+            gnn.W2 = gnn.W2 + self.learning_rate * grad
 
         return gnn
 

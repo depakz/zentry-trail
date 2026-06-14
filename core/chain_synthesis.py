@@ -50,8 +50,8 @@ def extract_artifacts_from_response(response_text: str) -> List[Dict]:
     if re.search(r'172\.(1[6-9]|2[0-9]|3[01])\.\d{1,3}\.\d{1,3}', response_text):
         artifacts.append({"type": "ENDPOINT:INTERNAL_IP", "value": "internal_ip_found"})
 
-    # JWT
-    if re.search(r'eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}', response_text):
+    # JWT - match full JWT (3 parts) or partial (just header eyJ...)
+    if re.search(r'eyJ[A-Za-z0-9_-]{3,}', response_text):
         artifacts.append({"type": "CREDENTIAL:JWT_SIGNED", "value": "jwt_found"})
 
     # DB connection string

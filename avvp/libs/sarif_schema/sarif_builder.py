@@ -1,8 +1,8 @@
 """
-avvp/libs/sarif-schema/sarif_builder.py
+avvp/libs/sarif_schema/sarif_builder.py
 
-Full SARIF 2.1.0 builder and structural validator.
-This is the canonical implementation loaded via avvp/libs/sarif_schema/__init__.py.
+Lightweight SARIF 2.1.0 builder and validator.
+Used by tests/test_sarif.py and core/sarif_reporter.py.
 """
 
 from __future__ import annotations
@@ -17,22 +17,6 @@ SARIF_SCHEMA  = (
 
 _VALID_LEVELS = {"error", "warning", "note", "none"}
 
-_SEV_TO_LEVEL: Dict[str, str] = {
-    "critical": "error",
-    "high":     "error",
-    "medium":   "warning",
-    "low":      "note",
-    "info":     "note",
-}
-
-_SEV_TO_CVSS: Dict[str, float] = {
-    "critical": 9.5,
-    "high":     8.0,
-    "medium":   5.5,
-    "low":      3.0,
-    "info":     0.0,
-}
-
 
 def build_sarif_report(
     findings: List[Dict[str, Any]],
@@ -40,7 +24,7 @@ def build_sarif_report(
     tool_version: str = "1.0.0",
 ) -> Dict[str, Any]:
     """
-    Build a SARIF 2.1.0 document from a list of finding dicts.
+    Build a minimal SARIF 2.1.0 document from a list of finding dicts.
 
     Each finding dict should have:
       - vuln_class  : str   rule / vulnerability class
@@ -75,6 +59,7 @@ def validate_sarif(sarif: Dict[str, Any]) -> None:
     Validate that a SARIF dict is structurally correct (SARIF 2.1.0).
 
     Raises ValueError on the first structural violation found.
+    Does NOT perform full JSON-Schema validation (no external dependency).
     """
     if sarif.get("version") != SARIF_VERSION:
         raise ValueError(f"Expected version '{SARIF_VERSION}', got {sarif.get('version')!r}")
@@ -91,10 +76,27 @@ def validate_sarif(sarif: Dict[str, Any]) -> None:
 # Internal helpers
 # ---------------------------------------------------------------------------
 
+_SEV_TO_LEVEL: Dict[str, str] = {
+    "critical": "error",
+    "high":     "error",
+    "medium":   "warning",
+    "low":      "note",
+    "info":     "note",
+}
+
+_SEV_TO_CVSS: Dict[str, float] = {
+    "critical": 9.5,
+    "high":     8.0,
+    "medium":   5.5,
+    "low":      3.0,
+    "info":     0.0,
+}
+
+
 def _finding_to_result(finding: Dict[str, Any]) -> Dict[str, Any]:
     vuln_class = str(finding.get("vuln_class") or "unknown")
     severity   = str(finding.get("severity") or "info").lower()
-    uri        = str(finding.get("uri") or finding.get("url") or "")
+    uri        = str(finding.get("uri") or "")
     summary    = str(finding.get("summary") or vuln_class)
     region     = finding.get("region") or {}
 
@@ -108,11 +110,9 @@ def _finding_to_result(finding: Dict[str, Any]) -> Dict[str, Any]:
         if r:
             physical["region"] = r
 
-    level = _SEV_TO_LEVEL.get(severity, "warning")
-
     return {
         "ruleId":  vuln_class,
-        "level":   level,
+        "level":   _SEV_TO_LEVEL.get(severity, "warning"),
         "message": {"text": summary},
         "locations": [{"physicalLocation": physical}],
         "properties": {
@@ -123,8 +123,8 @@ def _finding_to_result(finding: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _deduplicate_rules(findings: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    seen  : set  = set()
-    rules : list = []
+    seen  : set    = set()
+    rules : list   = []
     for f in findings:
         vc = str(f.get("vuln_class") or "unknown")
         if vc in seen:
@@ -144,6 +144,7 @@ def _deduplicate_rules(findings: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 def _validate_run(run: Dict[str, Any], index: int) -> None:
     prefix = f"runs[{index}]"
 
+    # tool
     tool = run.get("tool")
     if not isinstance(tool, dict):
         raise ValueError(f"{prefix}.tool must be a dict")
@@ -153,6 +154,7 @@ def _validate_run(run: Dict[str, Any], index: int) -> None:
     if "name" not in driver:
         raise ValueError(f"{prefix}.tool.driver must have 'name'")
 
+    # results
     results = run.get("results")
     if not isinstance(results, list):
         raise ValueError(f"{prefix}.results must be a list")

@@ -12,7 +12,7 @@ Tests include:
 import asyncio
 import time
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, AsyncMock
 
 from avvp.services.oob_canary import (
     generate_token,
@@ -110,7 +110,7 @@ class TestOOBCanaryServer:
             mock_request.method = "GET"
             mock_request.query_string = ""
             mock_request.headers = {}
-            mock_request.text = asyncio.coroutine(lambda: "")()
+            mock_request.text = AsyncMock(return_value="")
 
             # Call the handler directly
             response = await server._handle_request(mock_request)

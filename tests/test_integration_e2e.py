@@ -114,7 +114,7 @@ class TestIntegration:
 
         assert ref is not None
         assert ref.artifact_type == "http_request"
-        assert ref.content_hash.startswith("9f86d08")  # sha256("test data")
+        assert ref.content_hash.startswith("916f002")  # sha256(b"test data")
 
     def test_outcome_db(self):
         """OutcomeDB should record scan outcomes."""

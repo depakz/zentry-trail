@@ -247,3 +247,120 @@
 2026-06-01 12:26:19,985 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
 2026-06-01 12:26:21,808 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
 2026-06-06 15:53:32,894 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_99ZpravYg6jt
+2026-06-14 22:18:29,765 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:18:29,766 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:18:29,767 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:18:30,021 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_uZNnRgp1UjKP
+2026-06-14 22:18:39,508 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:18:39,508 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:18:39,511 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:18:39,513 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:18:39,515 [INFO] CryptoValidator: probing http://example.test
+2026-06-14 22:18:39,517 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:18:39,517 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:18:39,519 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:18:39,521 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:18:39,523 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:18:39,934 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:18:40,142 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:18:40,149 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-14 22:18:40,150 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-14 22:18:42,567 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
+2026-06-14 22:19:45,187 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_qSbL9bxR6rFX
+2026-06-14 22:21:39,841 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_uDwUWnetGDik
+2026-06-14 22:23:02,913 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_QoLSNrRB2YfC
+2026-06-14 22:23:42,521 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:23:42,522 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:23:42,523 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:23:42,785 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_DsvpCfQlSCJ7
+2026-06-14 22:23:47,843 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:23:47,844 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:23:47,845 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:23:47,846 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:23:47,847 [INFO] CryptoValidator: probing http://example.test
+2026-06-14 22:23:47,849 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:23:47,849 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:23:47,850 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:23:47,851 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:23:47,853 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:23:48,086 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:23:48,322 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:23:48,324 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-14 22:23:48,324 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-14 22:23:50,029 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
+2026-06-14 22:24:23,676 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:24:23,677 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:24:23,678 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:24:23,928 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_LjqX1ALGwphc
+2026-06-14 22:24:31,627 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:24:31,628 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:24:31,629 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:24:31,630 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:24:31,631 [INFO] CryptoValidator: probing http://example.test
+2026-06-14 22:24:31,632 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:24:31,632 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:24:31,634 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:24:31,635 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:24:31,636 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:24:31,971 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:24:32,161 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:24:32,165 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-14 22:24:32,166 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-14 22:24:33,945 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
+2026-06-14 22:40:45,408 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:40:45,409 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:40:45,410 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:40:45,668 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_MfryelLAqcbl
+2026-06-14 22:40:51,134 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:40:51,135 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:40:51,136 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:40:51,138 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:40:51,139 [INFO] CryptoValidator: probing http://example.test
+2026-06-14 22:40:51,140 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:40:51,140 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:40:51,142 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:40:51,143 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:40:51,144 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:40:51,516 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:40:51,739 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:40:51,742 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-14 22:40:51,742 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-14 22:40:53,398 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
+2026-06-14 22:45:40,325 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:45:40,326 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:45:40,327 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:45:40,583 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_1pe0R1jGTcPu
+2026-06-14 22:45:46,701 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:45:46,701 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:45:46,702 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:45:46,703 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:45:46,704 [INFO] CryptoValidator: probing http://example.test
+2026-06-14 22:45:46,705 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:45:46,705 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:45:46,706 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:45:46,707 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:45:46,708 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:45:47,089 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:45:52,329 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:45:52,333 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-14 22:45:52,333 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-14 22:45:54,019 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
+2026-06-14 22:54:15,665 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:54:15,666 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:54:15,666 [INFO] SecurityMisconfigurationValidator: probing https://example.test
+2026-06-14 22:54:15,940 [INFO] SSRFValidator: OOB probe for blind SSRF — injecting url=http://attacker.com:8877/test_scan_test_finding_6kEI68tsXQwM
+2026-06-14 22:54:21,280 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:54:21,280 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:54:21,281 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:54:21,282 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:54:21,283 [INFO] CryptoValidator: probing http://example.test
+2026-06-14 22:54:21,284 [INFO] AuthValidator: probing login rate limiting at https://example.test/login
+2026-06-14 22:54:21,285 [WARNING] AuthValidator: confirmed ['missing_rate_limiting', 'remember_me_cookie_without_secure_httponly'] at https://example.test/login
+2026-06-14 22:54:21,286 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:54:21,287 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:54:21,288 [INFO] CryptoValidator: probing https://example.test
+2026-06-14 22:54:21,506 [INFO] BrokenAccessControlValidator: probing access control on https://example.test
+2026-06-14 22:54:21,623 [WARNING] OutdatedComponentsValidator: cves=[] disclosed_versions=['1.2.3']
+2026-06-14 22:54:21,629 [INFO] SSRFValidator: probing https://example.test/?url=https://example.com with parameters ['url']
+2026-06-14 22:54:21,629 [WARNING] SSRFValidator: exception-based confirmation via url=http://127.0.0.1 (Connection refused)
+2026-06-14 22:54:23,330 [INFO] LoggingValidator: headers present=[] missing=['X-Content-Type-Options', 'Content-Security-Policy', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Strict-Transport-Security'] for https://example.test
