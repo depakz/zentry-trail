@@ -52,11 +52,32 @@ def _print_final_summary(session) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Unified async vulnerability scanner")
-    parser.add_argument("-u", "--url", "--target", dest="target", required=True, help="Target URL or host")
+    parser.add_argument("-u", "--url", "--target", dest="target", required=False, default=None, help="Target URL or host")
     parser.add_argument("--profile", choices=("auto", "balanced", "aggressive"), default="auto", help="Recon profile selection")
     parser.add_argument("--scope", nargs="*", default=[], help="Allowed domains for scope enforcement")
     parser.add_argument("--output", default="reports", help="Output directory for HTML/JSON reports")
+    # ── OOB canary flags (Session 1 / 10) ──────────────────────────────────
+    parser.add_argument("--oob-host",  default=None,   help="OOB canary host/IP (default: auto-detect local IP)")
+    parser.add_argument("--oob-port",  type=int, default=8877, help="OOB canary port (default: 8877)")
+    parser.add_argument("--no-oob",    action="store_true", help="Disable OOB canary server")
+    # ── Traffic normalization flags (Session 5 / 10) ───────────────────────
+    parser.add_argument("--browser-profile", choices=("chrome124", "firefox124", "safari17"), default="chrome124",
+                        help="Browser profile for traffic normalization (default: chrome124)")
+    parser.add_argument("--no-normalize", action="store_true", help="Disable traffic normalization (raw requests)")
+    # ── False-positive labelling (Session 9 / 10) ──────────────────────────
+    parser.add_argument("--label-fp",   nargs=2, metavar=("SCAN_ID", "FINDING_ID"),
+                        help="Label a finding as a false positive: --label-fp SCAN_ID FINDING_ID")
     args = parser.parse_args()
+
+    # ── False-positive labelling (no scan needed) ─────────────────────────
+    if args.label_fp:
+        scan_id, finding_id = args.label_fp
+        from scripts.label_findings import label_false_positive
+        label_false_positive("data/outcomes.db", scan_id, finding_id)
+        return
+
+    if not args.target:
+        parser.error("--url / -u is required unless using --label-fp")
 
     # Normalize target URL
     target = args.target.strip()

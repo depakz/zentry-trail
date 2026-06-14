@@ -1,6 +1,7 @@
 import asyncio
 import uuid
 import time
+import socket
 from typing import Any, Dict, List
 from urllib.parse import urlparse
 from rich.panel import Panel
@@ -26,6 +27,12 @@ from core.validator_selector import discover_validators, select_validators
 from core.chain_expander import ChainExpander
 from modules.pipeline.validation import registry
 
+try:
+    from avvp.services.oob_canary import start_oob_server, stop_oob_server
+except Exception:
+    start_oob_server = None
+    stop_oob_server = None
+
 async def _timed(name: str, coro, timeout: int, progress=None):
     start = time.monotonic()
     if progress:
@@ -47,13 +54,14 @@ async def _timed(name: str, coro, timeout: int, progress=None):
         return []
 
 class Orchestrator:
-    def __init__(self, target: str, fast: bool = True, scope: list = None, output_dir: str = "reports"):
+    def __init__(self, target: str, fast: bool = True, scope: list = None, output_dir: str = "reports", enable_oob: bool = True):
         self.target = target
         self.session = Session(target=target)
         self.fast = fast
         self.scope = scope or []
         self.output_dir = output_dir
-        
+        self.enable_oob = enable_oob
+
         self.fact_store = FactStore()
         self.attack_chain_manager = AttackChainManager(self.fact_store)
         self.dag_brain = DAGBrain(use_graph_engine=True, fact_store=self.fact_store)
@@ -64,11 +72,56 @@ class Orchestrator:
         self.chain_expander = ChainExpander(self.attack_chain_manager)
         self._playwright = None
         self._browser = None
+        self._oob_server = None
+        self._oob_base_url = None
+
         # Ensure validators are imported and registered
         try:
             registry.auto_discover()
         except Exception:
             pass
+
+    def _get_local_ip(self) -> str:
+        """Get the local IP address that the OOB server should bind to."""
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.close()
+            return ip
+        except Exception:
+            return "127.0.0.1"
+
+    async def _start_oob_server(self) -> None:
+        """Start the OOB canary server."""
+        if not self.enable_oob or not start_oob_server:
+            return
+
+        try:
+            local_ip = self._get_local_ip()
+            self._oob_server = await start_oob_server(host=local_ip, port=8877)
+            self._oob_base_url = f"http://{local_ip}:8877"
+            from rich.console import Console
+            console = Console()
+            console.log(f"[green]✓ OOB Canary ready[/] at {self._oob_base_url}")
+        except Exception as e:
+            from rich.console import Console
+            console = Console()
+            console.log(f"[yellow]⚠ OOB Canary failed to start: {e}[/]")
+            self._oob_server = None
+            self._oob_base_url = None
+
+    async def _stop_oob_server(self) -> None:
+        """Stop the OOB canary server."""
+        if self._oob_server and stop_oob_server:
+            try:
+                await stop_oob_server()
+                self._oob_server = None
+                self._oob_base_url = None
+            except Exception as e:
+                from rich.console import Console
+                console = Console()
+                console.log(f"[yellow]⚠ OOB Canary failed to stop: {e}[/]")
 
     def _start_shared_browser(self) -> None:
         try:
@@ -572,6 +625,9 @@ class Orchestrator:
         protocols = sorted({str(h.get("scheme") or "").lower() for h in alive if isinstance(h, dict) and h.get("scheme")})
         target_url = scan_targets[0] if scan_targets else (self.target if self.target.startswith(("http://", "https://")) else f"https://{self.target}")
 
+        # Start OOB canary server
+        await self._start_oob_server()
+
         state = {
             "target": self.target,
             "url": target_url,
@@ -588,61 +644,68 @@ class Orchestrator:
             "protocols": protocols,
             "fact_store": self.fact_store,
             "browser": None,
+            "oob_server": self._oob_server,
+            "oob_base_url": self._oob_base_url,
+            "scan_id": self.session.id,
         }
 
         self._start_shared_browser()
         state["browser"] = self._browser
 
-        plan = self.dag_brain.build_plan(state, selected_validators)
-        results = self.validation_engine.run(plan, state)
-
-        validation_queue = []
-        for result in results:
-            if not isinstance(result, dict):
-                continue
-
-            if result.get("success"):
-                validator_id = result.get("validator_id") or result.get("validator_class") or "unknown_validator"
-                self.attack_chain_manager.validator_completed(str(validator_id), result)
-                self.chain_expander.check_and_expand(self.fact_store, validation_queue)
-
-            if result.get("success"):
-                severity = result.get("severity") or ((result.get("validation") or {}).get("severity")) or "medium"
-                endpoint = ""
-                evidence = result.get("evidence") if isinstance(result.get("evidence"), dict) else {}
-                request_blob = evidence.get("request")
-                if isinstance(request_blob, dict):
-                    endpoint = request_blob.get("target") or request_blob.get("url") or ""
-                title = result.get("vulnerability") or result.get("validator_id") or "validated-finding"
-                finding = Finding(
-                    id=str(uuid.uuid4())[:8],
-                    title=str(title),
-                    severity=str(severity),
-                    endpoint=str(endpoint),
-                    evidence=str(evidence.get("matched") or ""),
-                    validated=True,
-                )
-                finding.score = score_finding({"severity": finding.severity, "validated": True})
-                validated.append(finding)
-
-        progress.update(validation_task, advance=50, description="[magenta]Phase 2: Validation (Complete)")
-
-        self.session.findings = validated
-        progress.console.log(f"[bold green]   → {len(validated)} VALIDATED findings[/]")
-
-        # Save and HTML Report
-        path = self.session.save()
         try:
-            report_payload = self._build_report_payload(signal_bag, selection_reasons, selected_validators, results)
-            report_paths = html_report.write(self.session, out_dir=self.output_dir, report_payload=report_payload)
-            self.session.data["report_paths"] = report_paths
-            self.session.save()
-            progress.console.log(f"[green]► HTML Report generated → {report_paths.get('html', '')}[/]")
-            progress.console.log(f"[green]► JSON Report generated → {report_paths.get('json', '')}[/]")
-        except Exception as e:
-            progress.console.log(f"[red]► HTML Report failed → {e}[/]")
+            plan = self.dag_brain.build_plan(state, selected_validators)
+            results = self.validation_engine.run(plan, state)
+
+            validation_queue = []
+            for result in results:
+                if not isinstance(result, dict):
+                    continue
+
+                if result.get("success"):
+                    validator_id = result.get("validator_id") or result.get("validator_class") or "unknown_validator"
+                    self.attack_chain_manager.validator_completed(str(validator_id), result)
+                    self.chain_expander.check_and_expand(self.fact_store, validation_queue)
+
+                if result.get("success"):
+                    severity = result.get("severity") or ((result.get("validation") or {}).get("severity")) or "medium"
+                    endpoint = ""
+                    evidence = result.get("evidence") if isinstance(result.get("evidence"), dict) else {}
+                    request_blob = evidence.get("request")
+                    if isinstance(request_blob, dict):
+                        endpoint = request_blob.get("target") or request_blob.get("url") or ""
+                    title = result.get("vulnerability") or result.get("validator_id") or "validated-finding"
+                    finding = Finding(
+                        id=str(uuid.uuid4())[:8],
+                        title=str(title),
+                        severity=str(severity),
+                        endpoint=str(endpoint),
+                        evidence=str(evidence.get("matched") or ""),
+                        validated=True,
+                    )
+                    finding.score = score_finding({"severity": finding.severity, "validated": True})
+                    validated.append(finding)
+
+            progress.update(validation_task, advance=50, description="[magenta]Phase 2: Validation (Complete)")
+
+            self.session.findings = validated
+            progress.console.log(f"[bold green]   → {len(validated)} VALIDATED findings[/]")
+
+            # Save and HTML Report
+            path = self.session.save()
+            try:
+                report_payload = self._build_report_payload(signal_bag, selection_reasons, selected_validators, results)
+                report_paths = html_report.write(self.session, out_dir=self.output_dir, report_payload=report_payload)
+                self.session.data["report_paths"] = report_paths
+                self.session.save()
+                progress.console.log(f"[green]► HTML Report generated → {report_paths.get('html', '')}[/]")
+                progress.console.log(f"[green]► JSON Report generated → {report_paths.get('json', '')}[/]")
+            except Exception as e:
+                progress.console.log(f"[red]► HTML Report failed → {e}[/]")
+            finally:
+                self._stop_shared_browser()
+
+            progress.console.log(f"[green]► Session saved → {path}[/]")
         finally:
-            self._stop_shared_browser()
-            
-        progress.console.log(f"[green]► Session saved → {path}[/]")
+            await self._stop_oob_server()
+
         return self.session
