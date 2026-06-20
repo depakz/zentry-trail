@@ -117,11 +117,22 @@ class PostScanTrainer:
                 gnn.W2[i, 0] -= eps
                 grad_W2[i, 0] = (loss_p - loss_base) / eps
 
+            # ── Gradient for a1
+            grad_a1 = np.zeros_like(gnn.a1)
+            rng = np.random.default_rng()
+            sample_idx_a1 = rng.integers(0, gnn.a1.size, size=min(16, gnn.a1.size))
+            for flat_idx in sample_idx_a1:
+                r, c = divmod(int(flat_idx), gnn.a1.shape[1])
+                gnn.a1[r, c] += eps
+                logits_p, _ = gnn.forward(X)
+                loss_p = self._bce_loss(logits_p, y)
+                gnn.a1[r, c] -= eps
+                grad_a1[r, c] = (loss_p - loss_base) / eps
+
             # ── Gradient for W1 (32, 64) — sample 8 random elements ───
             # Full finite-difference over W1 (32×64=2048 elements) would be
             # slow; sampling keeps it fast while still improving the model.
             grad_W1 = np.zeros_like(gnn.W1)
-            rng = np.random.default_rng()
             sample_idx = rng.integers(0, gnn.W1.size, size=min(64, gnn.W1.size))
             for flat_idx in sample_idx:
                 r, c = divmod(int(flat_idx), gnn.W1.shape[1])
@@ -134,10 +145,12 @@ class PostScanTrainer:
             # ── Clip gradients ─────────────────────────────────────────
             grad_W1 = self._clip_gradient(grad_W1)
             grad_W2 = self._clip_gradient(grad_W2)
+            grad_a1 = self._clip_gradient(grad_a1)
 
             # ── Gradient step (descend — subtract gradient) ────────────
             gnn.W1 -= self.LEARNING_RATE * grad_W1
             gnn.W2 -= self.LEARNING_RATE * grad_W2
+            gnn.a1 -= self.LEARNING_RATE * grad_a1
 
         # ── Persist updated weights ──────────────────────────────────────
         try:

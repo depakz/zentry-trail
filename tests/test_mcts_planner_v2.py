@@ -20,19 +20,21 @@ import pytest
 
 from core.gnn_model   import SimpleGNN
 from core.gnn_trainer import PostScanTrainer
-from core.mcts_planner import AttackGraphNode, DeadlineAwareMCTS
+from core.attack_graph import AttackGraphNode, AttackGraph
+from core.mcts_planner import DeadlineAwareMCTS
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def make_node(node_id: str, priority: float, findings: list = None) -> AttackGraphNode:
+def make_node(node_id: str, priority: float, findings: list = None, method: str = "GET", url: str = "") -> AttackGraphNode:
     return AttackGraphNode(
         node_id=node_id,
-        url=f"http://example.com/{node_id}",
+        url=url or f"http://example.com/{node_id}",
         priority_score=priority,
         confirmed_findings=findings or [],
+        method=method
     )
 
 
@@ -47,15 +49,20 @@ class TestAttackGraphNodeFeaturize:
         assert isinstance(feat, np.ndarray), "featurize() must return ndarray"
         assert feat.shape == (32,), f"Expected shape (32,), got {feat.shape}"
 
-    def test_priority_score_in_feature_0(self):
+    def test_method_encoding(self):
+        node = make_node("n1", 0.5, method="POST")
+        feat = node.featurize()
+        assert feat[1] == 1.0
+
+    def test_priority_score_in_feature_28(self):
         node = make_node("n1", 0.75)
         feat = node.featurize()
-        assert feat[0] == pytest.approx(0.75)
+        assert feat[28] == pytest.approx(0.75)
 
-    def test_confirmed_findings_in_feature_1(self):
+    def test_confirmed_findings_in_feature_29(self):
         node = make_node("n1", 0.5, findings=["f1", "f2", "f3"])
         feat = node.featurize()
-        assert feat[1] > 0.0
+        assert feat[29] > 0.0
 
     def test_high_value_path_flagged(self):
         node = AttackGraphNode(
@@ -63,9 +70,10 @@ class TestAttackGraphNodeFeaturize:
             url="http://example.com/payment/checkout",
             priority_score=0.5,
             confirmed_findings=[],
+            tags=["admin_path"]
         )
         feat = node.featurize()
-        assert feat[3] == 1.0, "payment/checkout should set high_value flag"
+        assert feat[24] == 1.0, "admin_path should set high_value flag"
 
     def test_id_param_flagged(self):
         node = AttackGraphNode(
@@ -73,9 +81,10 @@ class TestAttackGraphNodeFeaturize:
             url="http://example.com/api/user?user_id=42",
             priority_score=0.5,
             confirmed_findings=[],
+            tags=["api"]
         )
         feat = node.featurize()
-        assert feat[2] == 1.0, "user_id param should set ID flag"
+        assert feat[27] == 1.0, "api tag should set flag"
 
     def test_all_values_finite(self):
         node = make_node("n1", 0.9, findings=["f1"])
@@ -121,6 +130,7 @@ class TestSimpleGNNForward:
         gnn = SimpleGNN(weights_path="/tmp/nonexistent_gnn.npz")
         assert gnn.W1.shape == (32, 64), f"W1 shape: {gnn.W1.shape}"
         assert gnn.W2.shape == (64, 1),  f"W2 shape: {gnn.W2.shape}"
+        assert gnn.a1.shape == (128, 1), f"a1 shape: {gnn.a1.shape}"
 
 
 # ---------------------------------------------------------------------------
@@ -205,6 +215,7 @@ class TestMCTSPlan:
 
     def test_plan_highest_priority_first(self):
         """Highest priority_score node should appear near the top."""
+        np.random.seed(42)
         planner = self._make_planner()
         nodes   = [
             make_node("low",  0.1),

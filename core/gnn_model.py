@@ -1,9 +1,9 @@
 """
 Lightweight numpy-based Graph Neural Network for attack node policy scoring.
 
-Architecture: 2-layer Graph Attention Network approximated with numpy.
+Architecture: 2-layer Graph Attention Network (GAT) approximated with numpy.
   Input:  node features  (N x 32)
-  Hidden: W1             (32 x 64)  — tanh activation + adjacency aggregation
+  Hidden: W1             (32 x 64)  — attention pooling across neighbors + tanh
   Output: policy logits  (N x 1)    — per-node expected value
           value estimate (scalar)   — overall graph value
 
@@ -18,16 +18,6 @@ from typing import Tuple
 
 
 class SimpleGNN:
-    """
-    2-layer Graph Attention Network approximated with numpy.
-
-    Forward pass:
-      1. Aggregate neighbour features:  X_agg = A_norm @ X  (A_norm = row-normalised adjacency + I)
-      2. Layer 1:                        H1 = tanh(X_agg @ W1)
-      3. Layer 2:                        logits = H1 @ W2
-      4. Value estimate:                 v = mean(logits)
-    """
-
     # Weight dimensions match the 32-dim feature vector defined in AttackGraphNode.featurize()
     INPUT_DIM  = 32
     HIDDEN_DIM = 64
@@ -36,6 +26,7 @@ class SimpleGNN:
     def __init__(self, weights_path: str = "core/gnn_weights.npz"):
         self.weights_path = weights_path
         self.W1: np.ndarray = None   # (32, 64)
+        self.a1: np.ndarray = None   # (128, 1) for attention
         self.W2: np.ndarray = None   # (64, 1)
         self._load_weights()
 
@@ -49,6 +40,7 @@ class SimpleGNN:
             try:
                 data = np.load(self.weights_path)
                 self.W1 = data["W1"]
+                self.a1 = data["a1"] if "a1" in data else np.random.default_rng(42).standard_normal((self.HIDDEN_DIM * 2, 1)) * 0.1
                 self.W2 = data["W2"]
                 return
             except Exception:
@@ -57,12 +49,16 @@ class SimpleGNN:
         # Reproducible random init (seed=42)
         rng = np.random.default_rng(42)
         self.W1 = rng.standard_normal((self.INPUT_DIM, self.HIDDEN_DIM)) * 0.1
+        self.a1 = rng.standard_normal((self.HIDDEN_DIM * 2, 1)) * 0.1
         self.W2 = rng.standard_normal((self.HIDDEN_DIM, self.OUTPUT_DIM)) * 0.1
 
     def save_weights(self) -> None:
         """Persist current weights to disk."""
-        os.makedirs(os.path.dirname(self.weights_path) or ".", exist_ok=True)
-        np.savez(self.weights_path, W1=self.W1, W2=self.W2)
+        try:
+            os.makedirs(os.path.dirname(self.weights_path) or ".", exist_ok=True)
+            np.savez(self.weights_path, W1=self.W1, a1=self.a1, W2=self.W2)
+        except Exception:
+            pass
 
     # ------------------------------------------------------------------
     # Forward pass
@@ -96,14 +92,28 @@ class SimpleGNN:
         else:
             A = np.eye(N)
 
-        # Row-normalise so aggregation is a weighted average, not a sum
-        row_sums = A.sum(axis=1, keepdims=True)
-        row_sums = np.where(row_sums == 0, 1.0, row_sums)   # avoid divide-by-zero
-        A_norm = A / row_sums
-
-        # Layer 1: aggregate neighbours then project
-        X_agg = A_norm @ node_features       # (N, 32)
-        H1    = np.tanh(X_agg @ self.W1)    # (N, 64)
+        # Layer 1: Graph Attention
+        Wh = node_features @ self.W1  # (N, 64)
+        
+        a_src = self.a1[:self.HIDDEN_DIM, :] # (64, 1)
+        a_tgt = self.a1[self.HIDDEN_DIM:, :] # (64, 1)
+        
+        score_src = Wh @ a_src # (N, 1)
+        score_tgt = Wh @ a_tgt # (N, 1)
+        e = score_src + score_tgt.T # (N, N)
+        
+        e = np.where(e > 0, e, 0.2 * e)
+        
+        mask = -9e15 * (1.0 - A)
+        attention = e + mask
+        
+        # Safe Softmax over rows
+        max_att = np.max(attention, axis=1, keepdims=True)
+        exp_att = np.exp(attention - max_att)
+        alpha = exp_att / (np.sum(exp_att, axis=1, keepdims=True) + 1e-10)
+        
+        # Aggregate
+        H1 = np.tanh(alpha @ Wh) # (N, 64)
 
         # Layer 2: policy logits
         logits = H1 @ self.W2               # (N, 1)

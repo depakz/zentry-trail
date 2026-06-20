@@ -89,6 +89,8 @@ def infer_vuln_types(param: str, nuclei_tags: Iterable[str] | None = None) -> li
         "open-redirect": "open_redirect",
         "xxe": "xxe",
         "idor": "idor",
+        "biz-logic": "biz_logic_validator",
+        "business-logic": "biz_logic_validator",
         "crlf": "crlf_injection",
         "path-traversal": "path_traversal",
     }

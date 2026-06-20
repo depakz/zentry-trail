@@ -26,6 +26,8 @@ from core.signal_extractor import extract_signals
 from core.validator_selector import discover_validators, select_validators
 from core.chain_expander import ChainExpander
 from modules.pipeline.validation import registry
+from core.evidence_store import EvidenceStore
+from core.self_training import OutcomeDB, AttackSelector, PostScanFineTuner
 
 try:
     from avvp.services.oob_canary import start_oob_server, stop_oob_server
@@ -70,6 +72,10 @@ class Orchestrator:
             attack_chain_manager=self.attack_chain_manager,
         )
         self.chain_expander = ChainExpander(self.attack_chain_manager)
+        self.evidence_store = EvidenceStore(output_dir=f"{self.output_dir}/evidence")
+        self.outcome_db = OutcomeDB(db_path=f"data/outcomes.db")
+        self.attack_selector = AttackSelector(self.outcome_db)
+        self.fine_tuner = PostScanFineTuner()
         self._playwright = None
         self._browser = None
         self._oob_server = None
@@ -628,6 +634,12 @@ class Orchestrator:
         # Start OOB canary server
         await self._start_oob_server()
 
+        try:
+            from core.normalized_client import NormalizedHTTPClient
+            normalized_client = NormalizedHTTPClient(profile_name="chrome124", timer_mode="web")
+        except Exception as e:
+            normalized_client = None
+
         state = {
             "target": self.target,
             "url": target_url,
@@ -647,13 +659,42 @@ class Orchestrator:
             "oob_server": self._oob_server,
             "oob_base_url": self._oob_base_url,
             "scan_id": self.session.id,
+            "normalized_client": normalized_client,
+            "attack_selector": self.attack_selector,
+            "outcome_db": self.outcome_db,
         }
 
         self._start_shared_browser()
         state["browser"] = self._browser
 
         try:
-            plan = self.dag_brain.build_plan(state, selected_validators)
+            from core.gnn_model import SimpleGNN
+            from core.mcts_planner import DeadlineAwareMCTS
+            from core.attack_graph import AttackGraphNode
+            
+            nodes = []
+            for i, val in enumerate(selected_validators):
+                score = getattr(val, "priority", 0) / 100.0
+                vid = getattr(val, "validator_id", val.__class__.__name__)
+                nodes.append(AttackGraphNode(
+                    node_id=f"val_{i}",
+                    url=target_url,
+                    priority_score=score,
+                    tags=[vid]
+                ))
+            
+            self.outcome_db.record_scan(self.session.id, target_url, int(time.time()))
+            
+            gnn = SimpleGNN()
+            mcts = DeadlineAwareMCTS(gnn, scan_deadline_epoch=time.time() + 300)
+            ordered_nodes = mcts.plan(nodes, budget_seconds=300)
+            
+            ordered_validators = []
+            for node in ordered_nodes:
+                idx = int(node.node_id.split("_")[1])
+                ordered_validators.append(selected_validators[idx])
+                
+            plan = self.dag_brain.build_plan(state, ordered_validators)
             results = self.validation_engine.run(plan, state)
 
             validation_queue = []
@@ -683,7 +724,37 @@ class Orchestrator:
                         validated=True,
                     )
                     finding.score = score_finding({"severity": finding.severity, "validated": True})
+                    
+                    try:
+                        self.evidence_store.store_http_pair(
+                            finding.id,
+                            request_blob if isinstance(request_blob, dict) else {"raw": str(request_blob)},
+                            response_blob if isinstance(response_blob, dict) else {"raw": str(response_blob)}
+                        )
+                    except Exception as e:
+                        pass
+                        
                     validated.append(finding)
+
+            try:
+                for order, node in enumerate(ordered_nodes):
+                    idx = int(node.node_id.split("_")[1])
+                    val = selected_validators[idx]
+                    vid = getattr(val, "validator_id", val.__class__.__name__)
+                    led = 1 if any(getattr(r, "validator_id", getattr(r, "validator_class", "")) == vid for r in results if isinstance(r, dict) and r.get("success")) else 0
+                    self.outcome_db.record_node_decision(self.session.id, node.node_id, node.priority_score, order, led, node.featurize())
+                
+                for f in validated:
+                    self.outcome_db.record_finding(f.id, self.session.id, f.severity, f.endpoint, f.score)
+                asyncio.create_task(self.fine_tuner.run_in_background(gnn, self.session.id, self.outcome_db))
+            except Exception as e:
+                pass
+
+            for finding in validated:
+                try:
+                    self.evidence_store.generate_bundle(finding.id)
+                except Exception as e:
+                    pass
 
             progress.update(validation_task, advance=50, description="[magenta]Phase 2: Validation (Complete)")
 
@@ -695,6 +766,18 @@ class Orchestrator:
             try:
                 report_payload = self._build_report_payload(signal_bag, selection_reasons, selected_validators, results)
                 report_paths = html_report.write(self.session, out_dir=self.output_dir, report_payload=report_payload)
+                
+                try:
+                    from core.sarif_reporter import SARIFReporter
+                    sarif_reporter = SARIFReporter()
+                    sarif_dict = sarif_reporter.generate(self.session, self.evidence_store)
+                    sarif_path = f"{self.output_dir}/{self.session.id}.sarif" if hasattr(self.session, "id") else f"{self.output_dir}/scan_results.sarif"
+                    sarif_written = sarif_reporter.write(sarif_dict, sarif_path)
+                    report_paths["sarif"] = sarif_written
+                    progress.console.log(f"[green]► SARIF Report generated → {sarif_written}[/]")
+                except Exception as e:
+                    progress.console.log(f"[yellow]► SARIF Report failed → {e}[/]")
+
                 self.session.data["report_paths"] = report_paths
                 self.session.save()
                 progress.console.log(f"[green]► HTML Report generated → {report_paths.get('html', '')}[/]")

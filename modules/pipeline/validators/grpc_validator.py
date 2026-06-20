@@ -94,30 +94,37 @@ class gRPCValidator:
                 remediation="Disable gRPC reflection in production or restrict it to authenticated clients.",
             )
 
-        # Test 2: Unauthenticated method call attempt
-        try:
-            methods_result = subprocess.run(
-                ["grpcurl", "-plaintext", f"{host}:{port}", "list", "helloworld.Greeter"],
-                capture_output=True,
-                timeout=3,
-                text=True,
-            )
-            if methods_result.returncode == 0:
-                # Service exists and is callable without auth
-                return ValidationResult(
-                    success=True,
-                    confidence=0.85,
-                    severity="high",
-                    vulnerability="grpc-unauthenticated-access",
-                    evidence=Evidence(
-                        request={"target": f"{host}:{port}", "service": "helloworld.Greeter"},
-                        response={"accessible": True},
-                        matched="unauthenticated_method",
-                    ),
-                    impact="Unauthenticated gRPC methods are accessible from the network.",
-                    remediation="Implement authentication and authorization checks for all gRPC methods.",
+        # Test 2: Unauthenticated method call attempt using discovered services or fallback
+        services_to_test = ["helloworld.Greeter"]
+        if reflection_data and "services" in reflection_data:
+            services_to_test = [s for s in reflection_data["services"] if "reflection" not in s.lower() and "health" not in s.lower()]
+            
+        for service in services_to_test:
+            try:
+                # Probe identified endpoints with empty protobuf definitions
+                probe_result = subprocess.run(
+                    ["grpcurl", "-plaintext", "-d", "{}", f"{host}:{port}", service],
+                    capture_output=True,
+                    timeout=3,
+                    text=True,
                 )
-        except Exception:
-            pass
+                stderr_lower = (probe_result.stderr or "").lower()
+                if "unauthenticated" not in stderr_lower and "permissiondenied" not in stderr_lower:
+                    if probe_result.returncode == 0 or "unimplemented" in stderr_lower:
+                        return ValidationResult(
+                            success=True,
+                            confidence=0.85,
+                            severity="high",
+                            vulnerability="grpc-unauthenticated-access",
+                            evidence=Evidence(
+                                request={"target": f"{host}:{port}", "service": service},
+                                response={"output": probe_result.stdout or probe_result.stderr},
+                                matched="unauthenticated_method",
+                            ),
+                            impact="Unauthenticated gRPC methods are accessible from the network with empty or malformed payloads.",
+                            remediation="Implement authentication and authorization checks for all gRPC methods.",
+                        )
+            except Exception as e:
+                logger.debug(f"gRPC unauthenticated probe failed: {e}")
 
         return None

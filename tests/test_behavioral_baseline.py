@@ -7,6 +7,10 @@ Tests for core/behavioral_baseline.py and core/behavioral_probe.py
 import pytest
 from core.behavioral_baseline import BSMRecorder, BehavioralStateMachine, BSMStep
 from core.behavioral_probe    import BSMDeviationProber, DeviationProbe
+from modules.pipeline.validators.biz_logic_validator import BizLogicValidator
+from modules.pipeline.engine.models import ValidationResult
+import aiohttp
+from unittest.mock import AsyncMock, patch
 
 
 # ---------------------------------------------------------------------------
@@ -218,6 +222,55 @@ class TestRecorderProberIntegration:
         assert "step_skip"    in probe_types
         assert "csrf_bypass"  in probe_types
 
+
+# ---------------------------------------------------------------------------
+# BizLogicValidator tests
+# ---------------------------------------------------------------------------
+
+class TestBizLogicValidator:
+
+    def test_validator_can_run(self):
+        validator = BizLogicValidator()
+        state = {"endpoints": ["http://example.com/checkout/step1"]}
+        assert validator.can_run(state) is True
+
+        state_no_match = {"endpoints": ["http://example.com/about"]}
+        assert validator.can_run(state_no_match) is False
+
+    @pytest.mark.asyncio
+    async def test_validator_run_success(self):
+        validator = BizLogicValidator()
+        state = {
+            "endpoints": [
+                "http://shop.example.com/checkout/step1",
+                "http://shop.example.com/checkout/step2?qty=2&price=29.99",
+                "http://shop.example.com/checkout/confirm?qty=2&price=29.99"
+            ]
+        }
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_request_context = AsyncMock()
+        mock_request_context.__aenter__.return_value = mock_response
+
+        with patch("aiohttp.ClientSession.request", return_value=mock_request_context):
+            result = await validator.run(state)
+            assert result is not None
+            assert result.success is True
+            assert "biz-logic-" in result.vulnerability
+            assert result.severity in ("critical", "high", "medium")
+
+    @pytest.mark.asyncio
+    async def test_validator_run_no_bypass(self):
+        validator = BizLogicValidator()
+        state = {"endpoints": ["http://shop.example.com/checkout/step1", "http://shop.example.com/checkout/step2?qty=2&price=29.99", "http://shop.example.com/checkout/confirm?qty=2&price=29.99"]}
+        mock_response = AsyncMock()
+        mock_response.status = 403
+        mock_request_context = AsyncMock()
+        mock_request_context.__aenter__.return_value = mock_response
+
+        with patch("aiohttp.ClientSession.request", return_value=mock_request_context):
+            result = await validator.run(state)
+            assert result is None
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
