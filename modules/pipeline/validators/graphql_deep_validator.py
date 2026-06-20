@@ -85,7 +85,7 @@ class GraphQLDeepValidator:
 
         for endpoint in endpoints:
             # Test 1: Alias-based batch query to bypass rate limiting
-            aliases = " ".join([f"q{i}:__typename" for i in range(100)])
+            aliases = " ".join([f"q{i}:__typename" for i in range(500)])
             batch_query = f"{{ {aliases} }}"
             resp = self._post(endpoint, batch_query)
             if resp and resp.status_code == 200 and resp.text and "typename" in resp.text:
@@ -105,7 +105,7 @@ class GraphQLDeepValidator:
                 )
 
             # Test 2: Deep nesting to trigger timeout/DoS
-            depth_query = "query{" * 15 + "a" + "}" * 15
+            depth_query = "query { " + "a { " * 16 + "id" + " }" * 16 + " }"
             resp = self._post(endpoint, depth_query)
             if resp and (resp.status_code >= 500 or resp.elapsed.total_seconds() > 5):
                 logger.warning(f"GraphQL: deep nesting DoS confirmed on {endpoint}")
@@ -115,12 +115,42 @@ class GraphQLDeepValidator:
                     severity="high",
                     vulnerability="graphql-deep-nesting-dos",
                     evidence=Evidence(
-                        request={"target": endpoint, "depth": 15},
+                        request={"target": endpoint, "depth": 16},
                         response={"status": resp.status_code, "time": str(resp.elapsed)},
                         matched="deep_nesting",
                     ),
                     impact="Deep query nesting can cause server DoS due to lack of depth limits.",
                     remediation="Implement query depth limits and timeouts for GraphQL operations.",
                 )
+
+            # Test 3: Object IDOR Validation
+            idor_query = "query { user(id: %d) { id email name } }"
+            try:
+                headers = {"Cookie": state.get("cookie")} if state.get("cookie") else None
+                resp1 = self._post(endpoint, idor_query % 1, headers=headers)
+                resp2 = self._post(endpoint, idor_query % 2, headers=headers)
+                if resp1 and resp2 and resp1.status_code == 200 and resp2.status_code == 200:
+                    try:
+                        data1 = resp1.json().get("data", {}).get("user")
+                        data2 = resp2.json().get("data", {}).get("user")
+                        if data1 and data2 and data1 != data2:
+                            logger.warning(f"GraphQL: IDOR confirmed on {endpoint}")
+                            return ValidationResult(
+                                success=True,
+                                confidence=0.9,
+                                severity="high",
+                                vulnerability="graphql-idor",
+                                evidence=Evidence(
+                                    request={"target": endpoint, "query": "user(id: 1...2)"},
+                                    response={"id_1": data1, "id_2": data2},
+                                    matched="cross-tenant_data_leakage",
+                                ),
+                                impact="Cross-tenant data leakage via predictable object identifiers.",
+                                remediation="Implement robust object-level authorization checks inside GraphQL resolvers.",
+                            )
+                    except ValueError:
+                        pass
+            except Exception as e:
+                logger.debug(f"GraphQL IDOR test failed: {e}")
 
         return None

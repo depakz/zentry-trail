@@ -214,7 +214,32 @@ class SSRFValidator:
                     baseline_response = requests.get(baseline_url, headers=headers, timeout=timeout, allow_redirects=False)
                     probe_response = requests.get(probe_url, headers=headers, timeout=timeout, allow_redirects=False)
 
-                    probe_body = (probe_response.text or "")[:2000]
+                    # --- WAF Fallback Logic ---
+                    if probe_response.status_code in {403, 406}:
+                        try:
+                            import asyncio
+                            async def _fallback():
+                                nc = state.get("normalized_client")
+                                if nc:
+                                    async with nc as client:
+                                        resp = await client.get(probe_url, allow_redirects=False)
+                                        return await resp.text(), resp.status
+                                return probe_response.text, probe_response.status_code
+                            
+                            try:
+                                fb_text, fb_status = asyncio.run(_fallback())
+                            except RuntimeError as re_err:
+                                loop = asyncio.new_event_loop()
+                                asyncio.set_event_loop(loop)
+                                fb_text, fb_status = loop.run_until_complete(_fallback())
+                                loop.close()
+                            probe_body = (fb_text or "")[:2000]
+                            probe_response.status_code = fb_status
+                        except Exception as e:
+                            probe_body = (probe_response.text or "")[:2000]
+                    else:
+                        probe_body = (probe_response.text or "")[:2000]
+
                     probe_lower = probe_body.lower()
                     matched_markers = [marker for marker in SSRF_MARKERS if marker in probe_lower]
 

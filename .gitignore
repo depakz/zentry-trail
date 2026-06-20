@@ -2,6 +2,7 @@
 venv/
 .venv/
 __pycache__/
+.env.local/
 
 # Binaries & Large Tools
 bin/

@@ -4,43 +4,8 @@ import time
 import math
 import numpy as np
 from typing import Dict, List, Tuple
-from dataclasses import dataclass
-
-
-@dataclass
-class AttackGraphNode:
-    """Node in attack graph."""
-    node_id: str
-    url: str
-    priority_score: float
-    confirmed_findings: List[str]
-
-    def featurize(self) -> np.ndarray:
-        """Return 32-dim feature vector for GNN."""
-        # Simplified: just return scalar features as 32-dim vector
-        features = np.zeros(32)
-        features[0] = self.priority_score
-        features[1] = len(self.confirmed_findings)
-        return features
-
-
-class SimpleGNN:
-    """Lightweight numpy-based GNN for policy scoring."""
-
-    def __init__(self, weights_path: str = "core/gnn_weights.npz"):
-        self.weights_path = weights_path
-        self.W1 = np.random.randn(32, 16) * 0.1
-        self.W2 = np.random.randn(16, 1) * 0.1
-
-    def forward(self, node_features: np.ndarray) -> Tuple[np.ndarray, float]:
-        """Forward pass through GNN."""
-        if node_features.shape[0] == 0:
-            return np.array([]), 0.0
-        # Simple 2-layer network
-        h1 = np.tanh(node_features @ self.W1)
-        logits = h1 @ self.W2
-        value = float(np.mean(logits))
-        return logits.flatten(), value
+from core.gnn_model import SimpleGNN
+from core.attack_graph import AttackGraphNode
 
 
 class DeadlineAwareMCTS:
@@ -56,23 +21,33 @@ class DeadlineAwareMCTS:
 
     def exploration_constant(self) -> float:
         """Decay exploration weight as deadline approaches."""
-        elapsed_frac = (time.time() - self.scan_start) / max(1, self.deadline - self.scan_start)
-        elapsed_frac = min(1.0, elapsed_frac)
+        current_time = time.time()
+        total_time = max(1.0, self.deadline - self.scan_start)
+        elapsed_frac = (current_time - self.scan_start) / total_time
+        elapsed_frac = min(1.0, max(0.0, elapsed_frac))
         # Sigmoid decay
-        return self.C_MIN + (self.C_MAX - self.C_MIN) / (1 + math.exp(10 * (elapsed_frac - 0.6)))
+        try:
+            decay = 1.0 / (1.0 + math.exp(10.0 * (elapsed_frac - 0.6)))
+        except OverflowError:
+            decay = 0.0
+        return self.C_MIN + (self.C_MAX - self.C_MIN) * decay
 
     def plan(self, nodes: List[AttackGraphNode], budget_seconds: float = 60) -> List[AttackGraphNode]:
         """Plan validation order using GNN + MCTS."""
-        if self.deadline - time.time() < 5:
-            # Deadline imminent, use greedy priority
+        time_left = self.deadline - time.time()
+        if time_left < 5.0:
             return sorted(nodes, key=lambda n: n.priority_score, reverse=True)
 
-        # Compute policy scores via GNN
-        features = np.array([n.featurize() for n in nodes])
-        if features.size == 0:
-            return nodes
+        if not nodes:
+            return []
 
+        # Compute policy scores via GNN
+        features = np.array([n.featurize() for n in nodes], dtype=np.float32)
         policy_logits, _ = self.gnn.forward(features)
-        scored = list(zip(policy_logits, nodes))
-        scored.sort(reverse=True)
+        
+        exp_c = self.exploration_constant()
+        scores = policy_logits + exp_c * np.random.randn(len(nodes))
+        
+        scored = list(zip(scores, nodes))
+        scored.sort(key=lambda x: x[0], reverse=True)
         return [node for _, node in scored]
