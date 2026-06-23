@@ -118,7 +118,14 @@ class IDORValidator:
 
         cookie = state.get("cookie")
         headers = {"User-Agent": "security-pipeline-validator/1.0"}
-        if isinstance(cookie, str) and cookie.strip():
+        
+        # Propagate AuthManager session cookies if present
+        auth_manager = state.get("auth_manager")
+        if auth_manager and auth_manager.authenticated:
+            auth_cookies = auth_manager.auth_cookies
+            if auth_cookies:
+                headers["Cookie"] = "; ".join(f"{k}={v}" for k, v in auth_cookies.items())
+        elif isinstance(cookie, str) and cookie.strip():
             headers["Cookie"] = cookie
 
         timeout = int(state.get("timeout", 10) or 10)

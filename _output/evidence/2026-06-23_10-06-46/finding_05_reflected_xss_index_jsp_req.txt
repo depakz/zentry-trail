@@ -1,0 +1,5 @@
+GET /index.jsp?content=%3Cb%3Ezentry_xss_tag%3C%2Fb%3E HTTP/1.1
+Host: altoro.testfire.net
+User-Agent: zentry-trail/1.0
+
+# Injected payload: <b>zentry_xss_tag</b>

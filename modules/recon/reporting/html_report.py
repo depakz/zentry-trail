@@ -60,6 +60,37 @@ def _finding_details(findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
         snippet = str(finding.get("response_snippet") or finding.get("evidence") or "")
         cvss = float(finding.get("cvss") or finding.get("score") or 0.0)
         vuln = str(finding.get("vulnerability") or finding.get("title") or "")
+
+        # Load raw request from evidence file or generate from finding dict
+        raw_request = ""
+        req_path = finding.get("evidence_req_path")
+        if req_path:
+            try:
+                raw_request = Path(req_path).read_text(encoding="utf-8")
+            except Exception:
+                pass
+        if not raw_request:
+            try:
+                from core.evidence_collector import format_raw_request
+                raw_request = format_raw_request(finding)
+            except Exception:
+                pass
+
+        # Load raw response from evidence file or generate from finding dict
+        raw_response = ""
+        res_path = finding.get("evidence_res_path")
+        if res_path:
+            try:
+                raw_response = Path(res_path).read_text(encoding="utf-8")
+            except Exception:
+                pass
+        if not raw_response:
+            try:
+                from core.evidence_collector import format_raw_response
+                raw_response = format_raw_response(finding)
+            except Exception:
+                pass
+
         output.append(
             {
                 **finding,
@@ -69,6 +100,8 @@ def _finding_details(findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "response_snippet": snippet,
                 "cvss": cvss,
                 "owasp": _owasp_mapping(vuln, validator_name),
+                "raw_request": raw_request,
+                "raw_response": raw_response,
             }
         )
     return output

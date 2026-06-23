@@ -1,0 +1,8 @@
+GET /login.jsp HTTP/1.1
+Host: altoro.testfire.net
+User-Agent: Mozilla/5.0 (compatible; ZentryScanner/2.0)
+Accept-Encoding: gzip, deflate
+Accept: */*
+Connection: keep-alive
+Cookie: [REDACTED]
+

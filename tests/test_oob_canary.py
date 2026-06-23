@@ -110,7 +110,9 @@ class TestOOBCanaryServer:
             mock_request.method = "GET"
             mock_request.query_string = ""
             mock_request.headers = {}
-            mock_request.text = asyncio.coroutine(lambda: "")()
+            async def mock_text():
+                return ""
+            mock_request.text = mock_text
 
             # Call the handler directly
             response = await server._handle_request(mock_request)
