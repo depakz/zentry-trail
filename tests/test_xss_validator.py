@@ -41,12 +41,15 @@ class FakeContext:
     async def close(self):
         return None
 
+    async def add_cookies(self, cookies):
+        return None
+
 
 class FakeBrowser:
     def __init__(self, page):
         self._page = page
 
-    async def new_context(self):
+    async def new_context(self, *args, **kwargs):
         return FakeContext(self._page)
 
 

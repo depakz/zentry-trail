@@ -64,6 +64,15 @@ def main() -> None:
     parser.add_argument("--browser-profile", choices=("chrome124", "firefox124", "safari17"), default="chrome124",
                         help="Browser profile for traffic normalization (default: chrome124)")
     parser.add_argument("--no-normalize", action="store_true", help="Disable traffic normalization (raw requests)")
+    # ── Authentication flags (new) ───────────────────────────────────────────
+    parser.add_argument("--auth",       default=None, help="Authenticated credentials (username:password)")
+    parser.add_argument("--auth2",      default=None, help="Second user credentials (username:password)")
+    parser.add_argument("--auth-url",   default=None, help="Login URL (e.g. http://target/login)")
+    parser.add_argument("--auth-user",  default=None, help="Username to authenticate with")
+    parser.add_argument("--auth-pass",  default=None, help="Password to authenticate with")
+    parser.add_argument("--auth-field-user", default="uid",   help="Form field name for username (default: uid)")
+    parser.add_argument("--auth-field-pass", default="passw", help="Form field name for password (default: passw)")
+    parser.add_argument("--no-auth",    action="store_true",  help="Disable pre-scan authentication attempt")
     # ── False-positive labelling (Session 9 / 10) ──────────────────────────
     parser.add_argument("--label-fp",   nargs=2, metavar=("SCAN_ID", "FINDING_ID"),
                         help="Label a finding as a false positive: --label-fp SCAN_ID FINDING_ID")
@@ -91,6 +100,22 @@ def main() -> None:
             scope_list.extend([s.strip() for s in str(value).split(",") if s.strip()])
 
     try:
+        # Build custom credential profile if user supplied auth flags
+        custom_creds = None
+        custom_creds2 = None
+        if not getattr(args, "no_auth", False):
+            if getattr(args, "auth", None):
+                parts = args.auth.split(":", 1)
+                if len(parts) == 2:
+                    custom_creds = {"username": parts[0], "password": parts[1]}
+            elif getattr(args, "auth_user", None) and getattr(args, "auth_pass", None):
+                custom_creds = {"username": args.auth_user, "password": args.auth_pass}
+
+            if getattr(args, "auth2", None):
+                parts2 = args.auth2.split(":", 1)
+                if len(parts2) == 2:
+                    custom_creds2 = {"username": parts2[0], "password": parts2[1]}
+
         # Single Progress Manager initialized here
         with Progress(
             SpinnerColumn(),
@@ -102,8 +127,16 @@ def main() -> None:
             # Two Primary Bars
             recon_task = progress.add_task("[cyan]Phase 1: Reconnaissance...", total=100)
             validation_task = progress.add_task("[magenta]Phase 2: Validation...", total=100)
-            
+
             orchestrator = Orchestrator(target=target, fast=fast_mode, scope=scope_list, output_dir=args.output)
+
+            # Override credential profiles if user supplied --auth-* flags
+            if custom_creds or custom_creds2:
+                from core.auth_manager import AuthManager
+                orchestrator.auth_manager = AuthManager(target=target, credentials=custom_creds)
+                if custom_creds2:
+                    orchestrator.auth_manager.credentials2 = custom_creds2
+
             # Pass the single progress bar and task IDs to the orchestrator
             session = asyncio.run(orchestrator.run(progress, recon_task, validation_task))
 

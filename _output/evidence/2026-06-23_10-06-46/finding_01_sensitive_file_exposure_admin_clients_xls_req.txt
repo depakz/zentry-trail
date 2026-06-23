@@ -1,0 +1,3 @@
+GET /admin/clients.xls HTTP/1.1
+Host: altoro.testfire.net
+User-Agent: zentry-trail/1.0

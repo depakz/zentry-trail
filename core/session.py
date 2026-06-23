@@ -1,6 +1,7 @@
 import re
 import os
 import json
+import uuid
 from datetime import datetime
 from dataclasses import dataclass, field, asdict
 
@@ -26,6 +27,7 @@ class Session:
         safe_target = re.sub(r'[^\w\-.]', '_', safe_target)
 
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        self.id = str(uuid.uuid4())
         filename = f"session_{safe_target}_{timestamp}.json"
 
         # Ensure base directory exists

@@ -49,4 +49,3 @@ def brute_force_fields(api_url: str, schema_map: Dict[str, Set[str]], wordlist: 
                 except Exception as e:
                     results[obj_type][field] = False
     return results
-```

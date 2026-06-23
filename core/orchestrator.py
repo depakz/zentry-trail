@@ -28,6 +28,9 @@ from core.chain_expander import ChainExpander
 from modules.pipeline.validation import registry
 from core.evidence_store import EvidenceStore
 from core.self_training import OutcomeDB, AttackSelector, PostScanFineTuner
+from core.auth_manager import AuthManager
+from core.dedup import dedup_findings, dedup_finding_objects
+from core.evidence_collector import EvidenceCollector
 
 try:
     from avvp.services.oob_canary import start_oob_server, stop_oob_server
@@ -73,6 +76,15 @@ class Orchestrator:
         )
         self.chain_expander = ChainExpander(self.attack_chain_manager)
         self.evidence_store = EvidenceStore(output_dir=f"{self.output_dir}/evidence")
+        self.evidence_collector = EvidenceCollector(base_dir="_output/evidence")
+
+        # Wire evidence collector into BaseValidator so all validators can
+        # capture raw HTTP evidence at confirmation time (Part D).
+        try:
+            from modules.pipeline.validators.base import BaseValidator as _BV
+            _BV.set_evidence_collector(self.evidence_collector)
+        except Exception:
+            pass
         self.outcome_db = OutcomeDB(db_path=f"data/outcomes.db")
         self.attack_selector = AttackSelector(self.outcome_db)
         self.fine_tuner = PostScanFineTuner()
@@ -80,6 +92,9 @@ class Orchestrator:
         self._browser = None
         self._oob_server = None
         self._oob_base_url = None
+        # Pre-scan authentication manager
+        self.auth_manager = AuthManager(target=target)
+        self._auth_cookies: dict = {}
 
         # Ensure validators are imported and registered
         try:
@@ -203,6 +218,31 @@ class Orchestrator:
             score = float((result.get("validation") or {}).get("confidence_score") or result.get("confidence") or 0.0)
             cvss = round(min(10.0, max(0.0, score * 10.0)), 1)
 
+            # Extract HTTP method from evidence for evidence capture
+            method = "GET"
+            if isinstance(request_blob, dict):
+                method = str(request_blob.get("method") or "GET").upper()
+
+            # Extract response status and headers for evidence capture
+            response_status = None
+            response_headers = None
+            request_headers = None
+            if isinstance(response_blob, dict):
+                response_status = response_blob.get("status") or response_blob.get("status_code")
+                response_headers = response_blob.get("headers")
+            if isinstance(request_blob, dict):
+                request_headers = request_blob.get("headers")
+
+            # Extract evidence file paths if captured at confirm time (Part D)
+            evidence_req_path = ""
+            evidence_res_path = ""
+            evidence_bundle_data = result.get("evidence_bundle")
+            if isinstance(evidence_bundle_data, dict):
+                bundle_meta = evidence_bundle_data.get("metadata") or {}
+                if isinstance(bundle_meta, dict):
+                    evidence_req_path = str(bundle_meta.get("evidence_req_path") or "")
+                    evidence_res_path = str(bundle_meta.get("evidence_res_path") or "")
+
             finding_details.append(
                 {
                     "validator_name": str(result.get("validator_id") or result.get("validator_class") or "unknown_validator"),
@@ -214,6 +254,14 @@ class Orchestrator:
                     "cvss": cvss,
                     "remediation": str(result.get("remediation") or ""),
                     "score": cvss,
+                    "method": method,
+                    # Evidence file paths captured at validator confirm time
+                    "evidence_req_path": evidence_req_path,
+                    "evidence_res_path": evidence_res_path,
+                    # Private evidence metadata — consumed by EvidenceCollector fallback
+                    "_evidence_response_status": response_status,
+                    "_evidence_response_headers": response_headers if isinstance(response_headers, dict) else None,
+                    "_evidence_request_headers": request_headers if isinstance(request_headers, dict) else None,
                 }
             )
 
@@ -590,7 +638,7 @@ class Orchestrator:
                 header_map.setdefault("Content-Type", content_type)
 
         signal_bag = extract_signals(alive, port_results, self.session.endpoints, header_map, fact_store=self.fact_store)
-        discovered_validators = discover_validators()
+        discovered_validators = discover_validators(auth_manager=self.auth_manager)
         selected_validators, selection_reasons = select_validators(signal_bag, discovered_validators, return_reasons=True)
         tech_confirmed = bool(signal_bag.get("tech"))
 
@@ -631,6 +679,41 @@ class Orchestrator:
         protocols = sorted({str(h.get("scheme") or "").lower() for h in alive if isinstance(h, dict) and h.get("scheme")})
         target_url = scan_targets[0] if scan_targets else (self.target if self.target.startswith(("http://", "https://")) else f"https://{self.target}")
 
+        # ── Pre-scan authentication ───────────────────────────────────────────
+        progress.console.log("   [cyan]→ Attempting pre-scan authentication...[/]")
+        try:
+            # Auto-detect login endpoint using AuthManager
+            login_info = self.auth_manager.detect_login_endpoint(list(self.session.endpoints))
+            if login_info:
+                login_url = login_info["url"]
+                user_field = login_info["user_field"]
+                pass_field = login_info["pass_field"]
+            else:
+                login_url = urljoin(target_url, "/doLogin")
+                user_field = "uid"
+                pass_field = "passw"
+
+            # Try login
+            success = self.auth_manager.login(login_url, user_field, pass_field)
+            if success:
+                self._auth_cookies = self.auth_manager.auth_cookies
+                progress.console.log(
+                    f"   [bold green]✓ Authenticated as '{self.auth_manager.credentials.get('username')}' "
+                    f"at {login_url}[/]"
+                )
+                # Attempt second user login if provided
+                if self.auth_manager.credentials2:
+                    success2 = self.auth_manager.login_user2(login_url, user_field, pass_field)
+                    if success2:
+                        progress.console.log(
+                            f"   [bold green]✓ Authenticated user2 as '{self.auth_manager.credentials2.get('username')}'[/]"
+                        )
+            else:
+                progress.console.log("   [yellow]⚠ Pre-scan auth failed — scanning unauthenticated[/]")
+        except Exception as e:
+            progress.console.log(f"   [yellow]⚠ Auth manager error: {e}[/]")
+            self._auth_cookies = {}
+
         # Start OOB canary server
         await self._start_oob_server()
 
@@ -662,6 +745,10 @@ class Orchestrator:
             "normalized_client": normalized_client,
             "attack_selector": self.attack_selector,
             "outcome_db": self.outcome_db,
+            # Auth state — propagated to all validators
+            "auth_cookies": self._auth_cookies,
+            "auth_session": self.auth_manager.session,
+            "auth_manager": self.auth_manager,
         }
 
         self._start_shared_browser()
@@ -765,12 +852,44 @@ class Orchestrator:
             path = self.session.save()
             try:
                 report_payload = self._build_report_payload(signal_bag, selection_reasons, selected_validators, results)
+
+                # ── Deduplicate findings before any report output ─────────
+                report_payload["findings"] = dedup_findings(report_payload.get("findings", []))
+                self.session.findings = dedup_finding_objects(self.session.findings or [])
+                progress.console.log(f"[cyan]► Dedup: {len(report_payload['findings'])} unique findings after deduplication[/]")
+
+                # ── Evaluate Attack Chains ────────────────────────────────
+                try:
+                    from chains.rules import CHAIN_RULES
+                    from chains.engine import ChainEngine
+                    chain_engine = ChainEngine(CHAIN_RULES)
+                    attack_chains = chain_engine.evaluate(report_payload.get("findings", []))
+                    report_payload["attack_chains"] = attack_chains
+                    progress.console.log(f"[cyan]► Attack Chains: {len(attack_chains)} chains correlated[/]")
+                except Exception as ce_exc:
+                    progress.console.log(f"[yellow]► Attack Chain Engine evaluation failed (non-fatal): {ce_exc}[/]")
+                    report_payload["attack_chains"] = []
+
+                # ── Save evidence bundles to disk ─────────────────────────
+                try:
+                    self.evidence_collector.save_evidence(report_payload.get("findings", []))
+                    evidence_dir = self.evidence_collector.directory
+                    progress.console.log(f"[cyan]► Evidence: {len(report_payload['findings'])} bundles saved → {evidence_dir}[/]")
+                except Exception as ev_exc:
+                    progress.console.log(f"[yellow]► Evidence capture failed (non-fatal): {ev_exc}[/]")
+
                 report_paths = html_report.write(self.session, out_dir=self.output_dir, report_payload=report_payload)
                 
                 try:
                     from core.sarif_reporter import SARIFReporter
                     sarif_reporter = SARIFReporter()
-                    sarif_dict = sarif_reporter.generate(self.session, self.evidence_store)
+                    sarif_dict = sarif_reporter.generate(
+                        findings=report_payload.get("findings", []),
+                        target=self.target,
+                        evidence_store=self.evidence_store,
+                        scan_id=self.session.id if hasattr(self.session, "id") else None,
+                        attack_chains=report_payload.get("attack_chains", []),
+                    )
                     sarif_path = f"{self.output_dir}/{self.session.id}.sarif" if hasattr(self.session, "id") else f"{self.output_dir}/scan_results.sarif"
                     sarif_written = sarif_reporter.write(sarif_dict, sarif_path)
                     report_paths["sarif"] = sarif_written
@@ -782,6 +901,22 @@ class Orchestrator:
                 self.session.save()
                 progress.console.log(f"[green]► HTML Report generated → {report_paths.get('html', '')}[/]")
                 progress.console.log(f"[green]► JSON Report generated → {report_paths.get('json', '')}[/]")
+
+                try:
+                    import subprocess
+                    import sys
+                    sub_res = subprocess.run([sys.executable, "generate_report_pdf.py"], capture_output=True, text=True)
+                    if sub_res.returncode == 0:
+                        lines = sub_res.stdout.strip().split("\n")
+                        pdf_line = [line for line in lines if "PDF report saved" in line]
+                        if pdf_line:
+                            progress.console.log(f"[green]► {pdf_line[0].strip()}[/]")
+                        else:
+                            progress.console.log(f"[green]► PDF Report generated successfully[/]")
+                    else:
+                        progress.console.log(f"[yellow]► PDF Report failed: {sub_res.stderr.strip()}[/]")
+                except Exception as pe:
+                    progress.console.log(f"[yellow]► PDF Report failed: {pe}[/]")
             except Exception as e:
                 progress.console.log(f"[red]► HTML Report failed → {e}[/]")
             finally:

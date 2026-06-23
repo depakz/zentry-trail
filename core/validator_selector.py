@@ -56,7 +56,7 @@ def _match_signal_values(needle_values: List[Any], hay_values: List[Any], mode: 
     return False
 
 
-def discover_validators(package_name: str = "modules.pipeline.validators") -> List[Any]:
+def discover_validators(package_name: str = "modules.pipeline.validators", auth_manager: Any = None) -> List[Any]:
     """Discover validator classes dynamically using pkgutil/importlib."""
     package = importlib.import_module(package_name)
     discovered: List[Any] = []
@@ -82,10 +82,22 @@ def discover_validators(package_name: str = "modules.pipeline.validators") -> Li
                 continue
 
             try:
-                instance = obj(context=None)
+                instance = obj(context=None, auth_manager=auth_manager)
             except TypeError:
                 try:
-                    instance = obj()
+                    instance = obj(auth_manager=auth_manager)
+                except TypeError:
+                    try:
+                        instance = obj(context=None)
+                        instance.auth_manager = auth_manager
+                    except TypeError:
+                        try:
+                            instance = obj()
+                            instance.auth_manager = auth_manager
+                        except Exception:
+                            continue
+                    except Exception:
+                        continue
                 except Exception:
                     continue
             except Exception:
