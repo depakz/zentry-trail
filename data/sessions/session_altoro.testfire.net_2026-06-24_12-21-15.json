@@ -1,0 +1,96 @@
+{
+  "target": "http://altoro.testfire.net",
+  "created": "2026-06-24_12-21-15",
+  "subdomains": [
+    "http://altoro.testfire.net"
+  ],
+  "alive_hosts": [
+    {
+      "url": "https://altoro.testfire.net",
+      "input": "http://altoro.testfire.net",
+      "status": 200,
+      "title": "Altoro Mutual",
+      "tech": [
+        "Apache Tomcat",
+        "Java"
+      ],
+      "ip": "",
+      "host": "65.61.137.117",
+      "scheme": "https",
+      "webserver": "Apache-Coyote/1.1",
+      "content_type": "text/html",
+      "content_length": 0,
+      "cdn": false,
+      "cdn_name": ""
+    }
+  ],
+  "endpoints": [],
+  "waf": {
+    "https://altoro.testfire.net": "none"
+  },
+  "nuclei_tags": [],
+  "findings": [
+    {
+      "id": "21f63fc5",
+      "title": "insecure-session-cookie",
+      "severity": "medium",
+      "endpoint": "https://altoro.testfire.net",
+      "payload": "",
+      "evidence": "SameSite flag missing \u2014 CSRF attacks possible",
+      "validated": true,
+      "reproduction": [],
+      "impact": "",
+      "cve": [],
+      "score": 5.5
+    },
+    {
+      "id": "74a1000e",
+      "title": "default-credentials",
+      "severity": "critical",
+      "endpoint": "https://altoro.testfire.net/bank/main.jsp",
+      "payload": "",
+      "evidence": "username:admin",
+      "validated": true,
+      "reproduction": [],
+      "impact": "",
+      "cve": [],
+      "score": 9.5
+    },
+    {
+      "id": "57dc6587",
+      "title": "sql-injection",
+      "severity": "high",
+      "endpoint": "https://altoro.testfire.net/login.jsp",
+      "payload": "",
+      "evidence": "' or 1=1 or 'a'='a",
+      "validated": true,
+      "reproduction": [],
+      "impact": "",
+      "cve": [],
+      "score": 8.0
+    },
+    {
+      "id": "2a7140c2",
+      "title": "reflected-xss",
+      "severity": "high",
+      "endpoint": "https://altoro.testfire.net/search.jsp?query=%3Cu%3Ezentry_reflected_xss_search%3C/u%3E",
+      "payload": "",
+      "evidence": "<u>zentry_reflected_xss_search</u>",
+      "validated": true,
+      "reproduction": [],
+      "impact": "",
+      "cve": [],
+      "score": 8.0
+    }
+  ],
+  "mined_params": {},
+  "recon_report_paths": {
+    "json": "reports/altoro.testfire.net-2026-06-24_12-21-15-recon-report.json"
+  },
+  "recon_fact_count": 2,
+  "report_paths": {
+    "html": "reports/altoro.testfire.net-2026-06-24_12-21-15-report.html",
+    "json": "reports/altoro.testfire.net-2026-06-24_12-21-15-report.json",
+    "sarif": "reports/8e7a7737-29d6-4eba-b708-c34a246deb31.sarif"
+  }
+}

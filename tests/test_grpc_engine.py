@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from modules.pipeline.validators.grpc_validator import gRPCValidator
+from zentry.validators import gRPCValidator
+
 
 @patch('subprocess.run')
 def test_grpc_reflection_and_unauth(mock_run):

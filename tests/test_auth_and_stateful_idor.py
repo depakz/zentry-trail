@@ -4,13 +4,14 @@ import re
 from unittest.mock import MagicMock, patch
 from urllib.parse import urljoin, urlparse
 
-from core.auth_manager import AuthManager
-from modules.pipeline.validators.biz_logic_validator import BizLogicValidator
-from modules.pipeline.validators.default_credential_validator import DefaultCredentialValidator
-from modules.pipeline.validators.sqli_validator import SQLiValidator
-from modules.pipeline.validators.xss_validator import XSSValidator
-from modules.pipeline.validators.sensitive_file_validator import SensitiveFileValidator
-from modules.pipeline.engine.models import ValidationResult
+from zentry.auth import AuthManager
+from zentry.validators.bizlogic_validator import BizLogicValidator
+from zentry.validators.auth import DefaultCredentialValidator
+from zentry.validators.sqli_validator import SQLiValidator
+from zentry.validators.xss_validator import XSSValidator
+from zentry.validators.sensitive_file_validator import SensitiveFileValidator
+from zentry.session import ValidationResult
+
 
 class MockResponse:
     def __init__(self, text, status_code=200, cookies=None, request=None, url="http://example.com"):

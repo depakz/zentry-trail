@@ -5,10 +5,8 @@ Tests for core/behavioral_baseline.py and core/behavioral_probe.py
 """
 
 import pytest
-from core.behavioral_baseline import BSMRecorder, BehavioralStateMachine, BSMStep
-from core.behavioral_probe    import BSMDeviationProber, DeviationProbe
-from modules.pipeline.validators.biz_logic_validator import BizLogicValidator
-from modules.pipeline.engine.models import ValidationResult
+from zentry.validators.bizlogic_validator import BSMRecorder, BehavioralStateMachine, BSMStep, BSMDeviationProber, DeviationProbe, BizLogicValidator
+from zentry.session import ValidationResult
 import aiohttp
 from unittest.mock import AsyncMock, patch
 

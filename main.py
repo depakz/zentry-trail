@@ -3,18 +3,18 @@
 
 import argparse
 import asyncio
-from typing import Dict
+from typing import Any, Dict
 
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from rich.table import Table
 
-from core.orchestrator import Orchestrator
-from core.logger import logger
-from modules.recon.reporting import json_report
+from zentry.recon.orchestrator import ReconOrchestrator
+from zentry.reporting.json_reporter import JSONReporter
+from zentry.session import ScanSession
 
 
-def _severity_summary(session) -> Dict[str, int]:
+def _severity_summary(session: ScanSession) -> Dict[str, int]:
     counts = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0}
     findings = getattr(session, "findings", []) or []
     for finding in findings:
@@ -29,7 +29,7 @@ def _severity_summary(session) -> Dict[str, int]:
     return counts
 
 
-def _print_final_summary(session) -> None:
+def _print_final_summary(session: ScanSession) -> None:
     console = Console()
     counts = _severity_summary(session)
     table = Table(title="Final Scan Summary")
@@ -43,7 +43,7 @@ def _print_final_summary(session) -> None:
     table.add_row("Low", str(counts["low"]))
     table.add_row("Info", str(counts["info"]))
 
-    report_paths = getattr(session, "data", {}).get("report_paths", {}) if hasattr(session, "data") else {}
+    report_paths = session.data.get("report_paths", {})
     if isinstance(report_paths, dict):
         table.add_row("HTML Report", str(report_paths.get("html", "n/a")))
         table.add_row("JSON Report", str(report_paths.get("json", "n/a")))
@@ -53,25 +53,15 @@ def _print_final_summary(session) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Unified async vulnerability scanner")
     parser.add_argument("-u", "--url", "--target", dest="target", required=False, default=None, help="Target URL or host")
-    parser.add_argument("--profile", choices=("auto", "balanced", "aggressive"), default="auto", help="Recon profile selection")
+    parser.add_argument("--fast", action="store_true", help="Fast mode (skips some deep recon steps)")
     parser.add_argument("--scope", nargs="*", default=[], help="Allowed domains for scope enforcement")
     parser.add_argument("--output", default="reports", help="Output directory for HTML/JSON reports")
-    # ── OOB canary flags (Session 1 / 10) ──────────────────────────────────
-    parser.add_argument("--oob-host",  default=None,   help="OOB canary host/IP (default: auto-detect local IP)")
-    parser.add_argument("--oob-port",  type=int, default=8877, help="OOB canary port (default: 8877)")
-    parser.add_argument("--no-oob",    action="store_true", help="Disable OOB canary server")
-    # ── Traffic normalization flags (Session 5 / 10) ───────────────────────
-    parser.add_argument("--browser-profile", choices=("chrome124", "firefox124", "safari17"), default="chrome124",
-                        help="Browser profile for traffic normalization (default: chrome124)")
-    parser.add_argument("--no-normalize", action="store_true", help="Disable traffic normalization (raw requests)")
-    # ── Authentication flags (new) ───────────────────────────────────────────
+    # ── Authentication flags ───────────────────────────────────────────
     parser.add_argument("--auth",       default=None, help="Authenticated credentials (username:password)")
     parser.add_argument("--auth2",      default=None, help="Second user credentials (username:password)")
     parser.add_argument("--auth-url",   default=None, help="Login URL (e.g. http://target/login)")
     parser.add_argument("--auth-user",  default=None, help="Username to authenticate with")
     parser.add_argument("--auth-pass",  default=None, help="Password to authenticate with")
-    parser.add_argument("--auth-field-user", default="uid",   help="Form field name for username (default: uid)")
-    parser.add_argument("--auth-field-pass", default="passw", help="Form field name for password (default: passw)")
     parser.add_argument("--no-auth",    action="store_true",  help="Disable pre-scan authentication attempt")
     # ── False-positive labelling (Session 9 / 10) ──────────────────────────
     parser.add_argument("--label-fp",   nargs=2, metavar=("SCAN_ID", "FINDING_ID"),
@@ -93,7 +83,7 @@ def main() -> None:
     if not target.startswith(("http://", "https://")):
         target = f"http://{target}"
 
-    fast_mode = args.profile != "aggressive"
+    fast_mode = args.fast
     scope_list = []
     if isinstance(args.scope, list):
         for value in args.scope:
@@ -101,14 +91,14 @@ def main() -> None:
 
     try:
         # Build custom credential profile if user supplied auth flags
-        custom_creds = None
-        custom_creds2 = None
+        custom_creds: Optional[Dict[str, str]] = None
+        custom_creds2: Optional[Dict[str, str]] = None
         if not getattr(args, "no_auth", False):
             if getattr(args, "auth", None):
                 parts = args.auth.split(":", 1)
                 if len(parts) == 2:
                     custom_creds = {"username": parts[0], "password": parts[1]}
-            elif getattr(args, "auth_user", None) and getattr(args, "auth_pass", None):
+            elif args.auth_user and args.auth_pass:
                 custom_creds = {"username": args.auth_user, "password": args.auth_pass}
 
             if getattr(args, "auth2", None):
@@ -128,23 +118,23 @@ def main() -> None:
             recon_task = progress.add_task("[cyan]Phase 1: Reconnaissance...", total=100)
             validation_task = progress.add_task("[magenta]Phase 2: Validation...", total=100)
 
-            orchestrator = Orchestrator(target=target, fast=fast_mode, scope=scope_list, output_dir=args.output)
+            recon_orchestrator = ReconOrchestrator(target=target, fast=fast_mode, scope=scope_list, output_dir=args.output)
 
             # Override credential profiles if user supplied --auth-* flags
             if custom_creds or custom_creds2:
-                from core.auth_manager import AuthManager
-                orchestrator.auth_manager = AuthManager(target=target, credentials=custom_creds)
+                from zentry.auth.manager import AuthManager
+                recon_orchestrator.auth_manager = AuthManager(target=target, credentials=custom_creds)
                 if custom_creds2:
-                    orchestrator.auth_manager.credentials2 = custom_creds2
+                    recon_orchestrator.auth_manager.credentials2 = custom_creds2
 
             # Pass the single progress bar and task IDs to the orchestrator
-            session = asyncio.run(orchestrator.run(progress, recon_task, validation_task))
+            session = asyncio.run(recon_orchestrator.run(progress, recon_task, validation_task))
 
-        report_paths = getattr(session, "data", {}).get("recon_report_paths", {}) if hasattr(session, "data") else {}
+        report_paths = session.data.get("recon_report_paths", {})
         if isinstance(report_paths, dict):
             report_path = report_paths.get("json")
             if isinstance(report_path, str) and report_path:
-                json_report.load_into_fact_store(report_path, orchestrator.fact_store)
+                JSONReporter.load_into_fact_store(report_path, recon_orchestrator.fact_store)
 
         _print_final_summary(session)
 

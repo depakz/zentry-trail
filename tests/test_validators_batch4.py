@@ -2,9 +2,9 @@ import socket
 import requests
 from types import SimpleNamespace
 
-import modules.pipeline.validators.components as comp_mod
-import modules.pipeline.validators.redis as redis_mod
-import modules.pipeline.validators.ssrf as ssrf_mod
+import zentry.validators.components as comp_mod
+import zentry.validators.redis as redis_mod
+import zentry.validators.ssrf_validator as ssrf_mod
 
 
 def test_outdated_components_detects_version_header(monkeypatch):

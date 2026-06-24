@@ -1,9 +1,9 @@
 from types import SimpleNamespace
 from hashlib import sha256
 
-import modules.pipeline.validators.logging as log_mod
-import modules.pipeline.validators.integrity as int_mod
-import modules.pipeline.validators.stored_xss_validator as sx_mod
+import zentry.validators.logging as log_mod
+import zentry.validators.integrity as int_mod
+import zentry.validators.stored_xss_validator as sx_mod
 
 
 def test_logging_validator_missing_headers(monkeypatch):

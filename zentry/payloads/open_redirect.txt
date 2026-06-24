@@ -1,0 +1,12 @@
+https://evil.com
+//evil.com
+https://evil.com%0d%0a
+/\evil.com
+//evil%00.com
+https:///evil.com
+///evil.com
+////evil.com
+https://evil.com/
+//evil.com/
+/\/evil.com/
+https:%0a%0d//evil.com

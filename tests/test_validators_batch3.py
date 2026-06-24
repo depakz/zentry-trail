@@ -1,5 +1,5 @@
-import modules.pipeline.validators.crypto as crypto_mod
-import modules.pipeline.validators.access_control as ac_mod
+import zentry.validators.crypto as crypto_mod
+import zentry.validators.access_control as ac_mod
 from types import SimpleNamespace
 
 

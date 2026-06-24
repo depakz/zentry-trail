@@ -18,7 +18,7 @@ from unittest.mock import MagicMock, patch
 
 import requests
 
-from core.evidence_collector import (
+from zentry.evidence.store import (
     EvidenceCollector,
     _slugify,
     _finding_filename,
@@ -283,26 +283,8 @@ class TestEvidenceCollector:
 class TestSarifEvidencePropagation:
     """Part E — evidence_bundle_path in SARIF output."""
 
-    def test_sarif_builder_includes_evidence_path(self):
-        from avvp.libs.sarif_schema import sarif_builder
-
-        findings = [
-            {
-                "vulnerability": "sql-injection",
-                "severity": "high",
-                "uri": "http://example.com/login",
-                "payload": "' OR 1=1",
-                "evidence_req_path": "_output/evidence/2026-06-21_21-52-45/finding_01_sql_injection_login_req.txt",
-            },
-        ]
-
-        sarif = sarif_builder.build_sarif_report(findings)
-        result = sarif["runs"][0]["results"][0]
-        assert result["properties"]["evidence_bundle_path"] != ""
-        assert "finding_01" in result["properties"]["evidence_bundle_path"]
-
     def test_sarif_reporter_includes_evidence_path(self):
-        from core.sarif_reporter import SARIFReporter
+        from zentry.reporting.sarif_reporter import SARIFReporter
 
         reporter = SARIFReporter()
         findings = [

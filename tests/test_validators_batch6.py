@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
-import modules.pipeline.validators.injection as inj_mod
-import modules.pipeline.validators.jwt_validator as jwt_mod
+import zentry.validators.injection as inj_mod
+import zentry.validators.jwt as jwt_mod
 
 
 def test_injection_xss_reflected(monkeypatch):

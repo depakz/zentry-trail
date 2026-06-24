@@ -1,0 +1,34 @@
+{
+  "target": "http://altoro.testfire.net",
+  "created": "2026-06-24_12-13-54",
+  "subdomains": [
+    "http://altoro.testfire.net"
+  ],
+  "alive_hosts": [
+    {
+      "url": "https://altoro.testfire.net",
+      "input": "http://altoro.testfire.net",
+      "status": 200,
+      "title": "Altoro Mutual",
+      "tech": [
+        "Apache Tomcat",
+        "Java"
+      ],
+      "ip": "",
+      "host": "65.61.137.117",
+      "scheme": "https",
+      "webserver": "Apache-Coyote/1.1",
+      "content_type": "text/html",
+      "content_length": 0,
+      "cdn": false,
+      "cdn_name": ""
+    }
+  ],
+  "endpoints": [],
+  "waf": {
+    "https://altoro.testfire.net": "none"
+  },
+  "nuclei_tags": [],
+  "findings": [],
+  "mined_params": {}
+}

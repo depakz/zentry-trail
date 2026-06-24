@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ r.target }} Security Report</title>
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; background: #0f131a; color: #d8dee9; margin: 0; padding: 24px; }
+    h1, h2, h3 { color: #9dd7ff; margin-bottom: 8px; }
+    .card { background: #18202a; border: 1px solid #2c3a49; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+    .sev-critical { border-left: 5px solid #ff4d4d; }
+    .sev-high { border-left: 5px solid #ff8a3d; }
+    .sev-medium { border-left: 5px solid #f4c152; }
+    .sev-low { border-left: 5px solid #7bc96f; }
+    .sev-info { border-left: 5px solid #6fa8dc; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; border-bottom: 1px solid #2c3a49; padding: 8px; vertical-align: top; }
+    code { background: #111821; padding: 2px 6px; border-radius: 4px; color: #ffd58a; }
+    .mono { font-family: Consolas, Menlo, monospace; }
+    .muted { color: #9fb0c0; }
+    ul, ol { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Security Report: {{ r.target }}</h1>
+  <p class="muted">Generated at {{ r.generated_at }}</p>
+ 
+  <div class="card">
+    <h2>Executive Summary</h2>
+    <table>
+      <tr><th>Total Findings</th><td>{{ r.executive_summary.total_findings }}</td></tr>
+      <tr><th>Critical</th><td>{{ r.executive_summary.severity.critical }}</td></tr>
+      <tr><th>High</th><td>{{ r.executive_summary.severity.high }}</td></tr>
+      <tr><th>Medium</th><td>{{ r.executive_summary.severity.medium }}</td></tr>
+      <tr><th>Low</th><td>{{ r.executive_summary.severity.low }}</td></tr>
+      <tr><th>Info</th><td>{{ r.executive_summary.severity.info }}</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Attack Chains</h2>
+    {% if r.attack_chains %}
+      {% for c in r.attack_chains %}
+      <div class="card sev-{{ c.severity|lower }}" style="padding-left: 20px;">
+        <h3>{{ c.name }} ({{ c.chain_id }})</h3>
+        <p><b>Severity:</b> {{ c.severity|upper }} | <b>CVSS:</b> {{ "%.1f"|format(c.cvss) }} | <b>OWASP:</b> {{ c.owasp }}</p>
+        <p>{{ c.description }}</p>
+        <p><b>Attack Steps:</b></p>
+        <ol>
+          {% for f in c.component_findings %}
+            <li style="margin-bottom: 10px;">
+              <b>{{ f.validator_name or f.title }}</b> (CVSS: {{ "%.1f"|format(f.cvss) }})<br>
+              <span class="muted">Endpoint:</span> <span class="mono">{{ f.target_url }}</span><br>
+              {% if f.payload %}
+                <span class="muted">Payload:</span> <code class="mono">{{ f.payload }}</code>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No confirmed chains were emitted by the chain engine.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Per-Finding Detail</h2>
+    {% if r.findings %}
+      {% for f in r.findings %}
+      <div class="card sev-{{ f.severity|lower }}">
+        <h3>{{ f.validator_name }} — {{ f.vulnerability or f.title }}</h3>
+        <p><b>Severity:</b> {{ f.severity|upper }} | <b>CVSS:</b> {{ "%.1f"|format(f.cvss) }}</p>
+        <p><b>Target URL:</b> <span class="mono">{{ f.target_url }}</span></p>
+        <p><b>Payload:</b> <span class="mono">{{ f.payload or "n/a" }}</span></p>
+        <p><b>Response Snippet:</b> {{ f.response_snippet or "n/a" }}</p>
+        <p><b>OWASP Mapping:</b> {{ f.owasp }}</p>
+        {% if f.evidence_req_path %}
+        <p><b>Evidence Request Path:</b> <span class="mono">{{ f.evidence_req_path }}</span></p>
+        {% endif %}
+        {% if f.evidence_res_path %}
+        <p><b>Evidence Response Path:</b> <span class="mono">{{ f.evidence_res_path }}</span></p>
+        {% endif %}
+        {% if f.raw_request or f.raw_response %}
+        <details style="margin-top: 10px;">
+          <summary style="cursor: pointer; color: #9dd7ff; font-weight: bold;">View Raw HTTP Evidence</summary>
+          {% if f.raw_request %}
+          <pre class="mono" style="background: #111821; padding: 10px; border-radius: 4px; border: 1px solid #2c3a49; overflow-x: auto; white-space: pre-wrap; word-break: break-all; margin-top: 6px;">{{ f.raw_request }}</pre>
+          {% endif %}
+          {% if f.raw_response %}
+          <pre class="mono" style="background: #111821; padding: 10px; border-radius: 4px; border: 1px solid #2c3a49; overflow-x: auto; white-space: pre-wrap; word-break: break-all; margin-top: 6px;">{{ f.raw_response[:2048] }}</pre>
+          {% endif %}
+        </details>
+        {% endif %}
+        <p><b>Remediation:</b> {{ f.remediation or "Apply specific input validation, authentication checks, and secure defaults appropriate for this finding." }}</p>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No findings were confirmed.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Signal Coverage</h2>
+    <p><b>Detected Signals:</b></p>
+    <pre class="mono">{{ r.signal_coverage.detected_signals | tojson(indent=2) }}</pre>
+    <p><b>Selected Validators and Reasons:</b></p>
+    <pre class="mono">{{ r.signal_coverage.selected_validators | tojson(indent=2) }}</pre>
+  </div>
+</body>
+</html>

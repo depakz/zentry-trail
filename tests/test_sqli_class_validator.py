@@ -1,7 +1,7 @@
 import pytest
 import requests
-from modules.pipeline.validators.sqli_validator import SQLiValidator
-from modules.pipeline.engine.models import ValidationResult
+from zentry.validators import SQLiValidator
+from zentry.session import ValidationResult
 
 def test_sqli_validator_confirm_finding():
     validator = SQLiValidator()

@@ -1,4 +1,4 @@
-from modules.pipeline.brain.cve_mapper import CVEMapper, get_cve_info
+from zentry.chains.rules import CVEMapper, get_cve_info
 
 
 def test_extra_cve_spec_and_mapping():

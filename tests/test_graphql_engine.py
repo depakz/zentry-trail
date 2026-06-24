@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from modules.pipeline.validators.graphql_engine.schema_inference import infer_schema, brute_force_fields
-from modules.pipeline.validators.graphql_deep_validator import GraphQLDeepValidator
+from zentry.validators.api_validators import infer_schema, brute_force_fields
+from zentry.validators import GraphQLDeepValidator
 
 @patch('requests.post')
 def test_schema_inference_suggestion(mock_post):
