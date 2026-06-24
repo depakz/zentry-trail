@@ -1,0 +1,1 @@
+"""Reconnaissance phase: discovery, probing, and signal extraction."""

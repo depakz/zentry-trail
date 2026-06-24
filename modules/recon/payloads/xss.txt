@@ -1,4 +1,0 @@
-<script>alert(1)</script>
-"><svg/onload=alert(1)>
-javascript:alert(1)
-'"--></style></script><script>alert(1)</script>

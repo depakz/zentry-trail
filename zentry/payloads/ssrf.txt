@@ -1,0 +1,14 @@
+http://127.0.0.1
+http://localhost
+http://[::1]
+http://0.0.0.0
+http://169.254.169.254/latest/meta-data/
+http://metadata.google.internal/computeMetadata/v1/
+http://100.100.100.200/latest/meta-data/
+http://127.0.0.1:22
+http://127.0.0.1:3306
+http://127.0.0.1:6379
+http://127.0.0.1:9200
+file:///etc/passwd
+gopher://127.0.0.1:25/
+dict://127.0.0.1:11211/stat

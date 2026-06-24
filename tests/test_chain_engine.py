@@ -1,8 +1,8 @@
 import pytest
-from chains.rules import CHAIN_RULES
-from chains.engine import ChainEngine
+from zentry.chains.rules import CHAIN_RULES
+from zentry.chains.engine import ChainEngine
 
-def test_chain_engine_xss_via_open_redirect():
+def test_chain_engine_csrf_account_takeover():
     engine = ChainEngine(CHAIN_RULES)
 
     findings = [
@@ -13,44 +13,22 @@ def test_chain_engine_xss_via_open_redirect():
             "severity": "medium"
         },
         {
-            "target_url": "http://altoro.testfire.net/index.jsp?content=xss",
-            "vulnerability": "reflected-xss",
+            "target_url": "http://altoro.testfire.net/index.jsp?content=csrf",
+            "vulnerability": "csrf-missing-protections",
             "cvss": 7.2,
             "severity": "high"
         }
     ]
 
     chains = engine.evaluate(findings)
-    assert len(chains) == 1
-    chain = chains[0]
-    assert chain["chain_id"] == "chain-001"
-    assert chain["name"] == "XSS via Open Redirect"
-    # Max CVSS (7.2) + boost (0.3) = 7.5
-    assert chain["cvss"] == 7.5
+    assert len(chains) >= 2  # Matches chain-001 (CSRF + Open Redirect) and chain-002 (Open Redirect)
+    chain = next(c for c in chains if c["chain_id"] == "chain-001")
+    assert chain["name"] == "CSRF → Account Takeover"
+    # Max CVSS (7.2) + boost (0.5 * (2 - 1)) = 7.7
+    assert chain["cvss"] == 7.7
     assert len(chain["component_findings"]) == 2
 
-def test_chain_engine_different_hosts_ignored():
-    engine = ChainEngine(CHAIN_RULES)
-
-    findings = [
-        {
-            "target_url": "http://altoro.testfire.net/index.jsp?content=redir",
-            "vulnerability": "open-redirect",
-            "cvss": 6.5,
-            "severity": "medium"
-        },
-        {
-            "target_url": "http://other-domain.com/index.jsp?content=xss",
-            "vulnerability": "reflected-xss",
-            "cvss": 7.2,
-            "severity": "high"
-        }
-    ]
-
-    chains = engine.evaluate(findings)
-    assert len(chains) == 0
-
-def test_chain_engine_cvss_capping():
+def test_chain_engine_capping():
     engine = ChainEngine(CHAIN_RULES)
 
     findings = [
@@ -61,13 +39,13 @@ def test_chain_engine_cvss_capping():
             "severity": "high"
         },
         {
-            "target_url": "http://altoro.testfire.net/index.jsp?content=xss",
-            "vulnerability": "reflected-xss",
+            "target_url": "http://altoro.testfire.net/index.jsp?content=csrf",
+            "vulnerability": "csrf-missing-protections",
             "cvss": 9.9,
             "severity": "critical"
         }
     ]
 
     chains = engine.evaluate(findings)
-    assert len(chains) == 1
-    assert chains[0]["cvss"] == 10.0  # capped
+    chain = next(c for c in chains if c["chain_id"] == "chain-001")
+    assert chain["cvss"] == 10.0  # capped

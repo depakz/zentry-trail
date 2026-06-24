@@ -13,7 +13,7 @@ Validates:
 import hashlib
 from dataclasses import dataclass, field
 
-from core.dedup import dedup_findings, dedup_finding_objects, _dedup_key
+from zentry.reporting.dedup import dedup_findings, dedup_finding_objects, _dedup_key
 
 
 # ── Tests for dedup_findings (dict-based) ────────────────────────────────────

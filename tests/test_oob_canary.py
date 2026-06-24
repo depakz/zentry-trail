@@ -14,7 +14,7 @@ import time
 import pytest
 from unittest.mock import MagicMock, patch
 
-from avvp.services.oob_canary import (
+from zentry.oob import (
     generate_token,
     get_canary_url,
     parse_token,
@@ -207,7 +207,7 @@ class TestSSRFValidatorOOBIntegration:
 
     def test_ssrf_validator_imports(self):
         """SSRF validator should successfully import OOB utilities."""
-        from modules.pipeline.validators.ssrf import (
+        from zentry.validators.ssrf_validator import (
             generate_token as ssrf_gen_token,
             get_canary_url as ssrf_get_url,
         )
@@ -216,7 +216,7 @@ class TestSSRFValidatorOOBIntegration:
 
     def test_ssrf_oob_probe_method_exists(self):
         """SSRF validator should have _probe_oob_ssrf_sync method."""
-        from modules.pipeline.validators.ssrf import SSRFValidator
+        from zentry.validators.ssrf_validator import SSRFValidator
 
         validator = SSRFValidator()
         assert hasattr(validator, "_probe_oob_ssrf_sync")
@@ -224,8 +224,8 @@ class TestSSRFValidatorOOBIntegration:
 
     def test_ssrf_validator_with_oob_server(self):
         """SSRF validator should use OOB server when available."""
-        from modules.pipeline.validators.ssrf import SSRFValidator
-        from modules.pipeline.engine.models import ExecutionContext
+        from zentry.validators.ssrf_validator import SSRFValidator
+        from zentry.session import ExecutionContext
 
         validator = SSRFValidator()
         server = OOBCanaryServer(host="127.0.0.1", port=9876)

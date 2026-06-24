@@ -1,9 +1,9 @@
 from types import SimpleNamespace
 
-import modules.pipeline.validators.auth as auth_mod
-import modules.pipeline.validators.access_control as ac_mod
-import modules.pipeline.validators.components as comp_mod
-import modules.pipeline.validators.crypto as crypto_mod
+import zentry.validators.auth as auth_mod
+import zentry.validators.access_control as ac_mod
+import zentry.validators.components as comp_mod
+import zentry.validators.crypto as crypto_mod
 
 
 class FakeResponse:

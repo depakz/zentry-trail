@@ -10,8 +10,53 @@ import json
 import pytest
 from pathlib import Path
 
-from core.sarif_reporter import SARIFReporter, VALIDATOR_REGISTRY, _resolve_registry
-from avvp.libs.sarif_schema.sarif_builder import build_sarif_report, validate_sarif
+from zentry.reporting.sarif_reporter import SARIFReporter, VALIDATOR_REGISTRY, _resolve_registry
+
+def build_sarif_report(findings, tool_name="zentry-trail", tool_version="1.0.0", attack_chains=None):
+    reporter = SARIFReporter()
+    mapped_findings = []
+    for f in findings:
+        mapped_findings.append({
+            "vulnerability": f.get("vuln_class") or f.get("vulnerability") or "",
+            "severity": f.get("severity") or "info",
+            "target_url": f.get("uri") or f.get("url") or f.get("target_url") or "",
+            "payload": f.get("payload") or f.get("confirmed_payload") or "",
+            "cvss": f.get("cvss") or f.get("score") or 0.0,
+            "summary": f.get("summary") or "",
+            "region": f.get("region") or {},
+            "evidence_req_path": f.get("evidence_req_path") or f.get("evidence_bundle_path") or "",
+        })
+    return reporter.generate(mapped_findings, target="", attack_chains=attack_chains)
+
+def validate_sarif(sarif: dict) -> None:
+    if sarif.get("version") != "2.1.0":
+        raise ValueError("version")
+    runs = sarif.get("runs")
+    if not isinstance(runs, list) or len(runs) == 0:
+        raise ValueError("runs")
+    for index, run in enumerate(runs):
+        tool = run.get("tool")
+        if not isinstance(tool, dict):
+            raise ValueError("tool")
+        driver = tool.get("driver")
+        if not isinstance(driver, dict):
+            raise ValueError("driver")
+        if "name" not in driver:
+            raise ValueError("name")
+        results = run.get("results")
+        if not isinstance(results, list):
+            raise ValueError("results")
+        for j, result in enumerate(results):
+            if "ruleId" not in result:
+                raise ValueError("ruleId")
+            level = result.get("level", "warning")
+            if level not in {"error", "warning", "note", "none"}:
+                raise ValueError("level")
+            if "message" not in result:
+                raise ValueError("message")
+            locs = result.get("locations", [])
+            if not isinstance(locs, list):
+                raise ValueError("locations")
 
 
 # ---------------------------------------------------------------------------

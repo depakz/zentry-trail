@@ -1,8 +1,8 @@
 from types import SimpleNamespace
 
-import modules.pipeline.validators.csrf_validator as csrf_mod
-import modules.pipeline.validators.xxe_validator as xxe_mod
-import modules.pipeline.validators.open_redirect_validator as or_mod
+import zentry.validators.csrf as csrf_mod
+import zentry.validators.xxe_validator as xxe_mod
+import zentry.validators.open_redirect_validator as or_mod
 
 
 def test_csrf_missing_protections(monkeypatch):
